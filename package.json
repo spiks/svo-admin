@@ -1,12 +1,11 @@
 {
-  "name": "psy-frontend-admin",
+  "name": "most-frontend-admin",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "prepare": "husky install"
+    "lint": "next lint"
   },
   "dependencies": {
     "antd": "^4.18.5",
@@ -26,7 +25,6 @@
     "eslint-config-next": "12.0.10",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "husky": "^7.0.4",
     "lint-staged": "^12.3.3",
     "prettier": "2.5.1",
     "typescript": "4.5.5"
