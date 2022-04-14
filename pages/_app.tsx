@@ -1,5 +1,5 @@
-require("../styles/ant.less");
-import type { AppProps } from "next/app";
+require('../styles/ant.less');
+import type { AppProps } from 'next/app';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return <Component {...pageProps} />;
