@@ -1,34 +1,36 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# MOST Therapy
 
-## Getting Started
+Описание проекта и его идей
 
-First, run the development server:
+### Базовые технологии, использующиеся в проекте
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+1. [Next.js](https://nextjs.org/) - фреймворк, основанный на библиотеке React и предоставляющий возможности для SSR
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. [Ant Design](https://ant.design/) - библиотека готовых компонентов. Использование этой библиотеки обусловлено выбором ант-дизайна в макете.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Структура приложения
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- components - директория с компонентами.
+- pages - директория со страницами Next приложения и api-роутами.
+- public - директория с разной статикой (глобальные стили, шрифты, изображения)
+- libs - директория с переиспользуемыми функциями или переменными по проекту. Внутри этой директории можно создавать произвольную структуру на усмотрение команды.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+### Структура директории компонента
 
-## Learn More
+Директория с компонентом включает в себя следующие файлы:
 
-To learn more about Next.js, take a look at the following resources:
+- index.tsx - корневой файл компонента.
+- filename.typedef.ts - описание типов или интерфейсов, используемых в компоненте
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Стиль кода
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Стиль кода проверяется и исправляется с помощью [Prettier](https://prettier.io) и [ESLint](https://eslint.org).
+Актуальные версии настроек, использующиеся в проекте, можно найти в [Github](https://github.com/spiks/frontend-conventions#eslintrcjson)
 
-## Deploy on Vercel
+### Автоматизации
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Все автоматизации вроде проверки стиля запускаются через [GitHub Actions](https://github.com/features/actions). Все экшены описаны в директории [`.github/workflows`](./.github/workflows).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Локальный запуск проекта
+
+Для локальной сборки проекта в терминале необходимо написать команду `npm run build`, которая в течении некоторого времени совершит сборку проекта. Для запуска собранного проекта используется команда `npm run start`. Для запуска проекта в режиме разработки также может быть полезна команда `npm run dev`.

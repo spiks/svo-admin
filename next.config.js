@@ -1,10 +1,10 @@
-const withAntdLess = require("next-plugin-antd-less");
+const withAntdLess = require('next-plugin-antd-less');
 
-const isProd = process.env.NODE_ENV === "production";
+const isProd = process.env.NODE_ENV === 'production';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  lessVarsFilePath: "./styles/ant.less",
+  lessVarsFilePath: './styles/ant.less',
   lessVarsFilePathAppendToEndOfContent: false,
 
   webpack(config) {
