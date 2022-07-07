@@ -1,0 +1,11 @@
+.publicLayout {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.publicLayout .ant-layout-footer {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

@@ -1,5 +1,5 @@
-import { DatePicker } from 'antd';
+import { MainLayout } from '../components/MainLayout';
 
 export default function Home() {
-  return <DatePicker />;
+  return <MainLayout />;
 }
