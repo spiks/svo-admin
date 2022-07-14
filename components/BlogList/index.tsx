@@ -63,6 +63,10 @@ export const BlogList: FC = () => {
           </Col>
         </Row>
       }
+      pagination={{
+        showSizeChanger: true,
+        total: 500,
+      }}
       dataSource={blogArticles}
       renderItem={(item) => <BlogArticle {...item} />}
     />
