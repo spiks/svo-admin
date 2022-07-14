@@ -1,5 +1,5 @@
-import { Alert, Button, Tabs, Form, Input, Select, Tag, DatePicker, DatePickerProps, Row, Col } from 'antd';
-import { FC, useState } from 'react';
+import { Alert, Button, Tabs, Form, Input, Select, DatePicker, DatePickerProps, Row, Col } from 'antd';
+import { FC } from 'react';
 import { Header } from '../Header';
 import { FilterFilled, InfoCircleOutlined } from '@ant-design/icons';
 import { TagRender } from '../TagRender';
@@ -18,9 +18,12 @@ const options: OptionsType = [
   { label: 'Семья', value: 'lime' },
 ];
 
-export const BlogHeader: FC = () => {
-  const [showFilters, setShowFilters] = useState(false);
+export type BlogHeaderProps = {
+  showFilters: boolean;
+  handleShowFilters: () => void;
+};
 
+export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters }) => {
   const [form] = Form.useForm();
 
   const onSearch = () => {
@@ -37,6 +40,7 @@ export const BlogHeader: FC = () => {
 
   return (
     <Header
+      style={{ backgroundColor: '#FFFFFF' }}
       title={'Блог'}
       subTitle={'В этом разделе собраны статьи, опубликованные на платформе'}
       extra={
@@ -47,14 +51,7 @@ export const BlogHeader: FC = () => {
           <Button size="large" type={'primary'}>
             Добавить публикацию
           </Button>
-          <Button
-            size="large"
-            onClick={() => {
-              setShowFilters(!showFilters);
-            }}
-            icon={<FilterFilled />}
-            type="default"
-          >
+          <Button size="large" onClick={handleShowFilters} icon={<FilterFilled />} type="default">
             Парамерты поиска
           </Button>
         </>
@@ -62,7 +59,7 @@ export const BlogHeader: FC = () => {
       footer={
         <Tabs style={{ paddingLeft: '36px' }} defaultActiveKey="1">
           <TabPane tab="Опубликованные" key="1" />
-          <TabPane tab="Активные" key="2" />
+          <TabPane tab="Архивные" key="2" />
         </Tabs>
       }
     >

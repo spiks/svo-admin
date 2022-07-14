@@ -1,10 +1,25 @@
 import { NextPage } from 'next';
+import { useState } from 'react';
+import { BlogHeader } from '../../../components/BlogHeader';
+import { BlogList } from '../../../components/BlogList';
 import { MainLayout } from '../../../components/MainLayout';
+import { PageWrapper } from '../../../components/PageWrapper';
 
 const BlogPage: NextPage = () => {
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+
+  const handleShowFilters = () => {
+    setShowFilters(!showFilters);
+  };
+
   return (
     <MainLayout>
-      <div>Blog</div>
+      <BlogHeader showFilters={showFilters} handleShowFilters={handleShowFilters} />
+      <div style={{ overflow: 'auto' }}>
+        <PageWrapper>
+          <BlogList showFilters={showFilters} />
+        </PageWrapper>
+      </div>
     </MainLayout>
   );
 };
