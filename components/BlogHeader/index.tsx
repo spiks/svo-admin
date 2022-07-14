@@ -70,77 +70,81 @@ export const BlogHeader: FC = () => {
         <Row
           gutter={[0, 16]}
           style={{
-            flexDirection: 'column',
             paddingLeft: '36px',
           }}
         >
-          <Alert
-            style={{ borderRadius: '8px' }}
-            message="Описание"
-            description="Здесь можно разместить какое-нибудь описание для блога. Его можно скрыть."
-            type="info"
-            showIcon
-            closable
-          />
-
-          <Form style={{ paddingBottom: '24px' }} form={form} layout="vertical" requiredMark={false}>
-            <Row gutter={32}>
-              <Col span={12}>
-                <Form.Item
-                  style={{ width: '100%' }}
-                  label="Поиск"
-                  name="search"
-                  tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-                >
-                  <Search
-                    size="large"
-                    placeholder="Начните вводить название или описание статьи..."
-                    onSearch={onSearch}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <Form.Item
-                  style={{ width: '100%' }}
-                  label="Теги"
-                  name="tags"
-                  tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-                >
-                  <Select
-                    size="large"
-                    mode="multiple"
-                    tagRender={({ label, value, closable, onClose, ...props }) => {
-                      return <TagRender label={label} value={value} closable={closable} onClose={onClose} {...props} />;
-                    }}
+          <Col span={24}>
+            <Alert
+              style={{ borderRadius: '8px' }}
+              message="Описание"
+              description="Здесь можно разместить какое-нибудь описание для блога. Его можно скрыть."
+              type="info"
+              showIcon
+              closable
+            />
+          </Col>
+          <Col span={24}>
+            <Form style={{ paddingBottom: '24px' }} form={form} layout="vertical" requiredMark={false}>
+              <Row gutter={32}>
+                <Col span={12}>
+                  <Form.Item
                     style={{ width: '100%' }}
-                    options={options}
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-            <Row justify="space-between" align="bottom">
-              <Col>
-                <Form.Item
-                  style={{ width: '100%', margin: '0' }}
-                  label="Опубликовано"
-                  name="date"
-                  tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-                >
-                  <DatePicker
-                    size="large"
-                    style={{ width: '330px' }}
-                    placeholder="Укажите дату публикации"
-                    onChange={onChange}
-                  />
-                </Form.Item>
-              </Col>
-              <Col>
-                <Button size="large" onClick={onReset}>
-                  Очистить все фильтры
-                </Button>
-              </Col>
-            </Row>
-          </Form>
+                    label="Поиск"
+                    name="search"
+                    tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+                  >
+                    <Search
+                      size="large"
+                      placeholder="Начните вводить название или описание статьи..."
+                      onSearch={onSearch}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item
+                    style={{ width: '100%' }}
+                    label="Теги"
+                    name="tags"
+                    tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+                  >
+                    <Select
+                      size="large"
+                      mode="multiple"
+                      tagRender={({ label, value, closable, onClose, ...props }) => {
+                        return (
+                          <TagRender label={label} value={value} closable={closable} onClose={onClose} {...props} />
+                        );
+                      }}
+                      style={{ width: '100%' }}
+                      options={options}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+              <Row justify="space-between" align="bottom">
+                <Col>
+                  <Form.Item
+                    style={{ width: '100%', margin: '0' }}
+                    label="Опубликовано"
+                    name="date"
+                    tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+                  >
+                    <DatePicker
+                      size="large"
+                      style={{ width: '330px' }}
+                      placeholder="Укажите дату публикации"
+                      onChange={onChange}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Button size="large" onClick={onReset}>
+                    Очистить все фильтры
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Col>
         </Row>
       )}
     </Header>
