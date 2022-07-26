@@ -6,10 +6,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings=0",
-    "lint:fix": "npx prettier --write . && next lint --fix --max-warnings=0"
+    "lint:fix": "npx prettier --write . && next lint --fix --max-warnings=0",
+    "generate": "openapi --input https://storage.yandexcloud.net/most-docs/admin/openapi/0.32.json --output ./generated --useOptions --useUnionTypes --client axios"
   },
   "dependencies": {
     "antd": "^4.21.5",
+    "axios": "^0.27.2",
     "date-fns": "^2.28.0",
     "next": "12.1.6",
     "next-plugin-antd-less": "^1.8.0",
@@ -28,6 +30,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "lint-staged": "^12.3.3",
+    "openapi-typescript-codegen": "^0.23.0",
     "prettier": "2.6.2",
     "typescript": "4.5.5"
   }
