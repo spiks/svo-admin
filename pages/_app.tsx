@@ -1,4 +1,6 @@
 require('../styles/ant.less');
+require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
+
 import type { AppProps } from 'next/app';
 
 function MyApp({ Component, pageProps }: AppProps) {
