@@ -10,6 +10,7 @@ const nextConfig = {
   webpack(config) {
     return config;
   },
+  swcMinify: false,
 };
 
 module.exports = withAntdLess(nextConfig);
