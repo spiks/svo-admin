@@ -1,0 +1,6 @@
+.pagination {
+}
+
+.pagination :global li:not(:last-of-type) {
+  display: none;
+}

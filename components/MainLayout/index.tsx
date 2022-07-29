@@ -10,7 +10,7 @@ export const MainLayout: FC = ({ children }) => {
       <Sider width={280}>
         <SiderMenu />
       </Sider>
-      <Content>{children}</Content>
+      <Content style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>{children}</Content>
     </Layout>
   );
 };
