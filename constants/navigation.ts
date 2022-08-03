@@ -8,12 +8,14 @@ export const NAVIGATION = {
   events: '/content/events',
 
   // users
-  clients: '/users/clients',
-  therapist: '/users/therapist',
-  moderator: '/users/moderators',
+  patients: '/users/patients',
+  therapists: '/users/therapists',
+  moderators: '/users/moderators',
   supportAgents: '/users/supportAgents',
   administrators: '/users/administrators',
 
   // logs
-  logs: 'logs',
+  logs: '/logs',
+  content: '/content',
+  users: '/users',
 };

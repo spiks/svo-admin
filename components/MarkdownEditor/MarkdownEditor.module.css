@@ -1,63 +1,61 @@
 /* Root container */
 .container {
-	width: 100%;
-	background: #FAFAFA;
-	border-radius: 8px;
-	padding: 16px 16px 8px 16px;
-	overflow: hidden;
+  width: 100%;
+  background: #fafafa;
+  border-radius: 8px;
+  padding: 16px 16px 8px 16px;
+  overflow: hidden;
 }
 
 /* Custom toolbar container */
 .toolbar {
-	display: flex;
-	padding: 8px;
-	gap: 16px;
+  display: flex;
+  padding: 8px;
+  gap: 16px;
 }
 
 .toolbar button {
-	height: 24px;
+  height: 24px;
 }
 
 /* Markdown container */
 .markdown-editor {
-	display: flex;
-	flex-direction: column-reverse;
+  display: flex;
+  flex-direction: column-reverse;
 }
 
 /* Whole input area */
 .markdown-editor :global div.rdw-editor-main {
-	background: #FFFFFF;
-	border: 1px solid #D9D9D9;
-	border-radius: 2px;
-	padding: 8px 12px;
-	min-height: 94px;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+  padding: 8px 12px;
+  min-height: 94px;
 }
 
 /* Prevent border collide */
 .markdown-editor :global .DraftEditor-editorContainer {
-	border-left: none;
+  border-left: none;
 }
 
 /* Remove top margin on first block */
 .markdown-editor :global div.public-DraftEditor-content > div > div:first-of-type > div {
-	margin-top: 0;
+  margin-top: 0;
 }
-
 
 /* Remove bottom margin on last block */
 .markdown-editor :global div.public-DraftEditor-content > div > div:last-of-type > div {
-	margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 /* Let user see the difference between blocks and content inside blocks */
 .markdown-editor :global .public-DraftStyleDefault-ol .public-DraftStyleDefault-block,
-.markdown-editor :global .public-DraftStyleDefault-ul .public-DraftStyleDefault-block
-{
-	margin-top: 0;
-	margin-bottom: 0;
+.markdown-editor :global .public-DraftStyleDefault-ul .public-DraftStyleDefault-block {
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 /** Default toolbar container */
 .markdown-editor :global .rdw-editor-toolbar {
-	display: none;
+  display: none;
 }
