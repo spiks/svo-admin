@@ -1,10 +1,14 @@
 import { NextPage } from 'next';
+import { UsersHeader } from '../../../components/UsersHeader/UsersHeader.component';
+import { useUsersQueryParams } from '../../../components/UsersHeader/UsersHeader.hooks/useUsersQueryParams';
 import { MainLayout } from '../../../components/MainLayout/MainLayout.component';
 
 const SupportAgentsPage: NextPage = () => {
+  useUsersQueryParams();
+
   return (
     <MainLayout>
-      <div>SupportAgents</div>
+      <UsersHeader title={'Агенты поддержки'} />
     </MainLayout>
   );
 };
