@@ -1,4 +1,4 @@
-import { LoginForm } from '../../components/LoginForm';
+import { LoginForm } from '../../components/LoginForm/LoginForm.component';
 import styles from '../../public/styles/LoginPage.module.css';
 import { NextPage } from 'next';
 

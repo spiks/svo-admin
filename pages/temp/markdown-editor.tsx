@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { MainLayout } from '../../components/MainLayout';
+import { MainLayout } from '../../components/MainLayout/MainLayout.component';
 import dynamic from 'next/dynamic';
 import { MarkdownEditorProps } from '../../components/MarkdownEditor/MarkdownEditor.typedef';
 

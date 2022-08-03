@@ -1,9 +1,9 @@
 import { NextPage } from 'next';
 import { useState } from 'react';
-import { BlogHeader } from '../../../components/BlogHeader';
-import { BlogList } from '../../../components/BlogList';
-import { MainLayout } from '../../../components/MainLayout';
-import { PageWrapper } from '../../../components/PageWrapper';
+import { BlogHeader } from '../../../components/BlogHeader/BlogHeader.component';
+import { BlogList } from '../../../components/BlogList/BlogList.component';
+import { MainLayout } from '../../../components/MainLayout/MainLayout.component';
+import { PageWrapper } from '../../../components/PageWrapper/PageWrapper.component';
 
 const BlogPage: NextPage = () => {
   const [showFilters, setShowFilters] = useState<boolean>(false);
