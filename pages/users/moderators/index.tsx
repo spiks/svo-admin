@@ -1,5 +1,5 @@
 import { NextPage } from 'next';
-import { MainLayout } from '../../../components/MainLayout';
+import { MainLayout } from '../../../components/MainLayout/MainLayout.component';
 
 const ModeratorsPage: NextPage = () => {
   return (
