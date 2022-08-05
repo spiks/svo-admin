@@ -1,6 +1,6 @@
 import { Avatar, Col, Row, Tag, Typography, Card } from 'antd';
-import { FC, useEffect, useMemo, useState } from 'react';
-import { format } from 'date-fns';
+import moment from 'moment';
+import { FC } from 'react';
 import { Image } from '../Image/Image.component';
 
 export type BlogArticleProps = {
@@ -70,7 +70,7 @@ export const BlogArticle: FC<BlogArticleProps> = ({
           <Avatar style={{ marginRight: '8px' }} src={avatar} size={'small'} />
           <Typography.Link style={{ fontSize: '16px', marginRight: '18px' }}>{author}</Typography.Link>
           <Typography.Text style={{ marginRight: '8px' }}>Опубликовано:</Typography.Text>
-          <Typography.Text type="secondary">{format(data, 'yyyy-MM-dd HH:mm')}</Typography.Text>
+          <Typography.Text type="secondary">{moment(data).format('YYYY-MM-DD HH:MM')}</Typography.Text>
         </Col>
       </Row>
     </Card>
