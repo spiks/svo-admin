@@ -3,6 +3,10 @@ import { FC } from 'react';
 import { Header } from '../Header/Header.component';
 import { FilterFilled, InfoCircleOutlined } from '@ant-design/icons';
 import { TagRender } from '../TagRender/TagRender.component';
+import { useRouter } from 'next/router';
+import { useBlogHeaderForm } from './BlogHeader.hooks/useBlogHeaderForm';
+import { useBlogHeaderQueryParams } from './BlogHeader.hooks/useBlogHeaderQueryParams';
+import moment from 'moment';
 
 type OptionsType = {
   label: string;
@@ -24,24 +28,15 @@ export type BlogHeaderProps = {
 };
 
 export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters }) => {
-  const [form] = Form.useForm();
-
-  const onSearch = () => {
-    return;
-  };
-
-  const onChange: DatePickerProps['onChange'] = () => {
-    return;
-  };
-
-  const onReset = () => {
-    form.resetFields();
-  };
+  const { back } = useRouter();
+  const { handleFiltersApply, handleResetFilters, handleFiltersChange, form } = useBlogHeaderForm();
+  const { search, tags, publishDate } = useBlogHeaderQueryParams();
 
   return (
     <Header
       style={{ backgroundColor: '#FFFFFF' }}
       title={'Блог'}
+      onBack={back}
       subTitle={'В этом разделе собраны статьи, опубликованные на платформе'}
       extra={
         <>
@@ -81,7 +76,18 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
             />
           </Col>
           <Col span={24}>
-            <Form style={{ paddingBottom: '24px' }} form={form} layout="vertical" requiredMark={false}>
+            <Form
+              onFinish={handleFiltersApply}
+              onFieldsChange={handleFiltersChange}
+              style={{ paddingBottom: '24px' }}
+              form={form}
+              layout="vertical"
+              initialValues={{
+                search,
+                tags: tags ?? [],
+                date: publishDate,
+              }}
+            >
               <Row gutter={32}>
                 <Col span={12}>
                   <Form.Item
@@ -93,7 +99,7 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                     <Search
                       size="large"
                       placeholder="Начните вводить название или описание статьи..."
-                      onSearch={onSearch}
+                      onSearch={handleFiltersApply}
                     />
                   </Form.Item>
                 </Col>
@@ -130,12 +136,12 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                       size="large"
                       style={{ width: '330px' }}
                       placeholder="Укажите дату публикации"
-                      onChange={onChange}
+                      onChange={handleFiltersApply}
                     />
                   </Form.Item>
                 </Col>
                 <Col>
-                  <Button size="large" onClick={onReset}>
+                  <Button size="large" onClick={handleResetFilters}>
                     Очистить все фильтры
                   </Button>
                 </Col>
