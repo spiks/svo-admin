@@ -66,18 +66,18 @@ export const UsersHeader: FC<{ title: string }> = ({ title }) => {
               phone: '',
             }}
           >
-            <Row style={{ columnGap: '24px' }}>
-              <Col flex={'743px'}>
+            <Row style={{ columnGap: '24px', flexWrap: 'nowrap' }}>
+              <Col flex={9}>
                 <Form.Item name={'search'} label={'Поиск'} tooltip={'Поиск'}>
                   <Input.Search size={'large'} onSearch={handleFiltersApply} />
                 </Form.Item>
               </Col>
-              <Col flex={'330px'}>
+              <Col flex={2}>
                 <Form.Item name={'phone'} label={'Номер телефона'} tooltip={'Номер телефона'}>
                   <Input type={'tel'} size={'large'} />
                 </Form.Item>
               </Col>
-              <Col flex={'211px'}>
+              <Col flex={1}>
                 <Form.Item label={<span style={{ color: 'transparent' }}>.</span>}>
                   <Button
                     htmlType={'button'}
