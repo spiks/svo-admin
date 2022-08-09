@@ -9,7 +9,7 @@ import { useUsersHeaderForm } from './UsersHeader.hooks/useUsersHeaderForm';
  * Применённые параметры пробрасываются в query (GET) запрос на текущей странице;
  * Применение фильтров через 1.5 сек. после последнего изменения, либо по нажатию на enter;
  */
-export const UsersHeader: FC<{ title: string }> = ({ title }) => {
+export const UsersHeader: FC<{ title: string }> = ({ title, children }) => {
   const { back } = useRouter();
   const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters, form } =
     useUsersHeaderForm();
@@ -93,6 +93,7 @@ export const UsersHeader: FC<{ title: string }> = ({ title }) => {
             </Row>
           </Form>
         )}
+        {children}
       </div>
     </div>
   );
