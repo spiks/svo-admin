@@ -1,12 +1,35 @@
-import { Alert, Breadcrumb, Button, Col, Row, Tabs } from 'antd';
+import { Alert, BreadcrumbProps, Button, Tabs } from 'antd';
+import { Route } from 'antd/lib/breadcrumb/Breadcrumb';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FC } from 'react';
-import { Breadcrumbs } from '../Breadcrumbs/Breadcrumbs.component';
 import { Header } from '../Header/Header.component';
 
 export const UserProfileHeader: FC<{ username?: string; id?: string }> = ({ username = 'Дейнерис' }) => {
   const { TabPane } = Tabs;
   const { back } = useRouter();
+
+  const routes: BreadcrumbProps['routes'] = [
+    {
+      path: 'users',
+      breadcrumbName: 'Пользователи',
+    },
+    {
+      path: 'patients',
+      breadcrumbName: 'Клиенты',
+    },
+  ];
+
+  const itemRender = (route: Route, params: any, routes: Route[], paths: string[]) => {
+    const first = routes.indexOf(route) === 0;
+    const last = routes.indexOf(route) === routes.length - 1;
+
+    return first || last ? (
+      <span>{route.breadcrumbName}</span>
+    ) : (
+      <Link href={paths.join('/')}>{route.breadcrumbName}</Link>
+    );
+  };
 
   return (
     <Header
@@ -18,7 +41,7 @@ export const UserProfileHeader: FC<{ username?: string; id?: string }> = ({ user
         </div>
       }
       onBack={back}
-      breadcrumb={<Breadcrumbs />}
+      breadcrumb={{ routes, itemRender }}
       extra={
         <>
           <Button size="large" type="text">
