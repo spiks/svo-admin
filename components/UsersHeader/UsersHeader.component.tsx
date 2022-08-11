@@ -4,15 +4,20 @@ import { FilterFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { useUsersHeaderForm } from './UsersHeader.hooks/useUsersHeaderForm';
 
+type UserHeaderProps = {
+  title: string;
+  searchPlaceholder?: string;
+  form: Parameters<typeof useUsersHeaderForm>[0];
+};
 /**
  * Шапка с параметрами для фильтрации листинга для подразделов категории "Пользователи";
  * Применённые параметры пробрасываются в query (GET) запрос на текущей странице;
  * Применение фильтров через 1.5 сек. после последнего изменения, либо по нажатию на enter;
  */
-export const UsersHeader: FC<{ title: string }> = ({ title, children }) => {
+export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholder, children }) => {
   const { back } = useRouter();
-  const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters, form } =
-    useUsersHeaderForm();
+  const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters } =
+    useUsersHeaderForm(form);
 
   return (
     <div
@@ -69,7 +74,7 @@ export const UsersHeader: FC<{ title: string }> = ({ title, children }) => {
             <Row style={{ columnGap: '24px', flexWrap: 'nowrap' }}>
               <Col flex={9}>
                 <Form.Item name={'search'} label={'Поиск'} tooltip={'Поиск'}>
-                  <Input.Search size={'large'} onSearch={handleFiltersApply} />
+                  <Input.Search size={'large'} placeholder={searchPlaceholder} onSearch={handleFiltersApply} />
                 </Form.Item>
               </Col>
               <Col flex={2}>

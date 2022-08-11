@@ -1,14 +1,13 @@
 import { useRouter } from 'next/router';
-import { Form, FormProps } from 'antd';
+import { FormInstance, FormProps } from 'antd';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { UsersQueryParams } from '../UsersHeader.typedef';
 
 /**
  * Выплёвывает параметры для view'шки управления шапкой листинга пользователей (UsersHeader);
  */
-export function useUsersHeaderForm() {
+export function useUsersHeaderForm(form: FormInstance<UsersQueryParams>) {
   const { replace } = useRouter();
-  const [form] = Form.useForm<UsersQueryParams>();
 
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const toggleShowFilters = useCallback(() => {
@@ -25,8 +24,7 @@ export function useUsersHeaderForm() {
         ...(phone && { phone }),
       },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form]);
+  }, [form, replace]);
 
   const handleResetFilters = useCallback(() => {
     form.resetFields();
@@ -53,7 +51,6 @@ export function useUsersHeaderForm() {
       handleResetFilters,
       handleFiltersChange,
       showFilters,
-      form,
     };
-  }, [form, handleFiltersApply, handleFiltersChange, handleResetFilters, showFilters, toggleShowFilters]);
+  }, [handleFiltersApply, handleFiltersChange, handleResetFilters, showFilters, toggleShowFilters]);
 }
