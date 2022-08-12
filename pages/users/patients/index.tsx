@@ -6,37 +6,21 @@ import { TabList } from '../../../components/TabList/TabList.component';
 import { Badge, Form, Switch, Table } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { PageWrapper } from '../../../components/PageWrapper/PageWrapper.component';
-import { AccountProfiles, OrderDirection, PatientListingPreview } from '../../../generated';
 import { ColumnsType, SortOrder, TableRowSelection } from 'antd/lib/table/interface';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getPatientList } from '../../../api/patient/getPatientList';
 import { UsersQueryParams } from '../../../components/UsersHeader/UsersHeader.typedef';
+import { GridView, toGridView } from '../../../helpers/toGridView';
+import { sortOrderCuts } from '../../../helpers/sortOrderCuts';
 
 const tabListItems = [
   { label: 'Активные', key: 'active' },
   { label: 'Неактивные', key: 'not active' },
 ];
 
-const profileTypeTranslations: Record<AccountProfiles, string> = {
-  admin: 'Администратор',
-  therapist: 'Терапевт',
-  patient: 'Пациент',
-};
-
-const sortOrderCuts: Record<NonNullable<SortOrder>, OrderDirection> = {
-  ascend: 'asc',
-  descend: 'desc',
-};
-
-function toGridView(it: PatientListingPreview) {
-  return { ...it, profiles: it.profiles.map((it) => profileTypeTranslations[it]).join(' ') };
-}
-
-type GridView = ReturnType<typeof toGridView>;
-
 const columns: ColumnsType<GridView> = [
   {
-    title: 'Имя пользователей',
+    title: 'Имя пользователя',
     dataIndex: 'fullName',
   },
   {
