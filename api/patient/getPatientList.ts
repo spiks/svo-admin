@@ -1,28 +1,17 @@
 import { PatientServiceWithToken } from '../services';
 import { ApiResponseSuccess } from '../types';
-import { PaginationCursor, PatientListingPreview } from '../../generated';
-
-//TODO: исправить метод и убрать ts-ignore, когда в докуменатции появится поле total
+import { ListPatientsRequest, PatientListingPreview } from '../../generated';
 
 export const getPatientList = (
-  fullName?: string,
-  phone?: string,
-  cursor?: number,
+  request: ListPatientsRequest,
 ): ApiResponseSuccess<{
   items: Array<PatientListingPreview>;
-  total: number;
-  nextPageCursor: PaginationCursor;
+  itemsAmount: number;
 }> => {
-  // eslint-disable-next-line
-  // @ts-ignore
   return PatientServiceWithToken.listPatients({
     requestBody: {
       arguments: {
-        search: {
-          fullName: fullName || null,
-          phone: phone || null,
-        },
-        nextPageCursor: cursor || null,
+        ...request,
       },
     },
   }).catch(() => {
@@ -31,12 +20,11 @@ export const getPatientList = (
       data: {
         items: [
           {
-            id: 'd274b02e-646c-4624-b623-8a75e75d4293',
+            id: 'd274b02e-646c-4624-b623-8a75e75d429322',
             fullName: 'Степан Арвеладзе',
             phone: '+79110078079',
             profiles: ['therapist'],
             registrationDate: '1996-04-17',
-            lastActivityDate: '1996-04-17',
           },
           {
             id: 'd274b02e-646c-4624-b623-8a75e75d42932',
@@ -44,19 +32,16 @@ export const getPatientList = (
             phone: '+79110078079',
             profiles: ['therapist'],
             registrationDate: '1996-04-17',
-            lastActivityDate: '1996-04-17',
           },
           {
-            id: 'd274b02e-646c-4624-b623-8a75e75d4293223',
+            id: 'd274b02e-646c-4624-b623-8a75e75d42932232',
             fullName: 'Степан Арвеладзе',
             phone: '+79110078079',
             profiles: ['therapist'],
             registrationDate: '1996-04-17',
-            lastActivityDate: '1996-04-17',
           },
         ],
-        total: 1000,
-        nextPageCursor: 100,
+        itemsAmount: 100,
       },
     };
   });
