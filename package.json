@@ -7,11 +7,7 @@
     "start": "next start",
     "lint": "next lint --max-warnings=0",
     "lint:fix": "npx prettier --write . && next lint --fix --max-warnings=0",
-<<<<<<< HEAD
     "generate": "openapi --input https://storage.yandexcloud.net/most-docs/admin/openapi/0.44.json --output ./generated --useOptions --useUnionTypes --client axios"
-=======
-    "generate": "openapi --input https://storage.yandexcloud.net/most-docs/admin/openapi/0.41.json --output ./generated --useOptions --useUnionTypes --client axios"
->>>>>>> 0bccaec (build: update API to 0.41)
   },
   "dependencies": {
     "@tanstack/react-query": "^4.0.10",

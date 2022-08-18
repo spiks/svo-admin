@@ -51,13 +51,13 @@ const columns: ColumnsType<GridView> = [
 
 const rowSelection: TableRowSelection<GridView> = {
   onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
   onSelect: (record, selected, selectedRows) => {
-    console.log(record, selected, selectedRows);
+    // console.log(record, selected, selectedRows);
   },
   onSelectAll: (selected, selectedRows, changeRows) => {
-    console.log(selected, selectedRows, changeRows);
+    // console.log(selected, selectedRows, changeRows);
   },
 };
 
@@ -110,7 +110,6 @@ const ClientsPage: NextPage = () => {
   }, [fetchPatients, getQueryKey, page, pageSize, patientList, queryClient]);
 
   const [active, setActive] = useState(true);
-  console.log(active);
 
   const handleTabListChange = useCallback((key) => setActive(key === 'active'), []);
 
@@ -133,7 +132,6 @@ const ClientsPage: NextPage = () => {
           ) : (
             <Table
               onChange={(pagination, filters, sorter) => {
-                console.log(sorter);
                 if (sorter && !Array.isArray(sorter) && sorter.order) {
                   setSortOrder(sorter.order);
                 }
