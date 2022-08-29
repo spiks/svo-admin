@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useContext } from 'react';
 import { Avatar, Button, Menu } from 'antd';
 import { SiderMenuItems } from './SiderMenu.const';
 import logo from '/resources/svg/logo.svg';
@@ -7,6 +7,7 @@ import { LogoutOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useSidebarItemsToHighlight } from './useSidebarItemsToHighlight';
 import { useLogout } from '../../api/hooks/useLogout';
+import { AuthContext } from '../AuthProvider/AuthProvider.component';
 
 const { SubMenu } = Menu;
 
@@ -22,6 +23,10 @@ export const SiderMenu: FC = () => {
   const handleLogoutUser = async () => {
     logout();
   };
+
+  const isLogged = useContext(AuthContext);
+
+  const { email } = isLogged.credentials;
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
@@ -76,8 +81,9 @@ export const SiderMenu: FC = () => {
           padding: '0 16px',
         }}
       >
-        <Avatar size={'small'} />
-        <span style={{ marginLeft: '10px', color: '#FFFFFF' }}>Дейнерис</span>
+        {/* Пока показываем только Email пользователя
+        <Avatar size={'small'} /> */}
+        <span style={{ marginLeft: '10px', color: '#FFFFFF' }}>{email?.email}</span>
         <Button
           onClick={handleLogoutUser}
           type={'link'}
