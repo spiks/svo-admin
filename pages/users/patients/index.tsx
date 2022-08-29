@@ -6,27 +6,21 @@ import { TabList } from '../../../components/TabList/TabList.component';
 import { Badge, Form, Switch, Table } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { PageWrapper } from '../../../components/PageWrapper/PageWrapper.component';
-import { PatientListingPreview } from '../../../generated';
-import { ColumnsType, TableRowSelection } from 'antd/lib/table/interface';
+import { ColumnsType, SortOrder, TableRowSelection } from 'antd/lib/table/interface';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getPatientList } from '../../../api/patient/getPatientList';
 import { UsersQueryParams } from '../../../components/UsersHeader/UsersHeader.typedef';
+import { GridView, toGridView } from '../../../helpers/toGridView';
+import { sortOrderCuts } from '../../../helpers/sortOrderCuts';
 
 const tabListItems = [
   { label: 'Активные', key: 'active' },
   { label: 'Неактивные', key: 'not active' },
 ];
 
-//TODO: когда будет типизация от бэка сделать перевод
-function toGridView(it: PatientListingPreview) {
-  return { ...it, profiles: it.profiles.join(' ') };
-}
-
-type GridView = ReturnType<typeof toGridView>;
-
 const columns: ColumnsType<GridView> = [
   {
-    title: 'Имя пользователей',
+    title: 'Имя пользователя',
     dataIndex: 'fullName',
   },
   {
@@ -46,13 +40,13 @@ const columns: ColumnsType<GridView> = [
     sorter: (a, b) => new Date(a.registrationDate).getTime() - new Date(b.registrationDate).getTime(),
     width: 181,
   },
-  {
-    title: 'Последняя активность',
-    dataIndex: 'lastActivityDate',
-    defaultSortOrder: 'descend' as const,
-    sorter: (a, b) => new Date(a.lastActivityDate).getTime() - new Date(b.lastActivityDate).getTime(),
-    width: 220,
-  },
+  // {
+  //   title: 'Последняя активность',
+  //   dataIndex: 'lastActivityDate',
+  //   defaultSortOrder: 'descend' as const,
+  //   sorter: (a, b) => new Date(a.lastActivityDate).getTime() - new Date(b.lastActivityDate).getTime(),
+  //   width: 220,
+  // },
 ];
 
 const rowSelection: TableRowSelection<GridView> = {
@@ -67,42 +61,63 @@ const rowSelection: TableRowSelection<GridView> = {
   },
 };
 
-const PAGE_SIZE = 50;
-
 const ClientsPage: NextPage = () => {
   const [isMultipleChoice, setIsMultipleChoice] = useState(false);
   const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [sortOrder, setSortOrder] = useState<NonNullable<SortOrder>>('descend');
   const [form] = Form.useForm<UsersQueryParams>();
   const { search, phone } = form.getFieldsValue();
 
   const fetchPatients = useCallback(
-    (nextPageCursor = 0) => {
-      return getPatientList(search, phone, nextPageCursor);
+    (page) => {
+      return getPatientList({
+        search: {
+          fullName: search,
+          phone: phone,
+        },
+        pagination: {
+          count: pageSize,
+          offset: page * pageSize,
+        },
+        orderBy: {
+          field: 'dateOfRegistration',
+          orderDirection: sortOrderCuts[sortOrder],
+        },
+      });
     },
-    [phone, search],
+    [pageSize, phone, search, sortOrder],
   );
 
   useUsersQueryParams();
   const queryClient = useQueryClient();
 
-  const { status, data: patientList } = useQuery(
-    ['patients', page - 1, search, phone],
-    () => fetchPatients(PAGE_SIZE * (page - 1)),
-    {
-      keepPreviousData: true,
+  const getQueryKey = useCallback(
+    (page) => {
+      return ['patients', page, search, phone, pageSize, sortOrder];
     },
+    [pageSize, phone, search, sortOrder],
   );
 
+  const { status, data: patientList } = useQuery(getQueryKey(page), () => fetchPatients(page - 1), {
+    keepPreviousData: true,
+  });
+
   useEffect(() => {
-    if (patientList?.data.nextPageCursor) {
-      queryClient.prefetchQuery(['patients', page], () => fetchPatients(page * PAGE_SIZE));
+    if (patientList && patientList.data.itemsAmount > (page + 1) * pageSize) {
+      queryClient.prefetchQuery(getQueryKey(page + 1), () => fetchPatients(page));
     }
-  }, [patientList, page, queryClient, fetchPatients]);
+  }, [fetchPatients, getQueryKey, page, pageSize, patientList, queryClient]);
 
   const [active, setActive] = useState(true);
   console.log(active);
 
   const handleTabListChange = useCallback((key) => setActive(key === 'active'), []);
+
+  const handlePaginationChange = useCallback((page: number, pageSize: number) => {
+    setPageSize(pageSize);
+    setPage(page);
+  }, []);
 
   return (
     <MainLayout>
@@ -117,6 +132,12 @@ const ClientsPage: NextPage = () => {
             <div>Сообщение об ошибке</div>
           ) : (
             <Table
+              onChange={(pagination, filters, sorter) => {
+                console.log(sorter);
+                if (sorter && !Array.isArray(sorter) && sorter.order) {
+                  setSortOrder(sorter.order);
+                }
+              }}
               title={() => (
                 <div
                   style={{
@@ -149,10 +170,9 @@ const ClientsPage: NextPage = () => {
               dataSource={patientList?.data.items.map(toGridView)}
               pagination={{
                 current: page,
-                pageSize: PAGE_SIZE,
-                onChange: setPage,
-                total: patientList?.data.total,
-                showSizeChanger: false,
+                pageSize: pageSize,
+                onChange: handlePaginationChange,
+                total: patientList?.data.itemsAmount,
               }}
             />
           )}

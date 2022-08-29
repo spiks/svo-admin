@@ -1,14 +1,14 @@
-import { PatientServiceWithToken } from '../services';
+import { TherapistServiceWithToken } from '../services';
 import { ApiResponseSuccess } from '../types';
-import { ListPatientsRequest, PatientListingPreview } from '../../generated';
+import { ListTherapistsRequest, TherapistListingPreview } from '../../generated';
 
-export const getPatientList = (
-  request: ListPatientsRequest,
+export const getTherapistList = (
+  request: ListTherapistsRequest,
 ): ApiResponseSuccess<{
-  items: Array<PatientListingPreview>;
+  items: Array<TherapistListingPreview>;
   itemsAmount: number;
 }> => {
-  return PatientServiceWithToken.listPatients({
+  return TherapistServiceWithToken.listTherapists({
     requestBody: {
       arguments: {
         ...request,
