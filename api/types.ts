@@ -1,15 +1,19 @@
 import {
+  AccessTokenExpiredApiProblem,
   ArrayIsTooLongConstraintViolation,
   ArrayIsTooShortConstraintViolation,
   ArrayShouldHaveExactLengthConstraintViolation,
   CodeIsInvalidConstraintViolation,
   EnumValueIsNotAllowedConstraintViolation,
+  InternalServerErrorApiProblem,
+  InvalidAccessTokenApiProblem,
   MandatoryFieldMissingConstraintViolation,
   NumberIsTooBigConstraintViolation,
   NumberIsTooSmallConstraintViolation,
   ResourceIsNotAvailableConstraintViolation,
   StringIsTooLongConstraintViolation,
   StringIsTooShortConstraintViolation,
+  ValidationErrorApiProblem,
   ValueDoesNotMatchRegexConstraintViolation,
   ValueIsNotValidConstraintViolation,
   ValueShouldNotBeNullConstraintViolation,
@@ -18,6 +22,12 @@ import {
 } from '../generated';
 
 export type ApiResponseSuccess<T> = Promise<{ status: 'success'; data: T }>;
+
+export type ApiErrorData =
+  | InternalServerErrorApiProblem
+  | ValidationErrorApiProblem
+  | AccessTokenExpiredApiProblem
+  | InvalidAccessTokenApiProblem;
 
 export type ApiViolation =
   | EnumValueIsNotAllowedConstraintViolation

@@ -1,5 +1,6 @@
 import { createContext, FC, useEffect, useMemo, useState } from 'react';
 import { getEmail } from '../../api/auth/getEmail';
+import { createRefreshTokenInterceptor } from '../../api/interceptors/createRefreshTokenInterceptor';
 import { ClientStorage } from '../../clientStorage';
 import { AccountEmail } from '../../generated';
 
@@ -43,7 +44,10 @@ const AuthProvider: FC = ({ children }) => {
   };
 
   useEffect(() => {
-    isUserLoggedIn();
+    (async () => {
+      await createRefreshTokenInterceptor(isUserLoggedIn);
+      await isUserLoggedIn();
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
