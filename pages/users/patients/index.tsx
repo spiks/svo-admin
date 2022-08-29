@@ -81,7 +81,7 @@ const ClientsPage: NextPage = () => {
           offset: page * pageSize,
         },
         orderBy: {
-          field: 'dateOfRegistration',
+          field: 'createdAt',
           orderDirection: sortOrderCuts[sortOrder],
         },
       });
