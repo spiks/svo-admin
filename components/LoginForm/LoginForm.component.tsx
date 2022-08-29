@@ -1,18 +1,26 @@
 import { FC, useState } from 'react';
-import { Button, Checkbox, Form, Input } from 'antd';
+import { Button, Checkbox, Form, FormProps, Input, Row } from 'antd';
 import { Image } from '../Image/Image.component';
 import LogotypeSvg from '../../resources/svg/logotype.svg';
 import styles from './LoginForm.module.css';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { PasswordRecoveryModal } from '../PasswordRecoveryModal/PasswordRecoveryModal.component';
+import { IssueTokenByEmailAndPasswordRequest } from '../../generated';
+import { issueToken } from '../../api/auth/issueTokenByEmailAndPassword';
+import { useRouter } from 'next/router';
+import { ClientStorage } from '../../clientStorage';
+import { ApiValidationError } from '../../api/errorClasses';
 
 export type ILoginFormProps = {
-  username: string;
+  email: string;
   password: string;
 };
 
 export const LoginForm: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const { push } = useRouter();
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -26,9 +34,24 @@ export const LoginForm: FC = () => {
     setIsModalVisible(false);
   };
 
-  const onFinish = () => {};
-
-  const onFinishFailed = () => {};
+  const onFinish: FormProps<IssueTokenByEmailAndPasswordRequest>['onFinish'] = async (values) => {
+    if (loading) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const tokenResp = await issueToken(values.email, values.password);
+      if (tokenResp.status === 'success') {
+        ClientStorage.setTokens(tokenResp.data);
+        push('/content/blog');
+      }
+    } catch (error) {
+      if (!(error instanceof ApiValidationError)) {
+        setError('Неизвестная ошибка');
+      }
+    }
+    setLoading(false);
+  };
 
   return (
     <>
@@ -38,18 +61,13 @@ export const LoginForm: FC = () => {
           <span style={{ color: 'rgba(0, 0, 0, 0.45)' }}>Система администрирования платформы</span>
         </div>
 
-        <Form<ILoginFormProps>
-          name="login"
-          onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
-          style={{ width: '100%' }}
-        >
+        <Form<ILoginFormProps> name="login" onFinish={onFinish} style={{ width: '100%' }}>
           <Form.Item
-            name="username"
+            name="email"
             rules={[
               {
                 required: true,
-                message: 'Необходимо указать имя пользователя',
+                message: 'Необходимо указать email',
               },
             ]}
           >
@@ -67,7 +85,11 @@ export const LoginForm: FC = () => {
           >
             <Input.Password size="large" prefix={<LockOutlined />} type="password" placeholder="Пароль" />
           </Form.Item>
-
+          {error && (
+            <Row justify="center">
+              <span style={{ color: 'red' }}>Неизвестная ошибка</span>
+            </Row>
+          )}
           <div className={styles.actions}>
             <Form.Item name="remember" valuePropName="checked">
               <Checkbox style={{ fontWeight: '600' }}>Запомнить меня</Checkbox>
@@ -80,7 +102,7 @@ export const LoginForm: FC = () => {
             </Form.Item>
           </div>
           <Form.Item>
-            <Button size="large" type="primary" block htmlType="submit">
+            <Button loading={loading} size="large" type="primary" block htmlType="submit">
               Войти
             </Button>
           </Form.Item>

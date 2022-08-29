@@ -86,8 +86,6 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
     return block.getType();
   }, [editorState]);
 
-  console.log(activeBlockTextType);
-
   return (
     <div className={styles['container']}>
       <Editor

@@ -5,6 +5,8 @@ require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
 
 import type { AppProps } from 'next/app';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { ClientStorage } from '../clientStorage';
+import AuthProvider from '../components/AuthProvider/AuthProvider.component';
 
 createErrorResponseInterceptor();
 
@@ -18,4 +20,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp;
+const MyAppView = (props: AppProps) => {
+  return (
+    <AuthProvider>
+      <MyApp {...props} />
+    </AuthProvider>
+  );
+};
+
+export default MyAppView;

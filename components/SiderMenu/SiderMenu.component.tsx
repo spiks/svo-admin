@@ -6,6 +6,8 @@ import { Image } from '../Image/Image.component';
 import { LogoutOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import { useSidebarItemsToHighlight } from './useSidebarItemsToHighlight';
+import { useLogout } from '../../api/hooks/useLogout';
+
 const { SubMenu } = Menu;
 
 export const SiderMenu: FC = () => {
@@ -14,6 +16,12 @@ export const SiderMenu: FC = () => {
   const subcategoryToHighlight = sidebarItemsToHighlight[1];
   const categoryToOpen = sidebarItemsToHighlight[0];
   const categoryToHighlight = sidebarItemsToHighlight[0];
+
+  const logout = useLogout();
+
+  const handleLogoutUser = async () => {
+    logout();
+  };
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100%' }}>
@@ -70,7 +78,12 @@ export const SiderMenu: FC = () => {
       >
         <Avatar size={'small'} />
         <span style={{ marginLeft: '10px', color: '#FFFFFF' }}>Дейнерис</span>
-        <Button type={'link'} size={'small'} style={{ marginLeft: 'auto', fontSize: '12px' }}>
+        <Button
+          onClick={handleLogoutUser}
+          type={'link'}
+          size={'small'}
+          style={{ marginLeft: 'auto', fontSize: '12px' }}
+        >
           <LogoutOutlined style={{ color: '#FFFFFF' }} />
         </Button>
       </div>
