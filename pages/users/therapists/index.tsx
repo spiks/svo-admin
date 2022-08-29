@@ -12,6 +12,7 @@ import { getTherapistList } from '../../../api/therapist/getTherapistList';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageWrapper } from '../../../components/PageWrapper/PageWrapper.component';
 import { TabList } from '../../../components/TabList/TabList.component';
+import { useRouter } from 'next/router';
 
 const tabListItems = [
   { label: 'Активные', key: 'active' },
@@ -63,6 +64,7 @@ const rowSelection: TableRowSelection<GridView> = {
 };
 
 const TherapistsPage: NextPage = () => {
+  const { push } = useRouter();
   const [activeTab, setActiveTab] = useState<string>('active');
 
   const [isMultipleChoice] = useState(false);
@@ -170,6 +172,13 @@ const TherapistsPage: NextPage = () => {
             )}
             rowSelection={isMultipleChoice ? { ...rowSelection } : undefined}
             columns={columns}
+            onRow={(data) => {
+              return {
+                onClick: async () => {
+                  await push('/users/therapists/' + data.id);
+                },
+              };
+            }}
             dataSource={therapistsList?.data.items.map(toGridView)}
             pagination={{
               current: page,
