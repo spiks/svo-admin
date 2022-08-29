@@ -43,7 +43,7 @@ export const LoginForm: FC = () => {
       const tokenResp = await issueToken(values.email, values.password);
       if (tokenResp.status === 'success') {
         ClientStorage.setTokens(tokenResp.data);
-        push('/content/blog');
+        push('/users/therapists');
       }
     } catch (error) {
       if (!(error instanceof ApiValidationError)) {
