@@ -17,9 +17,9 @@ interface TabListProps {
 export const TabList: FC<TabListProps> = ({ items, defaultActiveKey, onChange }) => {
   return (
     <Tabs defaultActiveKey={defaultActiveKey} onChange={onChange} className={styles['tab-list']}>
-      {items.map((it) => (
-        <TabPane key={it.key} tab={it.label} />
-      ))}
+      {items.map((it) => {
+        return <TabPane key={it.key} tab={it.label} />;
+      })}
     </Tabs>
   );
 };
