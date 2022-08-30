@@ -52,13 +52,15 @@ export const SiderMenu: FC = () => {
           {SiderMenuItems.map((it) => {
             return it.children ? (
               <SubMenu icon={it.icon} key={it.url} title={it.label}>
-                {it.children.map((it) => (
-                  <Menu.Item key={it.url}>
-                    <Link href={it.url}>
-                      <a>{it.label}</a>
-                    </Link>
-                  </Menu.Item>
-                ))}
+                {it.children.map((it) => {
+                  return (
+                    <Menu.Item key={it.url}>
+                      <Link href={it.url}>
+                        <a>{it.label}</a>
+                      </Link>
+                    </Menu.Item>
+                  );
+                })}
               </SubMenu>
             ) : (
               <Menu.Item icon={it.icon} key={it.url}>

@@ -7,7 +7,6 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { PasswordRecoveryModal } from '../PasswordRecoveryModal/PasswordRecoveryModal.component';
 import { IssueTokenByEmailAndPasswordRequest } from '../../generated';
 import { issueToken } from '../../api/auth/issueTokenByEmailAndPassword';
-import { useRouter } from 'next/router';
 import { ClientStorage } from '../../clientStorage';
 import { ApiValidationError } from '../../api/errorClasses';
 
@@ -20,7 +19,6 @@ export const LoginForm: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const { push } = useRouter();
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -43,7 +41,7 @@ export const LoginForm: FC = () => {
       const tokenResp = await issueToken(values.email, values.password);
       if (tokenResp.status === 'success') {
         ClientStorage.setTokens(tokenResp.data);
-        push('/users/therapists');
+        window.location.href = '/users/therapists';
       }
     } catch (error) {
       if (!(error instanceof ApiValidationError)) {

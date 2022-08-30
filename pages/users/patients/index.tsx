@@ -37,7 +37,9 @@ const columns: ColumnsType<GridView> = [
     title: 'Дата регистрации',
     dataIndex: 'registrationDate',
     defaultSortOrder: 'descend' as const,
-    sorter: (a, b) => new Date(a.registrationDate).getTime() - new Date(b.registrationDate).getTime(),
+    sorter: (a, b) => {
+      return new Date(a.registrationDate).getTime() - new Date(b.registrationDate).getTime();
+    },
     width: 181,
   },
   // {
@@ -99,19 +101,29 @@ const ClientsPage: NextPage = () => {
     [pageSize, phone, search, sortOrder],
   );
 
-  const { status, data: patientList } = useQuery(getQueryKey(page), () => fetchPatients(page - 1), {
-    keepPreviousData: true,
-  });
+  const { status, data: patientList } = useQuery(
+    getQueryKey(page),
+    () => {
+      return fetchPatients(page - 1);
+    },
+    {
+      keepPreviousData: true,
+    },
+  );
 
   useEffect(() => {
     if (patientList && patientList.data.itemsAmount > (page + 1) * pageSize) {
-      queryClient.prefetchQuery(getQueryKey(page + 1), () => fetchPatients(page));
+      queryClient.prefetchQuery(getQueryKey(page + 1), () => {
+        return fetchPatients(page);
+      });
     }
   }, [fetchPatients, getQueryKey, page, pageSize, patientList, queryClient]);
 
   const [active, setActive] = useState(true);
 
-  const handleTabListChange = useCallback((key) => setActive(key === 'active'), []);
+  const handleTabListChange = useCallback((key) => {
+    setActive(key === 'active');
+  }, []);
 
   const handlePaginationChange = useCallback((page: number, pageSize: number) => {
     setPageSize(pageSize);
@@ -136,33 +148,35 @@ const ClientsPage: NextPage = () => {
                   setSortOrder(sorter.order);
                 }
               }}
-              title={() => (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Badge count={0} offset={[23, 7]} showZero={false}>
-                    Найдено пользователей:
-                  </Badge>
-                  <Form.Item
-                    style={{ margin: 0 }}
-                    name="a"
-                    label="Множественный выбор"
-                    tooltip="Для совершения манипуляций над несколькими пользователями"
+              title={() => {
+                return (
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
                   >
-                    <Switch
-                      style={{
-                        marginLeft: 16,
-                      }}
-                      checked={isMultipleChoice}
-                      onChange={setIsMultipleChoice}
-                    />
-                  </Form.Item>
-                </div>
-              )}
+                    <Badge count={0} offset={[23, 7]} showZero={false}>
+                      Найдено пользователей:
+                    </Badge>
+                    <Form.Item
+                      style={{ margin: 0 }}
+                      name="a"
+                      label="Множественный выбор"
+                      tooltip="Для совершения манипуляций над несколькими пользователями"
+                    >
+                      <Switch
+                        style={{
+                          marginLeft: 16,
+                        }}
+                        checked={isMultipleChoice}
+                        onChange={setIsMultipleChoice}
+                      />
+                    </Form.Item>
+                  </div>
+                );
+              }}
               rowSelection={isMultipleChoice ? { ...rowSelection } : undefined}
               columns={columns}
               dataSource={patientList?.data.items.map(toGridView)}
