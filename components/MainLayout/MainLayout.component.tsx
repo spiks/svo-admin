@@ -1,9 +1,10 @@
 import { FC } from 'react';
-import { Layout } from 'antd';
+import { Layout, Spin } from 'antd';
 import { SiderMenu } from '../SiderMenu/SiderMenu.component';
+
 const { Sider, Content } = Layout;
 
-export const MainLayout: FC = ({ children }) => {
+export const MainLayout: FC<{ loading?: boolean }> = ({ children, loading }) => {
   return (
     <Layout hasSider>
       <Sider
@@ -24,7 +25,15 @@ export const MainLayout: FC = ({ children }) => {
           marginLeft: 280,
         }}
       >
-        <Content style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>{children}</Content>
+        <Content style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+          {loading ? (
+            <Spin
+              style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}
+            />
+          ) : (
+            children
+          )}
+        </Content>
       </Layout>
     </Layout>
   );

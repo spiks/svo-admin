@@ -1,9 +1,8 @@
 import { createContext, FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { getEmail } from '../../api/auth/getEmail';
 import { createRefreshTokenInterceptor } from '../../api/interceptors/createRefreshTokenInterceptor';
-import { ClientStorage } from '../../clientStorage';
+import { ClientStorage } from '../../utility/clientStorage';
 import { AccountEmail } from '../../generated';
-import { useRouter } from 'next/router';
 
 export type CredentialsType = {
   token: string | null;
@@ -30,7 +29,6 @@ const AuthProvider: FC = ({ children }) => {
   });
   const [loading, setLoading] = useState<boolean>(true);
 
-  const router = useRouter();
   const isUserLoggedIn = useCallback(async () => {
     const storageToken = ClientStorage.getTokens()?.accessToken;
     if (storageToken) {

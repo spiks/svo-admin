@@ -38,9 +38,9 @@ export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholde
           <Button type={'link'} size={'large'} key={0}>
             Обратиться к FAQ
           </Button>,
-          <Button type={'primary'} size={'large'} key={1}>
-            Добавить пользователя
-          </Button>,
+          // <Button type={'primary'} size={'large'} key={1}>
+          //   Добавить пользователя
+          // </Button>,
           <Button type={'default'} size={'large'} icon={<FilterFilled />} onClick={toggleShowFilters} key={2}>
             Параметры поиска
           </Button>,

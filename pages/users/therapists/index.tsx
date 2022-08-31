@@ -2,21 +2,22 @@ import { NextPage } from 'next';
 import { UsersHeader } from '../../../components/UsersHeader/UsersHeader.component';
 import { useUsersQueryParams } from '../../../components/UsersHeader/UsersHeader.hooks/useUsersQueryParams';
 import { MainLayout } from '../../../components/MainLayout/MainLayout.component';
-import { Badge, Form, Switch, Table } from 'antd';
+import { Badge, Form, Table } from 'antd';
 import { UsersQueryParams } from '../../../components/UsersHeader/UsersHeader.typedef';
 import { ColumnsType, SortOrder, TableRowSelection } from 'antd/lib/table/interface';
 import { GridView, toGridView } from '../../../helpers/toGridView';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { sortOrderCuts } from '../../../helpers/sortOrderCuts';
 import { getTherapistList } from '../../../api/therapist/getTherapistList';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { TabList } from '../../../components/TabList/TabList.component';
 import { PageWrapper } from '../../../components/PageWrapper/PageWrapper.component';
+import { TabList } from '../../../components/TabList/TabList.component';
+import { useRouter } from 'next/router';
 
 const tabListItems = [
   { label: 'Активные', key: 'active' },
-  { label: 'Ожидают подтверждение', key: 'awaiting confirmation' },
-  { label: 'Не активные', key: 'not active' },
+  { label: 'Ожидают подтверждение', key: 'awaiting_confirmation' },
+  // { label: 'Не активные', key: 'not active' },
 ];
 
 const columns: ColumnsType<GridView> = [
@@ -65,19 +66,24 @@ const rowSelection: TableRowSelection<GridView> = {
 };
 
 const TherapistsPage: NextPage = () => {
-  const [isMultipleChoice, setIsMultipleChoice] = useState(false);
+  const { push } = useRouter();
+  const [activeTab, setActiveTab] = useState<string>('active');
+
+  const [isMultipleChoice] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState<NonNullable<SortOrder>>('descend');
+
   const [form] = Form.useForm<UsersQueryParams>();
-  const { search, phone } = form.getFieldsValue();
+
+  const { search, phone } = useUsersQueryParams();
 
   const fetchTherapists = useCallback(
     (page) => {
       return getTherapistList({
         search: {
           fullName: search,
-          phone: phone,
+          phone,
         },
         pagination: {
           count: pageSize,
@@ -87,12 +93,12 @@ const TherapistsPage: NextPage = () => {
           field: 'createdAt',
           orderDirection: sortOrderCuts[sortOrder],
         },
+        statuses: [],
       });
     },
     [pageSize, phone, search, sortOrder],
   );
 
-  useUsersQueryParams();
   const queryClient = useQueryClient();
 
   const getQueryKey = useCallback(
@@ -102,7 +108,7 @@ const TherapistsPage: NextPage = () => {
     [pageSize, phone, search, sortOrder],
   );
 
-  const { status, data: therapistList } = useQuery(
+  const { status, data: therapistsList } = useQuery(
     getQueryKey(page),
     () => {
       return fetchTherapists(page - 1);
@@ -112,18 +118,21 @@ const TherapistsPage: NextPage = () => {
     },
   );
 
+  // Индикация загрузки данных в таблице (списка терапевтов)
+  const tableLoading = useMemo(() => {
+    return status !== 'success';
+  }, [status]);
+
   useEffect(() => {
-    if (therapistList && therapistList.data.itemsAmount > (page + 1) * pageSize) {
+    if (therapistsList && therapistsList.data.itemsAmount > (page + 1) * pageSize) {
       queryClient.prefetchQuery(getQueryKey(page + 1), () => {
         return fetchTherapists(page);
       });
     }
-  }, [fetchTherapists, getQueryKey, page, pageSize, therapistList, queryClient]);
-
-  const [active, setActive] = useState(true);
+  }, [fetchTherapists, getQueryKey, page, pageSize, therapistsList, queryClient]);
 
   const handleTabListChange = useCallback((key) => {
-    setActive(key === 'active');
+    setActiveTab(key);
   }, []);
 
   const handlePaginationChange = useCallback((page: number, pageSize: number) => {
@@ -138,57 +147,59 @@ const TherapistsPage: NextPage = () => {
       </UsersHeader>
       <div style={{ overflow: 'auto' }}>
         <PageWrapper>
-          {status === 'loading' ? (
-            <div>Loading...</div>
-          ) : status === 'error' ? (
-            <div>Сообщение об ошибке</div>
-          ) : (
-            <Table
-              onChange={(pagination, filters, sorter) => {
-                if (sorter && !Array.isArray(sorter) && sorter.order) {
-                  setSortOrder(sorter.order);
-                }
-              }}
-              title={() => {
-                return (
-                  <div
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
-                    <Badge count={0} offset={[23, 7]} showZero={false}>
-                      Найдено пользователей:
-                    </Badge>
-                    <Form.Item
-                      style={{ margin: 0 }}
-                      name="a"
-                      label="Множественный выбор"
-                      tooltip="Для совершения манипуляций над несколькими пользователями"
-                    >
-                      <Switch
-                        style={{
-                          marginLeft: 16,
-                        }}
-                        checked={isMultipleChoice}
-                        onChange={setIsMultipleChoice}
-                      />
-                    </Form.Item>
-                  </div>
-                );
-              }}
-              rowSelection={isMultipleChoice ? { ...rowSelection } : undefined}
-              columns={columns}
-              dataSource={therapistList?.data.items.map(toGridView)}
-              pagination={{
-                current: page,
-                pageSize: pageSize,
-                onChange: handlePaginationChange,
-                total: therapistList?.data.itemsAmount,
-              }}
-            />
-          )}
+          <Table
+            loading={tableLoading}
+            onChange={(pagination, filters, sorter) => {
+              if (sorter && !Array.isArray(sorter) && sorter.order) {
+                setSortOrder(sorter.order);
+              }
+            }}
+            title={() => {
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Badge count={0} offset={[23, 7]} showZero={false}>
+                    Найдено пользователей:
+                  </Badge>
+                  {/*<Form.Item*/}
+                  {/*  style={{ margin: 0 }}*/}
+                  {/*  name="a"*/}
+                  {/*  label="Множественный выбор"*/}
+                  {/*  tooltip="Для совершения манипуляций над несколькими пользователями"*/}
+                  {/*>*/}
+                  {/*  <Switch*/}
+                  {/*    style={{*/}
+                  {/*      marginLeft: 16,*/}
+                  {/*    }}*/}
+                  {/*    checked={isMultipleChoice}*/}
+                  {/*    onChange={setIsMultipleChoice}*/}
+                  {/*  />*/}
+                  {/*</Form.Item>*/}
+                </div>
+              );
+            }}
+            rowSelection={isMultipleChoice ? { ...rowSelection } : undefined}
+            columns={columns}
+            onRow={(data) => {
+              return {
+                onClick: async () => {
+                  await push('/users/therapists/' + data.id);
+                },
+              };
+            }}
+            dataSource={therapistsList?.data.items.map(toGridView)}
+            pagination={{
+              current: page,
+              pageSize: pageSize,
+              onChange: handlePaginationChange,
+              total: therapistsList?.data.itemsAmount,
+            }}
+          />
         </PageWrapper>
       </div>
     </MainLayout>
