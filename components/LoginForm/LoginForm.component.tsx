@@ -7,7 +7,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { PasswordRecoveryModal } from '../PasswordRecoveryModal/PasswordRecoveryModal.component';
 import { IssueTokenByEmailAndPasswordRequest } from '../../generated';
 import { issueToken } from '../../api/auth/issueTokenByEmailAndPassword';
-import { ClientStorage } from '../../clientStorage';
+import { ClientStorage } from '../../utility/clientStorage';
 import { ApiValidationError } from '../../api/errorClasses';
 
 export type ILoginFormProps = {

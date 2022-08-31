@@ -6,6 +6,7 @@ import {
   PassportService,
   PatientService,
   SnilsService,
+  TherapistDocumentsService,
   TherapistService,
 } from '../generated';
 
@@ -22,3 +23,5 @@ export const InnServiceWithToken = provideToken(InnService);
 export const DiplomaServiceWithToken = provideToken(DiplomaOfHigherEducationService);
 
 export const SnilsServiceWithToken = provideToken(SnilsService);
+
+export const TherapistDocumentsServiceWithToken = provideToken(TherapistDocumentsService);

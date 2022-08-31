@@ -1,4 +1,4 @@
-import { IssuedAuthorizationCredentials } from '../generated';
+import { IssuedAuthorizationCredentials } from '../../generated';
 
 type ClientStorageResult<T = string> = T | undefined;
 

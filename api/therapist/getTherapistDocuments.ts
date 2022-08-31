@@ -18,7 +18,7 @@ export const getTherapistDocuments = async (id: string) => {
   return {
     passport: passport.data,
     inn: inn.data,
-    diploma: diploma.data,
+    diploma: diploma.data[0] || null,
     snils: snils.data,
   };
 };

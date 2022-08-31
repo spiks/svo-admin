@@ -1,7 +1,5 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
-import { useQuery } from '@tanstack/react-query';
-import { getTherapistById } from '../../../api/therapist/getTherapistById';
 import { createContext, useMemo, useState } from 'react';
 import { MainLayout } from '../../../components/MainLayout/MainLayout.component';
 import { Divider, PageHeader, Steps } from 'antd';
@@ -9,6 +7,8 @@ import { NotFoundLayout } from '../../../components/NotFoundLayout/NotFoundLayou
 import { Step } from 'rc-steps';
 import { TherapistProfile } from '../../../generated';
 import { getTherapistDocuments } from '../../../api/therapist/getTherapistDocuments';
+import { useTherapistSignupQueries } from '../../../hooks/useTherapistSignupQueries';
+import { TherapistSignupDocuments } from '../../../components/TherapistSignupDocuments/TherapistSignupDocuments.component';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -19,7 +19,8 @@ enum STAGE {
 
 type TherapistPageContextValue = {
   therapist: TherapistProfile;
-  documents: ReturnType<typeof getTherapistDocuments>;
+  documents: Awaited<ReturnType<typeof getTherapistDocuments>>;
+  isLoading: boolean;
 };
 
 // Контекст страницы терапевта
@@ -32,21 +33,17 @@ const TherapistPage: NextPage = () => {
     // eslint-disable-next-line
   }, [query['id']]);
 
-  const {
-    data: therapistResponse,
-    isError,
-    isLoading,
-  } = useQuery(['therapist', therapistId], getTherapistById.bind(null, therapistId));
-  const therapist = useMemo(() => {
-    return therapistResponse?.data;
-  }, [therapistResponse])!;
+  const { isLoading, isError, therapist, documents } = useTherapistSignupQueries(therapistId);
 
-  const {
-    data: documentsResponse,
-  } = useQuery(["therapist", "documents", therapistId], getTherapistDocuments.bind(null, therapistId), {enabled: })
+  const [currentStage] = useState<STAGE>(STAGE.DOCUMENTS);
 
-
-  const [currentStage, setCurrentStage] = useState<STAGE>(STAGE.DOCUMENTS);
+  const contextValue = useMemo(() => {
+    return {
+      therapist: therapist!,
+      documents: documents!,
+      isLoading,
+    };
+  }, [documents, isLoading, therapist]);
 
   // Failed to get therapist
   if (isError) {
@@ -58,15 +55,8 @@ const TherapistPage: NextPage = () => {
     return <MainLayout loading={true} />;
   }
 
-  const contextValue = useMemo(() => {
-    return {
-      therapist,
-      documents
-    }
-  })
-
   return (
-    <TherapistPageContext.Provider>
+    <TherapistPageContext.Provider value={contextValue}>
       <MainLayout>
         <div
           style={{
@@ -84,6 +74,16 @@ const TherapistPage: NextPage = () => {
             </Steps>
           </div>
           <Divider />
+          {(() => {
+            switch (currentStage) {
+              case STAGE.CONTRACT:
+                return null;
+              case STAGE.DOCUMENTS:
+                return <TherapistSignupDocuments />;
+              case STAGE.INTERVIEW:
+                return null;
+            }
+          })()}
         </div>
       </MainLayout>
     </TherapistPageContext.Provider>

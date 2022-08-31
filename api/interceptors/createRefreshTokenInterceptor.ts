@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { ClientStorage } from '../../clientStorage';
-import { AccessTokenExpiredApiProblem, AuthenticationService, IssuedAuthorizationCredentials } from '../../generated';
+import { ClientStorage } from '../../utility/clientStorage';
+import { AuthenticationService, IssuedAuthorizationCredentials } from '../../generated';
 import { ApiRegularError } from '../errorClasses';
 
 const isUnauthorizedTokenError = (err: unknown) => {

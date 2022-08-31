@@ -39,7 +39,9 @@ const columns: ColumnsType<GridView> = [
     title: 'Дата регистрации',
     dataIndex: 'registrationDate',
     defaultSortOrder: 'descend' as const,
-    sorter: (a, b) => new Date(a.registrationDate).getTime() - new Date(b.registrationDate).getTime(),
+    sorter: (a, b) => {
+      return new Date(a.registrationDate).getTime() - new Date(b.registrationDate).getTime();
+    },
     width: 181,
   },
   // {
@@ -91,6 +93,7 @@ const TherapistsPage: NextPage = () => {
           field: 'createdAt',
           orderDirection: sortOrderCuts[sortOrder],
         },
+        statuses: [],
       });
     },
     [pageSize, phone, search, sortOrder],
@@ -105,9 +108,15 @@ const TherapistsPage: NextPage = () => {
     [pageSize, phone, search, sortOrder],
   );
 
-  const { status, data: therapistsList } = useQuery(getQueryKey(page), () => fetchTherapists(page - 1), {
-    keepPreviousData: true,
-  });
+  const { status, data: therapistsList } = useQuery(
+    getQueryKey(page),
+    () => {
+      return fetchTherapists(page - 1);
+    },
+    {
+      keepPreviousData: true,
+    },
+  );
 
   // Индикация загрузки данных в таблице (списка терапевтов)
   const tableLoading = useMemo(() => {
@@ -116,7 +125,9 @@ const TherapistsPage: NextPage = () => {
 
   useEffect(() => {
     if (therapistsList && therapistsList.data.itemsAmount > (page + 1) * pageSize) {
-      queryClient.prefetchQuery(getQueryKey(page + 1), () => fetchTherapists(page));
+      queryClient.prefetchQuery(getQueryKey(page + 1), () => {
+        return fetchTherapists(page);
+      });
     }
   }, [fetchTherapists, getQueryKey, page, pageSize, therapistsList, queryClient]);
 
@@ -143,33 +154,35 @@ const TherapistsPage: NextPage = () => {
                 setSortOrder(sorter.order);
               }
             }}
-            title={() => (
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <Badge count={0} offset={[23, 7]} showZero={false}>
-                  Найдено пользователей:
-                </Badge>
-                {/*<Form.Item*/}
-                {/*  style={{ margin: 0 }}*/}
-                {/*  name="a"*/}
-                {/*  label="Множественный выбор"*/}
-                {/*  tooltip="Для совершения манипуляций над несколькими пользователями"*/}
-                {/*>*/}
-                {/*  <Switch*/}
-                {/*    style={{*/}
-                {/*      marginLeft: 16,*/}
-                {/*    }}*/}
-                {/*    checked={isMultipleChoice}*/}
-                {/*    onChange={setIsMultipleChoice}*/}
-                {/*  />*/}
-                {/*</Form.Item>*/}
-              </div>
-            )}
+            title={() => {
+              return (
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Badge count={0} offset={[23, 7]} showZero={false}>
+                    Найдено пользователей:
+                  </Badge>
+                  {/*<Form.Item*/}
+                  {/*  style={{ margin: 0 }}*/}
+                  {/*  name="a"*/}
+                  {/*  label="Множественный выбор"*/}
+                  {/*  tooltip="Для совершения манипуляций над несколькими пользователями"*/}
+                  {/*>*/}
+                  {/*  <Switch*/}
+                  {/*    style={{*/}
+                  {/*      marginLeft: 16,*/}
+                  {/*    }}*/}
+                  {/*    checked={isMultipleChoice}*/}
+                  {/*    onChange={setIsMultipleChoice}*/}
+                  {/*  />*/}
+                  {/*</Form.Item>*/}
+                </div>
+              );
+            }}
             rowSelection={isMultipleChoice ? { ...rowSelection } : undefined}
             columns={columns}
             onRow={(data) => {

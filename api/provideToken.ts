@@ -1,5 +1,5 @@
 import { AuthorizationToken } from '../generated';
-import { ClientStorage } from '../clientStorage';
+import { ClientStorage } from '../utility/clientStorage';
 
 type RequestMethodArgs = {
   requestBody: {
