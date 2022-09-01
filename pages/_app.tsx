@@ -1,14 +1,12 @@
 import { createErrorResponseInterceptor } from '../api/interceptors/createErrorResponseInterceptor';
-
-require('../styles/ant.less');
-require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
-
 import type { AppProps } from 'next/app';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthProvider, { AuthContext } from '../components/AuthProvider/AuthProvider.component';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import { NAVIGATION } from '../constants/navigation';
+
+require('../styles/ant.less');
+require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
 
 createErrorResponseInterceptor();
 
