@@ -7,7 +7,15 @@ const profileTypeTranslations: Record<AccountProfiles, string> = {
 };
 
 export function toGridView(it: PatientListingPreview) {
-  return { ...it, profiles: it.profiles.map((it) => profileTypeTranslations[it]).join(' ') };
+  return {
+    ...it,
+    id: it.id,
+    profiles: it.profiles
+      .map((it) => {
+        return profileTypeTranslations[it];
+      })
+      .join(' '),
+  };
 }
 
 export type GridView = ReturnType<typeof toGridView>;

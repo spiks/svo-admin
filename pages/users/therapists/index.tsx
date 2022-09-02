@@ -13,10 +13,11 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageWrapper } from '../../../components/PageWrapper/PageWrapper.component';
 import { TabList } from '../../../components/TabList/TabList.component';
 import { useRouter } from 'next/router';
+import { TherapistProfileStatus } from '../../../generated';
 
-const tabListItems = [
+const tabListItems: { label: string; key: TherapistProfileStatus }[] = [
   { label: 'Активные', key: 'active' },
-  { label: 'Ожидают подтверждение', key: 'awaiting_confirmation' },
+  { label: 'Ожидают подтверждение', key: 'contract_awaiting_review' },
   // { label: 'Не активные', key: 'not active' },
 ];
 
@@ -67,7 +68,7 @@ const rowSelection: TableRowSelection<GridView> = {
 
 const TherapistsPage: NextPage = () => {
   const { push } = useRouter();
-  const [activeTab, setActiveTab] = useState<string>('active');
+  const [activeTab, setActiveTab] = useState<TherapistProfileStatus>('active');
 
   const [isMultipleChoice] = useState(false);
   const [page, setPage] = useState(1);
@@ -93,19 +94,19 @@ const TherapistsPage: NextPage = () => {
           field: 'createdAt',
           orderDirection: sortOrderCuts[sortOrder],
         },
-        statuses: [],
+        statuses: [activeTab],
       });
     },
-    [pageSize, phone, search, sortOrder],
+    [activeTab, pageSize, phone, search, sortOrder],
   );
 
   const queryClient = useQueryClient();
 
   const getQueryKey = useCallback(
     (page) => {
-      return ['therapists', page, search, phone, pageSize, sortOrder];
+      return ['therapists', page, activeTab, search, phone, pageSize, sortOrder];
     },
-    [pageSize, phone, search, sortOrder],
+    [activeTab, pageSize, phone, search, sortOrder],
   );
 
   const { status, data: therapistsList } = useQuery(
