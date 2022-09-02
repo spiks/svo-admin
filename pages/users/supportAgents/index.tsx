@@ -11,7 +11,11 @@ const SupportAgentsPage: NextPage = () => {
 
   return (
     <MainLayout>
-      <UsersHeader form={form} title={'Агенты поддержки'} />
+      <UsersHeader
+        subTitle={'В этом разделе собраны профили агентов поддержки системы'}
+        form={form}
+        title={'Агенты поддержки'}
+      />
     </MainLayout>
   );
 };

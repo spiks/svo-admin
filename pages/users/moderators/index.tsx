@@ -11,7 +11,7 @@ const ModeratorsPage: NextPage = () => {
 
   return (
     <MainLayout>
-      <UsersHeader title={'Модераторы'} form={form} />
+      <UsersHeader subTitle={'В этом разделе собраны профили модераторов системы'} title={'Модераторы'} form={form} />
     </MainLayout>
   );
 };

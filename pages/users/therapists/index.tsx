@@ -142,7 +142,11 @@ const TherapistsPage: NextPage = () => {
 
   return (
     <MainLayout>
-      <UsersHeader form={form} searchPlaceholder={'Начните вводить имя пользователя'} title={'Терапевты'}>
+      <UsersHeader
+        subTitle={'В этом разделе собраны профили терапевтов системы'}
+        form={form}
+        searchPlaceholder={'Начните вводить имя терапевта'}
+      >
         <TabList items={tabListItems} defaultActiveKey={'active'} onChange={handleTabListChange} />
       </UsersHeader>
       <div style={{ overflow: 'auto' }}>

@@ -11,7 +11,11 @@ const AdministratorsPage: NextPage = () => {
 
   return (
     <MainLayout>
-      <UsersHeader title={'Администраторы'} form={form} />
+      <UsersHeader
+        subTitle={'В этом разделе собраны профили администраторов системы'}
+        title={'Администраторы'}
+        form={form}
+      />
     </MainLayout>
   );
 };
