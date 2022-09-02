@@ -13,13 +13,17 @@ export function getDocumentStyle(
   isApproved: boolean | undefined | null,
   profileStatus: TherapistProfileStatus,
 ): DocumentProps['style'] {
-  if (isApproved) {
+  if (isApproved === true) {
     return 'approved';
   } else if (profileStatus === 'documents_not_submitted_yet') {
     return 'empty';
-  } else if (profileStatus === 'documents_rejected') {
-    return 'rejected';
   } else {
-    return 'pending';
+    switch (isApproved) {
+      case null:
+        return 'pending';
+      case false:
+      default:
+        return 'rejected';
+    }
   }
 }

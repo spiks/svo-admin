@@ -116,14 +116,20 @@ export const TherapistSignupDocuments: FC = () => {
 
   // Индикация возможности завершения модерации документов
   const canEndModeration = useMemo(() => {
-    return therapist.status !== 'documents_awaiting_review';
-  }, [therapist.status]);
+    return Object.values(documents).every((doc) => {
+      return doc?.isApprovedByModerator !== null;
+    });
+  }, [documents]);
 
   // Индикация возможности перехода к следующему этапу регистрации терапевта
   const canContinue = useMemo(() => {
     const allowedStatuses = ['interview_processing', 'interview_failed'];
-    return !allowedStatuses.includes(therapist.status);
+    return allowedStatuses.includes(therapist.status);
   }, [therapist.status]);
+
+  const forwardToInterview = useCallback(async () => {
+    await refetch('therapist');
+  }, [refetch]);
 
   const finishModeration = useCallback(async () => {
     await finishTherapistDocumentModeration(therapist.id);
@@ -145,14 +151,14 @@ export const TherapistSignupDocuments: FC = () => {
               type={'primary'}
               htmlType={'button'}
               onClick={finishModeration}
-              disabled={canEndModeration}
+              disabled={!canEndModeration || canContinue}
               loading={isUpdating}
             >
               Завершить модерацию
             </Button>
           </Col>
           <Col>
-            <Button type={'primary'} htmlType={'button'} disabled={canContinue}>
+            <Button type={'primary'} htmlType={'button'} onClick={forwardToInterview} disabled={!canContinue}>
               Перейти к интервью
             </Button>
           </Col>
