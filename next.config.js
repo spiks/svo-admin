@@ -1,12 +1,12 @@
 const withAntdLess = require('next-plugin-antd-less');
 
-const isProd = process.env.NODE_ENV === 'production';
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   lessVarsFilePath: './styles/ant.less',
   lessVarsFilePathAppendToEndOfContent: false,
-
+  publicRuntimeConfig: {
+    API_BASE_URL: process.env.API_BASE_URL,
+  },
   webpack(config) {
     return config;
   },
