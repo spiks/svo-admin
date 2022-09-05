@@ -104,12 +104,12 @@ export type BlogListProps = {
 };
 
 export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
-  const [multipleСhoice, setMultipleСhoice] = useState<boolean>(true);
+  const [multipleChoice, setMultipleChoice] = useState<boolean>(true);
   const [selectedArticles, setSelectedArticles] = useState<string[]>([]);
 
   useEffect(() => {
     if (showFilters) {
-      setMultipleСhoice(false);
+      setMultipleChoice(false);
     }
   }, [showFilters]);
 
@@ -117,13 +117,13 @@ export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
     return article.id;
   });
 
-  const toggleMultipleСhoice = () => {
-    setMultipleСhoice(!multipleСhoice);
+  const toggleMultipleChoice = () => {
+    setMultipleChoice(!multipleChoice);
     setSelectedArticles([]);
   };
 
   const handleSelectArticle = (id: string) => {
-    if (multipleСhoice) {
+    if (multipleChoice) {
       const index = selectedArticles.indexOf(id);
       if (index !== -1) {
         selectedArticles.splice(index, 1);
@@ -147,10 +147,10 @@ export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
         <Row align="middle" justify="space-between">
           <Row gutter={8}>
             <Col>
-              <span>{showFilters || !multipleСhoice ? 'Найдено статей:' : 'Выбрано:'}</span>
+              <span>{showFilters || !multipleChoice ? 'Найдено статей:' : 'Выбрано:'}</span>
             </Col>
             <Col>
-              <Badge count={showFilters || !multipleСhoice ? blogArticles.length : selectedArticles.length} />
+              <Badge count={showFilters || !multipleChoice ? blogArticles.length : selectedArticles.length} />
             </Col>
           </Row>
           <Row>
@@ -158,9 +158,9 @@ export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
               <Row align="middle" gutter={24}>
                 <Col>
                   <span style={{ marginRight: '28px' }}>Множественный выбор</span>
-                  <Switch onChange={toggleMultipleСhoice} defaultChecked={multipleСhoice} />
+                  <Switch onChange={toggleMultipleChoice} defaultChecked={multipleChoice} />
                 </Col>
-                {multipleСhoice && (
+                {multipleChoice && (
                   <Col>
                     <Button
                       onClick={() => {

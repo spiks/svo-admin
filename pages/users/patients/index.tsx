@@ -132,7 +132,12 @@ const ClientsPage: NextPage = () => {
 
   return (
     <MainLayout>
-      <UsersHeader form={form} searchPlaceholder={'Начните вводить имя пользователя'} title={'Клиенты'}>
+      <UsersHeader
+        subTitle={'В этом разделе собраны профили клиентов системы'}
+        form={form}
+        searchPlaceholder={'Начните вводить имя пользователя'}
+        title={'Клиенты'}
+      >
         <TabList items={tabListItems} defaultActiveKey={'active'} onChange={handleTabListChange} />
       </UsersHeader>
       <div style={{ overflow: 'auto' }}>

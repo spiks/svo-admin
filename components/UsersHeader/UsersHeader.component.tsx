@@ -5,16 +5,17 @@ import { useRouter } from 'next/router';
 import { useUsersHeaderForm } from './UsersHeader.hooks/useUsersHeaderForm';
 
 type UserHeaderProps = {
-  title: string;
+  title?: string;
   searchPlaceholder?: string;
   form: Parameters<typeof useUsersHeaderForm>[0];
+  subTitle?: string;
 };
 /**
  * Шапка с параметрами для фильтрации листинга для подразделов категории "Пользователи";
  * Применённые параметры пробрасываются в query (GET) запрос на текущей странице;
  * Применение фильтров через 1.5 сек. после последнего изменения, либо по нажатию на enter;
  */
-export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholder, children }) => {
+export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholder, subTitle, children }) => {
   const { back } = useRouter();
   const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters } =
     useUsersHeaderForm(form);
@@ -33,7 +34,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholde
           paddingLeft: 0,
         }}
         title={title}
-        onBack={back}
+        onBack={title ? back : undefined}
         extra={[
           <Button type={'link'} size={'large'} key={0}>
             Обратиться к FAQ
@@ -48,7 +49,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholde
         subTitle={
           <>
             <QuestionCircleOutlined />
-            <span style={{ marginLeft: '12px' }}>В этом разделе собраны профили клиентов системы</span>
+            <span style={{ marginLeft: '12px' }}>{subTitle}</span>
           </>
         }
       />
