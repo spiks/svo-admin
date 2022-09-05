@@ -1,5 +1,5 @@
 import { FC, useCallback, useContext, useMemo, useState } from 'react';
-import { Button, Checkbox, Form, notification, Space, Typography } from 'antd';
+import { Button, Checkbox, Form, notification, Space, Spin, Typography } from 'antd';
 import { UploadDocument } from '../UploadDocument/UploadDocument.component';
 import { requestFileUploadUrl } from '../../api/upload/requestFileUploadUrl';
 import { uploadFile } from '../../api/upload/uploadFile';
@@ -10,10 +10,16 @@ import { Document, DocumentProps } from '../Document/Document.component';
 import { getSignedContractStyle } from './TherapistSignupContract.utils';
 import { acceptContract } from '../../api/therapist/acceptContract';
 import { rejectContract } from '../../api/therapist/rejectContract';
+import { useContractsQuery } from '../../hooks/useContractsQuery';
 
 export const TherapistSignupContract: FC = () => {
-  const { therapist } = useContext(TherapistPageContext);
+  const { therapist, isLoading: contextLoading } = useContext(TherapistPageContext);
+  const { contract, signedContract, isLoading: contractsLoading } = useContractsQuery(therapist.id);
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
+
+  const isLoading = useMemo(() => {
+    return contextLoading || contractsLoading;
+  }, [contextLoading, contractsLoading]);
 
   const [contractToken, setContractToken] = useState<string | null>(null);
   const [accepted, setAccepted] = useState(false);
@@ -56,6 +62,12 @@ export const TherapistSignupContract: FC = () => {
 
     try {
       await submitContract(therapist.id, contractToken);
+      setContractToken(null);
+      notification.success({
+        type: 'success',
+        message: 'Успех',
+        description: 'Контракт отправлен терапевту!',
+      });
     } catch (err) {
       notification.error({
         type: 'error',
@@ -70,13 +82,12 @@ export const TherapistSignupContract: FC = () => {
 
   // Стиль отображаемого блока с файлом договора
   const contractStyle = useMemo(() => {
-    // @todo мы не можем сейчас узнать загружали ли пользователю договор из админки или нет (ждём backend)
-    if (contractToken || therapist.status === 'contract_awaiting_review') {
+    if (contract) {
       return 'approved';
     } else {
       return 'empty';
     }
-  }, [contractToken, therapist.status]);
+  }, [contract]);
 
   // Индикация возможности отправки контракта пользователю
   const canSubmitContract = useMemo(() => {
@@ -101,6 +112,7 @@ export const TherapistSignupContract: FC = () => {
     return {
       document: {
         name: 'Контракт',
+        ...(signedContract && { link: signedContract.url }),
       },
       style: getSignedContractStyle(therapist.status),
       // Подтверждение контракта подписанного пользователем
@@ -141,32 +153,34 @@ export const TherapistSignupContract: FC = () => {
         }
       },
     };
-  }, [canApprove, refetch, therapist.id, therapist.status]);
+  }, [canApprove, refetch, signedContract, therapist.id, therapist.status]);
 
   return (
-    <Form layout={'horizontal'} labelCol={{ span: 4 }} wrapperCol={{ span: 20 }}>
-      <Form.Item label={'Договор на отправку'}>
-        <Space size={24} direction={'vertical'}>
-          <UploadDocument style={contractStyle} onUpload={handleContractUpload} document={{ name: 'Договор' }} />
-          <Button type={'primary'} htmlType={'button'} onClick={handleContractSubmit} disabled={!canSubmitContract}>
-            Отправить договор
-          </Button>
-        </Space>
-      </Form.Item>
-      <Form.Item label={'Подписанный клиентом'}>
-        <Document {...signedDocumentProps} />
-      </Form.Item>
-      <Form.Item label={'Информация'}>
-        <Space size={24} direction={'vertical'}>
-          <Typography.Text>
-            Вся указанная психологом информация верна и соответствует нормативно-правовым актам, этическим нормам и не
-            нарушает законодательства Российской Федерации
-          </Typography.Text>
-          <Checkbox checked={accepted} onChange={toggleAcceptance}>
-            Я подтверждаю!
-          </Checkbox>
-        </Space>
-      </Form.Item>
-    </Form>
+    <Spin spinning={isLoading}>
+      <Form layout={'horizontal'} labelCol={{ span: 6 }} wrapperCol={{ span: 20 }}>
+        <Form.Item label={'Договор на отправку'}>
+          <Space size={24} direction={'vertical'}>
+            <UploadDocument style={contractStyle} onUpload={handleContractUpload} document={{ name: 'Договор' }} />
+            <Button type={'primary'} htmlType={'button'} onClick={handleContractSubmit} disabled={!canSubmitContract}>
+              Отправить договор
+            </Button>
+          </Space>
+        </Form.Item>
+        <Form.Item label={'Подписанный клиентом'}>
+          <Document {...signedDocumentProps} />
+        </Form.Item>
+        <Form.Item label={'Информация'}>
+          <Space size={24} direction={'vertical'}>
+            <Typography.Text>
+              Вся указанная психологом информация верна и соответствует нормативно-правовым актам, этическим нормам и не
+              нарушает законодательства Российской Федерации
+            </Typography.Text>
+            <Checkbox checked={accepted} onChange={toggleAcceptance}>
+              Я подтверждаю!
+            </Checkbox>
+          </Space>
+        </Form.Item>
+      </Form>
+    </Spin>
   );
 };
