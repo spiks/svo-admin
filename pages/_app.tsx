@@ -4,6 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import AuthProvider, { AuthContext } from '../components/AuthProvider/AuthProvider.component';
 import { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { OpenAPI } from '../generated';
+import getConfig from 'next/config';
 
 require('../styles/ant.less');
 require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
@@ -55,12 +57,17 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-const MyAppView = (props: AppProps) => {
+const MyAppView = (props: AppProps & { API_BASE_URL: string }) => {
+  OpenAPI.BASE = props.API_BASE_URL;
   return (
     <AuthProvider>
       <MyApp {...props} />
     </AuthProvider>
   );
+};
+
+MyAppView.getInitialProps = () => {
+  return getConfig().publicRuntimeConfig;
 };
 
 export default MyAppView;
