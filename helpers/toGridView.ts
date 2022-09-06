@@ -10,6 +10,7 @@ export function toGridView(it: PatientListingPreview) {
   return {
     ...it,
     id: it.id,
+    key: it.id,
     profiles: it.profiles
       .map((it) => {
         return profileTypeTranslations[it];
