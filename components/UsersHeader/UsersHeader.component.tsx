@@ -3,6 +3,7 @@ import { Alert, Button, Col, Form, Input, PageHeader, Row } from 'antd';
 import { FilterFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { useUsersHeaderForm } from './UsersHeader.hooks/useUsersHeaderForm';
+import { REGEXP_PHONE } from '../../constants/regexp';
 
 type UserHeaderProps = {
   title?: string;
@@ -79,8 +80,18 @@ export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholde
                 </Form.Item>
               </Col>
               <Col flex={2}>
-                <Form.Item name={'phone'} label={'Номер телефона'} tooltip={'Номер телефона'}>
-                  <Input type={'tel'} size={'large'} />
+                <Form.Item
+                  rules={[
+                    {
+                      pattern: REGEXP_PHONE,
+                      message: 'Неверный формат',
+                    },
+                  ]}
+                  name={'phone'}
+                  label={'Номер телефона'}
+                  tooltip={'Номер телефона'}
+                >
+                  <Input prefix={'+7'} placeholder={'0000000000'} maxLength={10} type={'tel'} size={'large'} />
                 </Form.Item>
               </Col>
               <Col flex={1}>
