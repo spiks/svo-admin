@@ -10,13 +10,21 @@ type UserHeaderProps = {
   searchPlaceholder?: string;
   form: Parameters<typeof useUsersHeaderForm>[0];
   subTitle?: string;
+  description?: string;
 };
 /**
  * Шапка с параметрами для фильтрации листинга для подразделов категории "Пользователи";
  * Применённые параметры пробрасываются в query (GET) запрос на текущей странице;
  * Применение фильтров через 1.5 сек. после последнего изменения, либо по нажатию на enter;
  */
-export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholder, subTitle, children }) => {
+export const UsersHeader: FC<UserHeaderProps> = ({
+  title,
+  form,
+  searchPlaceholder,
+  description,
+  subTitle,
+  children,
+}) => {
   const { back } = useRouter();
   const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters } =
     useUsersHeaderForm(form);
@@ -55,13 +63,15 @@ export const UsersHeader: FC<UserHeaderProps> = ({ title, form, searchPlaceholde
         }
       />
       <div style={{ marginLeft: '36px' }}>
-        <Alert
-          type={'info'}
-          showIcon={true}
-          message={'Описание'}
-          description={'Здесь можно разместить какое-нибудь описание для пользователей. Его можно скрыть.'}
-          style={{ marginBottom: '16px' }}
-        />
+        {description && (
+          <Alert
+            type={'info'}
+            showIcon={true}
+            message={'Описание'}
+            description={description}
+            style={{ marginBottom: '16px' }}
+          />
+        )}
         {showFilters && (
           <Form
             form={form}

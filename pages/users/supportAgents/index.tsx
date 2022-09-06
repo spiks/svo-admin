@@ -12,6 +12,7 @@ const SupportAgentsPage: NextPage = () => {
   return (
     <MainLayout>
       <UsersHeader
+        description={'Здесь можно разместить какое-нибудь описание для пользователей. Его можно скрыть.'}
         subTitle={'В этом разделе собраны профили агентов поддержки системы'}
         form={form}
         title={'Агенты поддержки'}

@@ -14,6 +14,7 @@ const AdministratorsPage: NextPage = () => {
       <UsersHeader
         subTitle={'В этом разделе собраны профили администраторов системы'}
         title={'Администраторы'}
+        description={'Здесь можно разместить какое-нибудь описание для пользователей. Его можно скрыть.'}
         form={form}
       />
     </MainLayout>

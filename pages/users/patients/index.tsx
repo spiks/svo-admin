@@ -133,6 +133,7 @@ const ClientsPage: NextPage = () => {
   return (
     <MainLayout>
       <UsersHeader
+        description={'Здесь можно разместить какое-нибудь описание для пользователей. Его можно скрыть.'}
         subTitle={'В этом разделе собраны профили клиентов системы'}
         form={form}
         searchPlaceholder={'Начните вводить имя пользователя'}
