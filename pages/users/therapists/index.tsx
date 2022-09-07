@@ -15,12 +15,36 @@ import { TabList } from '../../../components/TabList/TabList.component';
 import { useRouter } from 'next/router';
 import { TherapistProfileStatus } from '../../../generated';
 
-const tabListItems: { label: string; key: TherapistProfileStatus }[] = [
-  { label: 'Активные', key: 'active' },
-  { label: 'Ожидают подтверждение', key: 'contract_awaiting_review' },
+enum TAB_KEY {
+  ACTIVE = 'ACTIVE',
+  AWAITING = 'AWAITING',
+}
+
+// Разделы (Tabs)
+// Ключ (key) каждого tab'а является ключом объекта со списками статусов для query запроса
+const tabListItems: { label: string; key: TAB_KEY }[] = [
+  { label: 'Активные', key: TAB_KEY.ACTIVE },
+  { label: 'Ожидают подтверждение', key: TAB_KEY.AWAITING },
   // { label: 'Не активные', key: 'not active' },
 ];
 
+// Ключи применяемые для фильтрации пользователей для отдельных разделов
+const queryStatusLists: Record<TAB_KEY, TherapistProfileStatus[]> = {
+  // Только активные пользователи
+  [TAB_KEY.ACTIVE]: ['active'],
+  [TAB_KEY.AWAITING]: [
+    'contract_awaiting_review',
+    'contract_not_submitted_yet',
+    'contract_rejected',
+    'documents_awaiting_review',
+    'documents_not_submitted_yet',
+    'documents_rejected',
+    'interview_failed',
+    'interview_processing',
+  ],
+};
+
+// Колонки списка
 const columns: ColumnsType<GridView> = [
   {
     title: 'Имя пользователя',
@@ -45,13 +69,6 @@ const columns: ColumnsType<GridView> = [
     },
     width: 181,
   },
-  // {
-  //   title: 'Последняя активность',
-  //   dataIndex: 'lastActivityDate',
-  //   defaultSortOrder: 'descend' as const,
-  //   sorter: (a, b) => new Date(a.lastActivityDate).getTime() - new Date(b.lastActivityDate).getTime(),
-  //   width: 220,
-  // },
 ];
 
 const rowSelection: TableRowSelection<GridView> = {
@@ -68,7 +85,7 @@ const rowSelection: TableRowSelection<GridView> = {
 
 const TherapistsPage: NextPage = () => {
   const { push } = useRouter();
-  const [activeTab, setActiveTab] = useState<TherapistProfileStatus>('active');
+  const [activeTab, setActiveTab] = useState<TAB_KEY>(TAB_KEY.ACTIVE);
 
   const [isMultipleChoice] = useState(false);
   const [page, setPage] = useState(1);
@@ -94,7 +111,7 @@ const TherapistsPage: NextPage = () => {
           field: 'createdAt',
           orderDirection: sortOrderCuts[sortOrder],
         },
-        statuses: [activeTab],
+        statuses: queryStatusLists[activeTab],
       });
     },
     [activeTab, pageSize, phone, search, sortOrder],
