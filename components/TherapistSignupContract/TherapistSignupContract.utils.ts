@@ -12,8 +12,7 @@ export const getSignedContractStyle = (status: TherapistProfileStatus): Document
     case 'contract_awaiting_review':
       return 'pending';
     case 'contract_not_submitted_yet':
-      return 'empty';
     default:
-      throw new Error('Не корректный статус терапевта: ' + status);
+      return 'empty';
   }
 };

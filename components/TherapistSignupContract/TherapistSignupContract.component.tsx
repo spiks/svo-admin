@@ -10,12 +10,14 @@ import { Document, DocumentProps } from '../Document/Document.component';
 import { getSignedContractStyle } from './TherapistSignupContract.utils';
 import { acceptContract } from '../../api/therapist/acceptContract';
 import { rejectContract } from '../../api/therapist/rejectContract';
-import { useContractsQuery } from '../../hooks/useContractsQuery';
+import { useContractsQuery, useContractsQueryRefresh } from '../../hooks/useContractsQuery';
+import { s3ToUrl } from '../../utility/s3ToUrl';
 
 export const TherapistSignupContract: FC = () => {
   const { therapist, isLoading: contextLoading } = useContext(TherapistPageContext);
   const { contract, signedContract, isLoading: contractsLoading } = useContractsQuery(therapist.id);
-  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
+  const refetchContract = useContractsQueryRefresh(therapist.id);
+  const refetchTherapist = useTherapistSignupQueriesRefresh(therapist.id);
 
   const isLoading = useMemo(() => {
     return contextLoading || contractsLoading;
@@ -76,18 +78,18 @@ export const TherapistSignupContract: FC = () => {
       });
     } finally {
       // Обновляем данные (возможно изменение статуса пользователя)
-      await refetch('therapist');
+      await refetchContract();
     }
-  }, [contractToken, refetch, therapist.id]);
+  }, [contractToken, refetchContract, therapist.id]);
 
   // Стиль отображаемого блока с файлом договора
   const contractStyle = useMemo(() => {
-    if (contract) {
+    if (contract || contractToken) {
       return 'approved';
     } else {
       return 'empty';
     }
-  }, [contract]);
+  }, [contract, contractToken]);
 
   // Индикация возможности отправки контракта пользователю
   const canSubmitContract = useMemo(() => {
@@ -100,7 +102,7 @@ export const TherapistSignupContract: FC = () => {
         type: 'warning',
         message: 'Предупреждение',
         description:
-          'Для изменения статуса контракта пользователя, необходимо подтвердить соответствие договора соответствует нормативно-правовым актам',
+          'Для изменения статуса контракта пользователя, необходимо подтвердить соответствие договора нормативно-правовым актам',
       });
       return false;
     }
@@ -112,7 +114,7 @@ export const TherapistSignupContract: FC = () => {
     return {
       document: {
         name: 'Контракт',
-        ...(signedContract && { link: signedContract.url }),
+        ...(signedContract && { link: s3ToUrl(signedContract.url) }),
       },
       style: getSignedContractStyle(therapist.status),
       // Подтверждение контракта подписанного пользователем
@@ -130,7 +132,7 @@ export const TherapistSignupContract: FC = () => {
             description: 'Не удалось подтвердить правильность контракта загруженного пользователем',
           });
         } finally {
-          await refetch('therapist');
+          await refetchTherapist('therapist');
         }
       },
       // Отклонение контракта подписанного пользователем
@@ -149,11 +151,11 @@ export const TherapistSignupContract: FC = () => {
             description: 'Не удалось отклонить контракт загруженный пользователем',
           });
         } finally {
-          await refetch('therapist');
+          await refetchTherapist('therapist');
         }
       },
     };
-  }, [canApprove, refetch, signedContract, therapist.id, therapist.status]);
+  }, [canApprove, refetchTherapist, signedContract, therapist.id, therapist.status]);
 
   return (
     <Spin spinning={isLoading}>

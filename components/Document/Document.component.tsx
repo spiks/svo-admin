@@ -53,7 +53,7 @@ export const Document: FC<DocumentProps> = ({ style, document, onApproved, onRej
             columnGap: '4px',
           }}
         >
-          <Button size={'small'} icon={<UploadOutlined />} target={'_blank'} href={document.link}>
+          <Button size={'small'} icon={<UploadOutlined />} target={'_blank'} download={true} href={document.link}>
             Загрузить
           </Button>
           <Button size={'small'} icon={DocumentStyleIcon['approved']} onClick={onAction.bind(null, 'approve')} />
