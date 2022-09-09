@@ -13,6 +13,7 @@ import {
 import { DiplomaOfHigherEducation } from '../../generated';
 import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 import { finishTherapistDocumentModeration } from '../../api/therapist/finishTherapistDocumentModeration';
+import { s3ToUrl } from '../../utility/s3ToUrl';
 
 export const TherapistSignupDocuments: FC = () => {
   const { documents, therapist, isLoading } = useContext(TherapistPageContext);
@@ -104,7 +105,7 @@ export const TherapistSignupDocuments: FC = () => {
           onReject={onReject}
           document={{
             name: documentName[key] as string,
-            link: value?.document.url,
+            link: s3ToUrl(value?.document.url),
           }}
         />
       );

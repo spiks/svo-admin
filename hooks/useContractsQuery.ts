@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback, useMemo } from 'react';
 import { getTherapistContracts } from '../api/therapist/getTherapistContracts';
 
 export function useContractsQuery(therapistId: string) {
@@ -16,4 +16,12 @@ export function useContractsQuery(therapistId: string) {
       signedContract: data?.data.signedContract ?? null,
     };
   }, [isLoading, isError, data?.data.contract, data?.data.signedContract]);
+}
+
+export function useContractsQueryRefresh(therapistId: string) {
+  const client = useQueryClient();
+
+  return useCallback(() => {
+    return client.invalidateQueries(['contracts', therapistId]);
+  }, [client, therapistId]);
 }
