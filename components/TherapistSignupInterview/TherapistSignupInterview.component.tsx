@@ -3,6 +3,7 @@ import { Button, Space, Spin } from 'antd';
 import { TherapistPageContext } from '../../pages/users/therapists/[id]';
 import { markInterviewSuccessful } from '../../api/therapist/markInterviewSuccessful';
 import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
+import { markInterviewFailed } from '../../api/therapist/markInterviewFailed';
 
 export const TherapistSignupInterview: FC = () => {
   const { therapist } = useContext(TherapistPageContext);
@@ -18,7 +19,7 @@ export const TherapistSignupInterview: FC = () => {
 
   const failed = useCallback(async () => {
     setLoading(true);
-    await markInterviewSuccessful(therapist.id);
+    await markInterviewFailed(therapist.id);
     await refetch('therapist');
   }, [refetch, therapist.id]);
 
