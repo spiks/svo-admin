@@ -106,7 +106,9 @@ export const LoginForm: FC = () => {
           </Form.Item>
         </Form>
       </div>
-      <PasswordRecoveryModal visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} />
+      <PasswordRecoveryModal open={isModalVisible} onOk={handleOk} onCancel={handleCancel} />
     </>
   );
 };
+
+export default LoginForm;
