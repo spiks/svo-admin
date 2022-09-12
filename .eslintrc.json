@@ -4,7 +4,6 @@
   "plugins": ["prettier"],
   "rules": {
     "prettier/prettier": "error",
-    "no-console": ["error", { "allow": ["error"] }],
-    "arrow-body-style": ["error", "always"]
+    "no-console": ["error", { "allow": ["error"] }]
   }
 }
