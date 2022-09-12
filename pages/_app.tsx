@@ -1,11 +1,11 @@
 import { createErrorResponseInterceptor } from '../api/interceptors/createErrorResponseInterceptor';
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import AuthProvider, { AuthContext } from '../components/AuthProvider/AuthProvider.component';
-import { useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import AuthProvider from '../components/AuthProvider/AuthProvider.component';
+import { useEffect, useState, Suspense } from 'react';
 import { OpenAPI } from '../generated';
 import getConfig from 'next/config';
+import SplashScreenLoader from '../components/SplashScreenLoader/SplashScreenLoader.component';
 
 require('../styles/ant.less');
 require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
@@ -15,44 +15,15 @@ createErrorResponseInterceptor();
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 2, refetchOnWindowFocus: false } } });
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const { credentials, loading } = useContext(AuthContext);
-  const [isAppReady, setIsAppReady] = useState<boolean>(false);
-  const { pathname } = useRouter();
-
-  const { token } = credentials;
+  const [isLoading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if (loading) {
-      isAppReady && setIsAppReady(false);
-      return;
-    }
-
-    if (!token) {
-      // Страница не публичная и пользователь не авторизован
-      const isLoginPage = pathname === '/login';
-      if (!isLoginPage) {
-        window.location.href = '/login';
-        return;
-      }
-
-      // Страница публичная, пускаем в компонент
-      setIsAppReady(true);
-      return;
-    }
-
-    setIsAppReady(true);
-    return;
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAppReady, loading, token]);
-
-  if (!isAppReady) {
-    return <p>Загрузка</p>;
-  }
+    setLoading(false);
+  });
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
+      {isLoading ? <SplashScreenLoader /> : <Component {...pageProps} />}
     </QueryClientProvider>
   );
 }
