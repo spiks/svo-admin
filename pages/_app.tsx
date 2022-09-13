@@ -19,7 +19,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   useEffect(() => {
     setLoading(false);
-  });
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
