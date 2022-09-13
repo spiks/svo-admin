@@ -4,6 +4,7 @@ import { FilterFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { useUsersHeaderForm } from './UsersHeader.hooks/useUsersHeaderForm';
 import { REGEXP_PHONE } from '../../constants/regexp';
+import { useUsersQueryParams } from './UsersHeader.hooks/useUsersQueryParams';
 
 type UserHeaderProps = {
   title?: string;
@@ -28,6 +29,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
   const { back } = useRouter();
   const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters } =
     useUsersHeaderForm(form);
+  const { search, phone } = useUsersQueryParams();
 
   return (
     <div
@@ -79,8 +81,8 @@ export const UsersHeader: FC<UserHeaderProps> = ({
             onFinish={handleFiltersApply}
             onFieldsChange={handleFiltersChange}
             initialValues={{
-              search: '',
-              phone: '',
+              search,
+              phone,
             }}
           >
             <Row style={{ columnGap: '24px', flexWrap: 'nowrap' }}>
