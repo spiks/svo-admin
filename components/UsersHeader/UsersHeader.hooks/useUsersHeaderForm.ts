@@ -28,6 +28,10 @@ export function useUsersHeaderForm(form: FormInstance<UsersQueryParams>) {
 
   const handleResetFilters = useCallback(() => {
     form.resetFields();
+    form.setFieldsValue({
+      search: undefined,
+      phone: undefined,
+    });
     form.submit();
   }, [form]);
 
