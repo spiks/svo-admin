@@ -105,20 +105,16 @@ const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
     [activeTab, pageSize, phone, search, sortOrder],
   );
 
-  const { status, data: therapistsList } = useQuery(
+  const { isFetching, data: therapistsList } = useQuery(
     getQueryKey(page),
     () => {
       return fetchTherapists(page - 1);
     },
     {
       keepPreviousData: true,
+      retryDelay: 3000,
     },
   );
-
-  // Индикация загрузки данных в таблице (списка терапевтов)
-  const tableLoading = useMemo(() => {
-    return status !== 'success';
-  }, [status]);
 
   useEffect(() => {
     if (therapistsList && therapistsList.data.itemsAmount > (page + 1) * pageSize) {
@@ -135,7 +131,7 @@ const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
 
   return (
     <Table
-      loading={tableLoading}
+      loading={isFetching}
       onChange={(pagination, filters, sorter) => {
         if (sorter && !Array.isArray(sorter) && sorter.order) {
           setSortOrder(sorter.order);
