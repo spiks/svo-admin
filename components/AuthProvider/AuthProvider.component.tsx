@@ -40,7 +40,8 @@ const AuthProvider: FC = ({ children }) => {
       ClientStorage.clearTokens();
       push('/login', undefined, { shallow: true });
     }
-  }, [push]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     (async () => {
