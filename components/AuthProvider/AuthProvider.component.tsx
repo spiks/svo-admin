@@ -3,6 +3,7 @@ import { getEmail } from '../../api/auth/getEmail';
 import { createRefreshTokenInterceptor } from '../../api/interceptors/createRefreshTokenInterceptor';
 import { ClientStorage } from '../../utility/clientStorage';
 import { AccountEmail } from '../../generated';
+import { useRouter } from 'next/router';
 
 export type CredentialsType = {
   token: string | null;
@@ -11,7 +12,6 @@ export type CredentialsType = {
 
 export type AuthContextValue = {
   credentials: CredentialsType;
-  loading: boolean;
 };
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -19,7 +19,6 @@ export const AuthContext = createContext<AuthContextValue>({
     token: null,
     email: null,
   },
-  loading: true,
 });
 
 const AuthProvider: FC = ({ children }) => {
@@ -27,7 +26,7 @@ const AuthProvider: FC = ({ children }) => {
     token: null,
     email: null,
   });
-  const [loading, setLoading] = useState<boolean>(true);
+  const { push } = useRouter();
 
   const isUserLoggedIn = useCallback(async () => {
     const storageToken = ClientStorage.getTokens()?.accessToken;
@@ -39,9 +38,8 @@ const AuthProvider: FC = ({ children }) => {
       });
     } else {
       ClientStorage.clearTokens();
+      push('/login', undefined, { shallow: true });
     }
-    setLoading(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -54,9 +52,8 @@ const AuthProvider: FC = ({ children }) => {
   const contextValue = useMemo(() => {
     return {
       credentials,
-      loading,
     };
-  }, [credentials, loading]);
+  }, [credentials]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

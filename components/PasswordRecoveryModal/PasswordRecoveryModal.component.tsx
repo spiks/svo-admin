@@ -1,7 +1,7 @@
 import { Button, Modal, ModalProps, Input, Form, Typography } from 'antd';
 import { FC, useState } from 'react';
 
-export const PasswordRecoveryModal: FC<ModalProps> = ({ visible, onOk, onCancel }) => {
+export const PasswordRecoveryModal: FC<ModalProps> = ({ open, onOk, onCancel }) => {
   return (
     <Modal
       footer={[
@@ -10,7 +10,7 @@ export const PasswordRecoveryModal: FC<ModalProps> = ({ visible, onOk, onCancel 
           <Typography.Link style={{ marginLeft: '8px' }}>Подробнее</Typography.Link>
         </div>,
       ]}
-      visible={visible}
+      open={open}
       onOk={onOk}
       closable={false}
       onCancel={onCancel}

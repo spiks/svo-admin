@@ -12,6 +12,10 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["components/*"]
+    },
     "jsx": "preserve",
     "incremental": true
   },

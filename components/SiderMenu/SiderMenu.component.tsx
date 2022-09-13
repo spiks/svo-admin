@@ -17,7 +17,6 @@ export const SiderMenu: FC = () => {
   const subcategoryToHighlight = sidebarItemsToHighlight[1];
   const categoryToOpen = sidebarItemsToHighlight[0];
   const categoryToHighlight = sidebarItemsToHighlight[0];
-
   const logout = useLogout();
 
   const handleLogoutUser = async () => {
