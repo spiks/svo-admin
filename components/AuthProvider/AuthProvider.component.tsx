@@ -40,7 +40,9 @@ const AuthProvider: FC = ({ children }) => {
       ClientStorage.clearTokens();
       push('/login', undefined, { shallow: true });
     }
-  }, [push]);
+    // если передать router, то будет бесконечный цикл
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     (async () => {
