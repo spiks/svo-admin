@@ -40,7 +40,7 @@ const AuthProvider: FC = ({ children }) => {
       ClientStorage.clearTokens();
       push('/login', undefined, { shallow: true });
     }
-  }, []);
+  }, [push]);
 
   useEffect(() => {
     (async () => {
