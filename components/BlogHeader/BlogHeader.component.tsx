@@ -7,19 +7,15 @@ import { useRouter } from 'next/router';
 import { useBlogHeaderForm } from './BlogHeader.hooks/useBlogHeaderForm';
 import { useBlogHeaderQueryParams } from './BlogHeader.hooks/useBlogHeaderQueryParams';
 import moment from 'moment';
+import { BlogArticleTag } from 'generated';
 
-type OptionsType = {
-  label: string;
-  value: string;
-}[];
-
-const { TabPane } = Tabs;
 const { Search } = Input;
 
-const options: OptionsType = [
-  { label: 'Общая практика', value: 'gold' },
-  { label: 'Мотивация', value: 'blue' },
-  { label: 'Семья', value: 'lime' },
+//  TODO: нужен метод listBlogTags, чтобы получить список всех тегов. На основании этого списка уже реализовывать поиск статей по тегам.
+const options: BlogArticleTag[] = [
+  { id: 'gold', name: 'Общая практика' },
+  { id: 'blue', name: 'Мотивация' },
+  { id: 'lime', name: 'Семья' },
 ];
 
 export type BlogHeaderProps = {
@@ -27,10 +23,12 @@ export type BlogHeaderProps = {
   handleShowFilters: () => void;
 };
 
-export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters }) => {
-  const { back } = useRouter();
+export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters, children }) => {
+  const { back, push } = useRouter();
   const { handleFiltersApply, handleResetFilters, handleFiltersChange, form } = useBlogHeaderForm();
   const { search, tags, publishDate } = useBlogHeaderQueryParams();
+
+  const initialDate = publishDate ? moment(publishDate) : null;
 
   return (
     <Header
@@ -43,19 +41,19 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
           <Button size="large" type="text">
             Обратиться к FAQ
           </Button>
-          <Button size="large" type={'primary'}>
+          <Button
+            onClick={() => {
+              push('/content/blog/createArticle');
+            }}
+            size="large"
+            type={'primary'}
+          >
             Добавить публикацию
           </Button>
           <Button size="large" onClick={handleShowFilters} icon={<FilterFilled />} type="default">
             Парамерты поиска
           </Button>
         </>
-      }
-      footer={
-        <Tabs style={{ paddingLeft: '36px' }} defaultActiveKey="1">
-          <TabPane tab="Опубликованные" key="1" />
-          <TabPane tab="Архивные" key="2" />
-        </Tabs>
       }
     >
       {showFilters && (
@@ -78,14 +76,14 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
           <Col span={24}>
             <Form
               onFinish={handleFiltersApply}
-              onFieldsChange={handleFiltersChange}
+              onValuesChange={handleFiltersChange}
               style={{ paddingBottom: '24px' }}
               form={form}
               layout="vertical"
               initialValues={{
                 search,
                 tags: tags ?? [],
-                date: publishDate,
+                date: initialDate,
               }}
             >
               <Row gutter={32}>
@@ -147,6 +145,7 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                 </Col>
               </Row>
             </Form>
+            {children}
           </Col>
         </Row>
       )}

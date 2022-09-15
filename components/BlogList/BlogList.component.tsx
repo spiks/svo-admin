@@ -1,119 +1,92 @@
+import { useBlogHeaderQueryParams } from '@components/BlogHeader/BlogHeader.hooks/useBlogHeaderQueryParams';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge, Button, Col, List, Pagination, Row, Switch } from 'antd';
-import { FC, useEffect, useState } from 'react';
+import { getListBlogArticles } from 'api/blog/getListBlogArticles';
+import { markBlogArticlesAsArchived } from 'api/blog/markBlogArticlesAsArchived';
+import { DateWithTimezone } from 'generated';
+import { TabKey } from 'pages/content/blog';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { getTimeZoneToString } from 'utility/getTimeZoneToString';
 import { BlogArticle } from '../BlogArticle/BlogArticle.component';
 import style from './BlogList.module.css';
 
-export type BlogArticlesType = {
-  id: string;
-  title: string;
-  tags: {
-    label: string;
-    value: string;
-  }[];
-  avatar: string;
-  author: string;
-  data: Date;
-  description?: string;
-  image?: string;
-}[];
-
-const blogArticles: BlogArticlesType = [
-  {
-    id: '1',
-    title: 'Персональные данные — почему они всем так нужны (кроме нас)',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Enim, nunc faucibus aliquet adipiscing vestibulum laoreet. Volutpat et ut ullamcorper duis commodo quam. Accumsan id fusce eu turpis netus nibh. Vitae ullamcorper elementum accumsan congue turpis potenti. Cursus non, nisi sit venenatis vitae at sit. Adipiscing sit blandit odio egestas magna egestas a. Nunc, faucibus eu, neque in eget. Dis ut tortor eget quam a...',
-    tags: [
-      { label: 'Общая практика', value: 'gold' },
-      { label: 'Мотивация', value: 'blue' },
-      { label: 'Семья', value: 'lime' },
-      { label: 'Мысли', value: 'gray' },
-      { label: 'Страх', value: 'gray' },
-    ],
-    avatar: '',
-    author: 'Станислав Концевич',
-    data: new Date(),
-  },
-  {
-    id: '2',
-    title: 'Персональные данные — почему они всем так нужны (кроме нас)',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Enim, nunc faucibus aliquet adipiscing vestibulum laoreet. Volutpat et ut ullamcorper duis commodo quam. Accumsan id fusce eu turpis netus nibh. Vitae ullamcorper elementum accumsan congue turpis potenti. Cursus non, nisi sit venenatis vitae at sit. Adipiscing sit blandit odio egestas magna egestas a. Nunc, faucibus eu, neque in eget. Dis ut tortor eget quam a...',
-    tags: [
-      { label: 'Общая практика', value: 'gold' },
-      { label: 'Мотивация', value: 'blue' },
-      { label: 'Семья', value: 'lime' },
-      { label: 'Мысли', value: 'gray' },
-      { label: 'Страх', value: 'gray' },
-    ],
-    avatar: '',
-    author: 'Станислав Концевич',
-    data: new Date(),
-  },
-  {
-    id: '3',
-    title: 'Персональные данные — почему они всем так нужны (кроме нас)',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Enim, nunc faucibus aliquet adipiscing vestibulum laoreet. Volutpat et ut ullamcorper duis commodo quam. Accumsan id fusce eu turpis netus nibh. Vitae ullamcorper elementum accumsan congue turpis potenti. Cursus non, nisi sit venenatis vitae at sit. Adipiscing sit blandit odio egestas magna egestas a. Nunc, faucibus eu, neque in eget. Dis ut tortor eget quam a...',
-    tags: [
-      { label: 'Общая практика', value: 'gold' },
-      { label: 'Мотивация', value: 'blue' },
-      { label: 'Семья', value: 'lime' },
-      { label: 'Мысли', value: 'gray' },
-      { label: 'Страх', value: 'gray' },
-    ],
-    avatar: '',
-    author: 'Станислав Концевич',
-    data: new Date(),
-  },
-  {
-    id: '4',
-    title: 'Колыбель для взрослого: как восполнить нехватку материнской любви',
-    tags: [
-      { label: 'Общая практика', value: 'gold' },
-      { label: 'Мотивация', value: 'blue' },
-      { label: 'Семья', value: 'lime' },
-      { label: 'Мысли', value: 'gray' },
-      { label: 'Страх', value: 'gray' },
-      { label: 'Чувства', value: 'gray' },
-    ],
-    avatar: 'https://klike.net/uploads/posts/2019-03/1551511801_1.jpg',
-    author: 'Станислав Концевич',
-    data: new Date(),
-  },
-  {
-    id: '5',
-    title: 'Персональные данные — почему они всем так нужны (кроме нас)',
-    description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Enim, nunc faucibus aliquet adipiscing vestibulum laoreet. Volutpat et ut ullamcorper duis commodo quam. Accumsan id fusce eu turpis netus nibh. Vitae ullamcorper elementum accumsan congue turpis potenti. Cursus non, nisi sit venenatis vitae at sit. Adipiscing sit blandit odio egestas magna egestas a. Nunc, faucibus eu, neque in eget. Dis ut tortor eget quam a...',
-    tags: [
-      { label: 'Общая практика', value: 'gold' },
-      { label: 'Мотивация', value: 'blue' },
-      { label: 'Семья', value: 'lime' },
-      { label: 'Мысли', value: 'gray' },
-      { label: 'Страх', value: 'gray' },
-    ],
-    avatar: '',
-    author: 'Станислав Концевич',
-    data: new Date(),
-  },
-];
-
 export type BlogListProps = {
   showFilters: boolean;
+  activeTab: TabKey;
 };
 
-export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
+const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
   const [multipleChoice, setMultipleChoice] = useState<boolean>(true);
   const [selectedArticles, setSelectedArticles] = useState<string[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const { search, tags, publishDate } = useBlogHeaderQueryParams();
+
+  const dateWithTimeZone = useMemo((): DateWithTimezone | null => {
+    if (publishDate) {
+      return {
+        date: publishDate,
+        timezone: getTimeZoneToString(new Date(publishDate)),
+      };
+    }
+    return null;
+  }, [publishDate]);
+
+  const queryClient = useQueryClient();
+
+  const updateBlogArticleList = useMutation(() => fetchBlogArticles(page), {
+    onSuccess: () => queryClient.invalidateQueries(['articles']),
+  });
+
+  const sendArticlesToArchive = async () => {
+    await markBlogArticlesAsArchived(selectedArticles);
+    updateBlogArticleList.mutate();
+    setSelectedArticles([]);
+  };
+
+  const fetchBlogArticles = useCallback(
+    (page) => {
+      return getListBlogArticles({
+        search,
+        isArchived: activeTab === 'archived',
+        tags,
+        publicationDate: dateWithTimeZone,
+        pagination: {
+          count: pageSize,
+          offset: page * pageSize,
+        },
+      });
+    },
+    [pageSize, search, tags, activeTab, dateWithTimeZone],
+  );
+
+  const getQueryKey = useCallback(
+    (page) => {
+      return ['articles', page, publishDate, search, tags, pageSize, activeTab];
+    },
+    [pageSize, tags, search, publishDate, activeTab],
+  );
+
+  const { isFetching, data: blogArticlesList } = useQuery(
+    getQueryKey(page),
+    () => {
+      return fetchBlogArticles(page - 1);
+    },
+    {
+      keepPreviousData: true,
+      retryDelay: 3000,
+    },
+  );
 
   useEffect(() => {
     if (showFilters) {
       setMultipleChoice(false);
+      setSelectedArticles([]);
     }
   }, [showFilters]);
 
-  const idArticles = blogArticles.map((article) => {
+  const idArticles = blogArticlesList?.data.items.map((article) => {
     return article.id;
   });
 
@@ -135,11 +108,19 @@ export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
   };
 
   const selectAllArticles = () => {
-    setSelectedArticles([...idArticles]);
+    if (idArticles) {
+      setSelectedArticles([...idArticles]);
+    }
   };
+
+  const handlePaginationChange = useCallback((page: number, pageSize: number) => {
+    setPageSize(pageSize);
+    setPage(page);
+  }, []);
 
   return (
     <List
+      loading={isFetching}
       style={{ width: '100%', backgroundColor: '#FFFFFF' }}
       size="large"
       itemLayout="vertical"
@@ -150,7 +131,9 @@ export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
               <span>{showFilters || !multipleChoice ? 'Найдено статей:' : 'Выбрано:'}</span>
             </Col>
             <Col>
-              <Badge count={showFilters || !multipleChoice ? blogArticles.length : selectedArticles.length} />
+              <Badge
+                count={showFilters || !multipleChoice ? blogArticlesList?.data.itemsAmount : selectedArticles.length}
+              />
             </Col>
           </Row>
           <Row>
@@ -170,7 +153,13 @@ export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
                     >
                       Выбрать всё
                     </Button>
-                    <Button>Отправить в архив</Button>
+                    <Button
+                      onClick={() => {
+                        sendArticlesToArchive();
+                      }}
+                    >
+                      Отправить в архив
+                    </Button>
                   </Col>
                 )}
               </Row>
@@ -179,18 +168,21 @@ export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
               <Pagination
                 className={style['pagination']}
                 showSizeChanger
-                totalBoundaryShowSizeChanger={1}
-                hideOnSinglePage={false}
+                pageSize={pageSize}
+                onChange={handlePaginationChange}
               />
             </Row>
           </Row>
         </Row>
       }
       pagination={{
+        current: page,
+        pageSize: pageSize,
+        onChange: handlePaginationChange,
+        total: blogArticlesList?.data.itemsAmount,
         showSizeChanger: true,
-        total: 500,
       }}
-      dataSource={blogArticles}
+      dataSource={blogArticlesList?.data.items}
       renderItem={(item) => {
         return (
           <List.Item style={{ padding: '24px 16px 27px 16px' }}>
@@ -201,3 +193,5 @@ export const BlogList: FC<BlogListProps> = ({ showFilters }) => {
     />
   );
 };
+
+export default BlogList;

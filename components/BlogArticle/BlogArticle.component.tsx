@@ -1,33 +1,23 @@
 import { Avatar, Col, Row, Tag, Typography, Card } from 'antd';
+import { max } from 'date-fns';
+import { AdminBlogArticle } from 'generated';
 import moment from 'moment';
 import { FC } from 'react';
 import { Image } from '../Image/Image.component';
 
 export type BlogArticleProps = {
-  id: string;
-  title: string;
-  tags: {
-    label: string;
-    value: string;
-  }[];
-  avatar: string;
-  author: string;
-  data: Date;
-  description?: string;
-  image?: string;
   selectedArticles: string[];
   handleSelectArticle: (value: string) => void;
 };
 
-export const BlogArticle: FC<BlogArticleProps> = ({
+export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
   id,
   title,
-  description,
+  text,
   tags,
-  avatar,
   author,
-  data,
-  image,
+  publicationDate,
+  cover,
   selectedArticles,
   handleSelectArticle,
 }) => {
@@ -36,7 +26,7 @@ export const BlogArticle: FC<BlogArticleProps> = ({
     <Card
       style={
         selectedArticle
-          ? { padding: '8px', border: '4px solid #69C0FF', borderRadius: '8px', cursor: 'pointer' }
+          ? { padding: '8px', outline: '4px solid #69C0FF', borderRadius: '8px', cursor: 'pointer' }
           : { padding: '8px' }
       }
       hoverable={!selectedArticle}
@@ -49,28 +39,30 @@ export const BlogArticle: FC<BlogArticleProps> = ({
         <Col style={{ marginBottom: '24px' }} flex={3}>
           <h3 style={{ marginBottom: '16px' }}>{title}</h3>
           {tags.map((tag) => {
-            return (
-              <Tag key={tag.label} color={tag.value}>
-                {tag.label}
-              </Tag>
-            );
+            return <Tag key={tag.id}>{tag.name}</Tag>;
           })}
         </Col>
         <Col flex={2}>
-          {image && <Image style={{ borderRadius: '4px' }} width={272} height={78} alt={'image'} src={image} />}
+          {cover && (
+            <Image
+              style={{ borderRadius: '4px' }}
+              width={272}
+              height={78}
+              alt={'image'}
+              src={cover.sizes.original.url}
+            />
+          )}
         </Col>
-        {description && (
-          <Col style={{ marginBottom: '24px' }} span={24}>
-            <Typography.Text type="secondary" style={{ fontSize: '16px' }}>
-              {description}
-            </Typography.Text>
-          </Col>
-        )}
+        <Col style={{ marginBottom: '24px' }} span={24}>
+          <Typography.Paragraph ellipsis={{ rows: 3 }} type="secondary" style={{ fontSize: '16px' }}>
+            {text}
+          </Typography.Paragraph>
+        </Col>
         <Col span={24}>
-          <Avatar style={{ marginRight: '8px' }} src={avatar} size={'small'} />
-          <Typography.Link style={{ fontSize: '16px', marginRight: '18px' }}>{author}</Typography.Link>
+          <Avatar style={{ marginRight: '8px' }} src={author.avatar} size={'small'} />
+          <Typography.Link style={{ fontSize: '16px', marginRight: '18px' }}>{author.fullName}</Typography.Link>
           <Typography.Text style={{ marginRight: '8px' }}>Опубликовано:</Typography.Text>
-          <Typography.Text type="secondary">{moment(data).format('YYYY-MM-DD HH:MM')}</Typography.Text>
+          <Typography.Text type="secondary">{moment(publicationDate).format('YYYY-MM-DD HH:MM')}</Typography.Text>
         </Col>
       </Row>
     </Card>
