@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Badge, Table } from 'antd';
 import { GridView, toGridView } from '../../helpers/toGridView';
 import { ColumnsType, SortOrder, TableRowSelection } from 'antd/lib/table/interface';
@@ -67,6 +67,7 @@ const queryStatusLists: Record<TAB_KEY, TherapistProfileStatus[]> = {
 
 const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
   const { push } = useRouter();
+  const isMounted = useRef(true);
   const [isMultipleChoice] = useState(false);
 
   const [page, setPage] = useState(1);
@@ -74,6 +75,17 @@ const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
   const [sortOrder, setSortOrder] = useState<NonNullable<SortOrder>>('descend');
 
   const { search, phone } = useUsersQueryParams();
+
+  useEffect(() => {
+    if (isMounted.current) {
+      isMounted.current = false;
+      return;
+    }
+
+    if (phone || search) {
+      setPage(0);
+    }
+  }, [phone, search]);
 
   const fetchTherapists = useCallback(
     (page) => {
