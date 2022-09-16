@@ -36,7 +36,7 @@ export function useUsersHeaderForm(form: FormInstance<UsersQueryParams>) {
   }, [form]);
 
   const debounceTimerId = useRef<null | number>(null);
-  const handleFiltersChange: FormProps['onFieldsChange'] = useCallback(() => {
+  const handleFiltersChange: FormProps['onValuesChange'] = useCallback(() => {
     const timerId = debounceTimerId.current;
 
     if (timerId) {

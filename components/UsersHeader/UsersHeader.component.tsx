@@ -79,7 +79,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
             form={form}
             layout={'vertical'}
             onFinish={handleFiltersApply}
-            onFieldsChange={handleFiltersChange}
+            onValuesChange={handleFiltersChange}
             initialValues={{
               search,
               phone,
