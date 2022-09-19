@@ -21,18 +21,23 @@ export const TherapistSignupInterview: FC = () => {
     setLoading(true);
     await markInterviewFailed(therapist.id);
     await refetch('therapist');
+    setLoading(false);
   }, [refetch, therapist.id]);
 
   return (
     <Spin spinning={loading}>
-      <Space size={8}>
-        <Button danger htmlType={'button'} onClick={failed}>
-          Интервью провалено
-        </Button>
-        <Button type={'primary'} htmlType={'button'} onClick={passed}>
-          Интервью пройдено
-        </Button>
-      </Space>
+      {therapist.status === 'interview_failed' ? (
+        <span style={{ fontSize: '16px' }}>Пользователь не прошел верификацию и не может работать у нас.</span>
+      ) : (
+        <Space size={8}>
+          <Button danger htmlType={'button'} onClick={failed}>
+            Интервью провалено
+          </Button>
+          <Button type={'primary'} htmlType={'button'} onClick={passed}>
+            Интервью пройдено
+          </Button>
+        </Space>
+      )}
     </Spin>
   );
 };
