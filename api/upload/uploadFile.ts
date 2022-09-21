@@ -1,6 +1,7 @@
 import { FileMimeType, FileUploadCredentials } from '../../generated';
 import FormData from 'form-data';
 import axios from 'axios';
+import { RcFile } from 'antd/lib/upload';
 
 export interface UploadFileResponse {
   token: string;
@@ -23,7 +24,7 @@ export interface UploadFileResponse {
  * @param credentials - результат метода `requestFileUploadUrl`
  * @param file - загружаемый файл
  */
-export const uploadFile = async (credentials: FileUploadCredentials, file: File) => {
+export const uploadFile = async (credentials: FileUploadCredentials, file: File | RcFile) => {
   // {[mime-type]: maxSize}
   const allowed: Partial<Record<FileMimeType, number>> = {};
 
