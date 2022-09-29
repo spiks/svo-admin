@@ -35,21 +35,23 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
         handleSelectArticle(id);
       }}
     >
-      <Row>
-        <Col style={{ marginBottom: '24px' }} flex={3}>
+      <Row justify="space-between">
+        <Col style={{ marginBottom: '24px' }} span={14}>
           <h3 style={{ marginBottom: '16px' }}>{title}</h3>
           {tags.map((tag) => {
             return <Tag key={tag.id}>{tag.name}</Tag>;
           })}
         </Col>
-        <Col flex={2}>
+        <Col>
           {cover && (
             <Image
+              layout="fixed"
+              objectFit="cover"
               style={{ borderRadius: '4px' }}
               width={272}
               height={78}
               alt={'image'}
-              src={cover.sizes.original.url}
+              src={'https://' + cover.sizes.original.url}
             />
           )}
         </Col>

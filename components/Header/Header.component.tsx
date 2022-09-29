@@ -8,7 +8,7 @@ export const Header: FC<PageHeaderProps> = ({ children, ...props }) => {
       }}
       {...props}
     >
-      {children}
+      <div style={{ marginLeft: '36px' }}>{children}</div>
     </PageHeader>
   );
 };
