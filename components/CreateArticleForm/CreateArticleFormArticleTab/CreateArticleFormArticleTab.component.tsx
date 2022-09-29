@@ -1,23 +1,22 @@
 import { MarkdownEditor } from '@components/MarkdownEditor/MarkdownEditor.component';
 import { Button, Form } from 'antd';
-
-import { FC, useContext, useEffect } from 'react';
+import { FC, useContext } from 'react';
 import { CreateArticleFormContext } from '../CreateArticleForm.component';
 import { LeftOutlined } from '@ant-design/icons';
 
 export const CreateArticleFormArticleTab: FC = () => {
   const formContext = useContext(CreateArticleFormContext);
-  const context = formContext?.form;
+  const form = formContext?.form;
 
-  const values = context?.getFieldsValue(true);
+  const values = form?.getFieldsValue(true);
 
   return (
-    <>
+    <div style={{ padding: '56px' }}>
       <h1 style={{ textAlign: 'start', marginBottom: '40px', fontSize: '24px' }}>{values?.title}</h1>
-      <Form.Item rules={[{ required: true, message: 'Введите текст статьи' }]} name={'text'}>
+      <Form.Item noStyle rules={[{ required: true, message: 'Введите текст статьи' }]} name={'text'}>
         <MarkdownEditor initialValue={values?.text} />
       </Form.Item>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '48px' }}>
         <Form.Item>
           <Button
             onClick={() => {
@@ -38,6 +37,6 @@ export const CreateArticleFormArticleTab: FC = () => {
           </Button>
         </Form.Item>
       </div>
-    </>
+    </div>
   );
 };

@@ -1,5 +1,5 @@
 import { TagRender } from '@components/TagRender/TagRender.component';
-import { Button, Checkbox, Col, Divider, Form, Row, Select, Typography, Upload } from 'antd';
+import { Button, Checkbox, Col, Divider, Form, notification, Row, Select, Typography, Upload } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { uploadFile } from 'api/upload/uploadFile';
@@ -19,12 +19,25 @@ export const CreateArticleFormInformationTab: FC = () => {
 
   const handleChange = async (info: UploadChangeParam<UploadFile>) => {
     const { data: credentials } = await requestFileUploadUrl('article_cover');
-    const { data: uploaded } = await uploadFile(credentials, info.fileList[0].originFileObj as RcFile);
-    form?.setFieldValue('cover', uploaded.token);
+    try {
+      const { data: uploaded } = await uploadFile(credentials, info.fileList[0].originFileObj as RcFile);
+      form?.setFieldValue('cover', uploaded.token);
+    } catch (err) {
+      if (err instanceof Error) {
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: err.message,
+        });
+        return;
+      } else {
+        throw err;
+      }
+    }
   };
 
   return (
-    <>
+    <div style={{ padding: '80px 160px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '48px', fontSize: '38px' }}>{'Информация'}</h1>
       <Form.Item
         rules={[{ required: true, message: 'Введите заголовок статьи' }]}
@@ -37,7 +50,7 @@ export const CreateArticleFormInformationTab: FC = () => {
       <Form.Item name={'shortText'} label="Краткое описание">
         <TextArea style={{ marginBottom: '24px' }} showCount maxLength={400} />
       </Form.Item>
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }} valuePropName="checked" name={'showPreviewFromArticle'}>
+      <Form.Item wrapperCol={{ offset: 6, span: 18 }} valuePropName="checked" name={'showPreviewFromArticle'}>
         <Checkbox defaultChecked={false}>{'Показывать начало статьи вместо краткого описания'}</Checkbox>
       </Form.Item>
       <Form.Item rules={[{ required: true, message: 'Укажите теги' }]} name={'tags'} required label="Теги">
@@ -76,7 +89,7 @@ export const CreateArticleFormInformationTab: FC = () => {
           </Col>
         </Row>
       </Form.Item>
-      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+      <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
         <Button
           onClick={() => {
             if (formContext.handleTabListChange) {
@@ -89,6 +102,6 @@ export const CreateArticleFormInformationTab: FC = () => {
           {'Продолжить'}
         </Button>
       </Form.Item>
-    </>
+    </div>
   );
 };

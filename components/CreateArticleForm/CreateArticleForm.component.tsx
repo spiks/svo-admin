@@ -1,4 +1,4 @@
-import { Form, FormInstance, FormProps } from 'antd';
+import { Form, FormInstance, FormProps, notification } from 'antd';
 import { FC, createContext, useMemo } from 'react';
 import { AdminSubmitBlogArticle } from 'generated';
 import { submitBlogArticle } from 'api/blog/submitBlogArticle';
@@ -21,7 +21,21 @@ const CreateArticleForm: FC<{ activeTab: TabKey; handleTabListChange: (key: TabK
 
   const onFinish: FormProps<AdminSubmitBlogArticle>['onFinish'] = async () => {
     const values: AdminSubmitBlogArticle = form.getFieldsValue(true);
-    await submitBlogArticle(values);
+    try {
+      await submitBlogArticle(values);
+      notification.success({
+        type: 'success',
+        message: 'Успех',
+        description: 'Статья успешно создана',
+      });
+      form.resetFields();
+    } catch (err) {
+      notification.error({
+        type: 'error',
+        message: 'Ошибка',
+        description: 'Не удалось создать статью. Проверьте, все ли поля заполнены верно.',
+      });
+    }
   };
 
   const renderForm = () => {
@@ -51,7 +65,7 @@ const CreateArticleForm: FC<{ activeTab: TabKey; handleTabListChange: (key: TabK
         form={form}
         onFinish={onFinish}
         layout="horizontal"
-        labelCol={{ span: 8 }}
+        labelCol={{ span: 6 }}
         wrapperCol={{ span: 24 }}
       >
         {renderForm}
