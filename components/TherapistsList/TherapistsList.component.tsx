@@ -83,7 +83,7 @@ const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
     }
 
     if (phone || search) {
-      setPage(0);
+      setPage(1);
     }
   }, [phone, search]);
 
