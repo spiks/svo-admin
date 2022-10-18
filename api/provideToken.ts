@@ -1,5 +1,5 @@
 import { AuthorizationToken } from '../generated';
-import { ClientStorage } from '../utility/clientStorage';
+import { TokenStorage } from '../utility/clientStorage';
 
 type RequestMethodArgs = {
   requestBody: {
@@ -39,7 +39,7 @@ export function provideToken<T>(service: T): TokenlessService<T> {
     if (typeof property === 'function') {
       newValue = ((args: unknown) => {
         if (isMethodArgs(args)) {
-          const token = ClientStorage.getTokens()?.accessToken;
+          const token = TokenStorage.getTokens()?.accessToken;
 
           return property({
             ...args,

@@ -1,7 +1,7 @@
 import { createContext, FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { getEmail } from '../../api/auth/getEmail';
 import { createRefreshTokenInterceptor } from '../../api/interceptors/createRefreshTokenInterceptor';
-import { ClientStorage } from '../../utility/clientStorage';
+import { TokenStorage } from '../../utility/clientStorage';
 import { AccountEmail } from '../../generated';
 import { useRouter } from 'next/router';
 
@@ -26,10 +26,13 @@ const AuthProvider: FC = ({ children }) => {
     token: null,
     email: null,
   });
+  const [isLoading, setIsLoading] = useState(false);
   const { push } = useRouter();
 
+
+
   const isUserLoggedIn = useCallback(async () => {
-    const storageToken = ClientStorage.getTokens()?.accessToken;
+    const storageToken = TokenStorage.getTokens()?.accessToken;
     if (storageToken) {
       const email = await getEmail();
       setCredentials({
@@ -37,7 +40,7 @@ const AuthProvider: FC = ({ children }) => {
         email: email.data,
       });
     } else {
-      ClientStorage.clearTokens();
+      TokenStorage.clearTokens();
       push('/login', undefined, { shallow: true });
     }
     // если передать router, то будет бесконечный цикл
