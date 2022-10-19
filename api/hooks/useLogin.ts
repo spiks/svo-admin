@@ -1,5 +1,5 @@
 import { issueToken } from '../auth/issueTokenByEmailAndPassword';
-import { TokenStorage } from '../../utility/clientStorage';
+import { TokenStorage } from '../../utility/tokenStorage';
 import { useRouter } from 'next/router';
 
 export const useLogin = () => {

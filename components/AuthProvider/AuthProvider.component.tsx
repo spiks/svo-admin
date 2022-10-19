@@ -1,7 +1,7 @@
 import { createContext, FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { getEmail } from '../../api/auth/getEmail';
 import { createRefreshTokenInterceptor } from '../../api/interceptors/createRefreshTokenInterceptor';
-import { TokenStorage } from '../../utility/clientStorage';
+import { TokenStorage } from '../../utility/tokenStorage';
 import { AccountEmail } from '../../generated';
 import { useRouter } from 'next/router';
 
@@ -12,6 +12,7 @@ export type CredentialsType = {
 
 export type AuthContextValue = {
   credentials: CredentialsType;
+  isLoading: boolean;
 };
 
 export const AuthContext = createContext<AuthContextValue>({
@@ -19,6 +20,7 @@ export const AuthContext = createContext<AuthContextValue>({
     token: null,
     email: null,
   },
+  isLoading: false,
 });
 
 const AuthProvider: FC = ({ children }) => {
@@ -29,20 +31,21 @@ const AuthProvider: FC = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { push } = useRouter();
 
-
-
   const isUserLoggedIn = useCallback(async () => {
     const storageToken = TokenStorage.getTokens()?.accessToken;
-    if (storageToken) {
-      const email = await getEmail();
-      setCredentials({
-        token: storageToken,
-        email: email.data,
-      });
-    } else {
+    if (!storageToken) {
       TokenStorage.clearTokens();
       push('/login', undefined, { shallow: true });
+      return;
     }
+
+    const email = await getEmail();
+    setCredentials({
+      token: storageToken,
+      email: email.data,
+    });
+    setIsLoading(false);
+
     // если передать router, то будет бесконечный цикл
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -57,8 +60,9 @@ const AuthProvider: FC = ({ children }) => {
   const contextValue = useMemo(() => {
     return {
       credentials,
+      isLoading,
     };
-  }, [credentials]);
+  }, [credentials, isLoading]);
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
 };

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { TokenStorage } from '../../utility/clientStorage';
+import { TokenStorage } from '../../utility/tokenStorage';
 import { AuthenticationService, IssuedAuthorizationCredentials } from '../../generated';
 import { ApiRegularError } from '../errorClasses';
 

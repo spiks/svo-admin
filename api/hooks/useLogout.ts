@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import { revokeToken } from '../../api/auth/revokeToken';
 import { ApiValidationError } from '../../api/errorClasses';
-import { TokenStorage } from '../../utility/clientStorage';
+import { TokenStorage } from '../../utility/tokenStorage';
 import { NAVIGATION } from '../../constants/navigation';
 
 export const useLogout = () => {
