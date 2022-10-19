@@ -6,9 +6,7 @@ import styles from './LoginForm.module.css';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { PasswordRecoveryModal } from '../PasswordRecoveryModal/PasswordRecoveryModal.component';
 import { IssueTokenByEmailAndPasswordRequest } from '../../generated';
-import { issueToken } from '../../api/auth/issueTokenByEmailAndPassword';
-import { ClientStorage } from '../../utility/clientStorage';
-import { ApiValidationError } from '../../api/errorClasses';
+import { useLogin } from '../../api/hooks/useLogin';
 
 export type ILoginFormProps = {
   email: string;
@@ -19,6 +17,7 @@ export const LoginForm: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const login = useLogin();
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -32,21 +31,15 @@ export const LoginForm: FC = () => {
     setIsModalVisible(false);
   };
 
-  const onFinish: FormProps<IssueTokenByEmailAndPasswordRequest>['onFinish'] = async (values) => {
+  const onFinish: FormProps<IssueTokenByEmailAndPasswordRequest>['onFinish'] = async ({ email, password }) => {
     if (loading) {
       return;
     }
     setLoading(true);
-    try {
-      const tokenResp = await issueToken(values.email, values.password);
-      if (tokenResp.status === 'success') {
-        ClientStorage.setTokens(tokenResp.data);
-        window.location.href = '/users/therapists';
-      }
-    } catch (error) {
-      if (!(error instanceof ApiValidationError)) {
-        setError('Неизвестная ошибка');
-      }
+
+    const result = await login(email, password);
+    if (result.error) {
+      setError('Неизвестная ошибка');
     }
     setLoading(false);
   };

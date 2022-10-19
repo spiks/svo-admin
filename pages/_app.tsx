@@ -1,11 +1,12 @@
 import { createErrorResponseInterceptor } from '../api/interceptors/createErrorResponseInterceptor';
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import AuthProvider from '../components/AuthProvider/AuthProvider.component';
-import { useEffect, useState, Suspense } from 'react';
+import AuthProvider, { AuthContext } from '../components/AuthProvider/AuthProvider.component';
+import { useEffect, useContext } from 'react';
 import { OpenAPI } from '../generated';
 import getConfig from 'next/config';
 import SplashScreenLoader from '../components/SplashScreenLoader/SplashScreenLoader.component';
+import { useRouter } from 'next/router';
 
 require('../styles/ant.less');
 require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
@@ -15,11 +16,14 @@ createErrorResponseInterceptor();
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 2, refetchOnWindowFocus: false } } });
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const [isLoading, setLoading] = useState<boolean>(true);
+  const { push } = useRouter();
+  const { credentials, isLoading } = useContext(AuthContext);
 
   useEffect(() => {
-    setLoading(false);
-  }, []);
+    if (!credentials.token) {
+      push('/login');
+    }
+  }, [credentials, isLoading, push]);
 
   return (
     <QueryClientProvider client={queryClient}>

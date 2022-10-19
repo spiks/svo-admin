@@ -1,5 +1,15 @@
-import { MainLayout } from '../components/MainLayout/MainLayout.component';
+import SplashScreenLoader from '@components/SplashScreenLoader/SplashScreenLoader.component';
+import { GetServerSidePropsContext } from 'next';
 
 export default function Home() {
-  return <MainLayout />;
+  return <SplashScreenLoader />;
 }
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  return {
+    redirect: {
+      destination: '/login',
+      statusCode: 307,
+    },
+  };
+};

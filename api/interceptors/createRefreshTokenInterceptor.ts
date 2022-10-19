@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ClientStorage } from '../../utility/clientStorage';
+import { TokenStorage } from '../../utility/tokenStorage';
 import { AuthenticationService, IssuedAuthorizationCredentials } from '../../generated';
 import { ApiRegularError } from '../errorClasses';
 
@@ -21,7 +21,7 @@ export function createRefreshTokenInterceptor(onNewToken?: () => void) {
       // Если не access_token_expired, то пропускаем ошибку
       if (!isTokenExpiredError(error)) {
         if (isUnauthorizedTokenError(error)) {
-          ClientStorage.clearTokens();
+          TokenStorage.clearTokens();
           onNewToken && onNewToken();
         }
         return Promise.reject(error);
@@ -34,7 +34,7 @@ export function createRefreshTokenInterceptor(onNewToken?: () => void) {
        */
       axios.interceptors.response.eject(interceptor);
 
-      const refreshToken = ClientStorage.getTokens()?.refreshToken;
+      const refreshToken = TokenStorage.getTokens()?.refreshToken;
 
       if (!refreshToken) {
         return Promise.reject(error);
@@ -43,12 +43,12 @@ export function createRefreshTokenInterceptor(onNewToken?: () => void) {
       try {
         const refreshTokenResponse = await fetchNewToken(refreshToken);
 
-        ClientStorage.setTokens(refreshTokenResponse.data);
+        TokenStorage.setTokens(refreshTokenResponse.data);
         onNewToken?.();
 
         return retryFailedRequest(error, refreshTokenResponse);
       } catch (error) {
-        ClientStorage.clearTokens();
+        TokenStorage.clearTokens();
         return Promise.reject(error);
       } finally {
         // Создаем interceptor, прослушивающий access_token_expired вновь, так как сверху мы его остановили,

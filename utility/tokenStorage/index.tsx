@@ -25,7 +25,7 @@ const isTokens = (obj: Record<string, unknown>): obj is IssuedAuthorizationCrede
   });
 };
 
-export class ClientStorage {
+export class TokenStorage {
   public static setTokens(obj: IssuedAuthorizationCredentials): void {
     localStorage.setItem('Tokens', JSON.stringify(obj));
   }
