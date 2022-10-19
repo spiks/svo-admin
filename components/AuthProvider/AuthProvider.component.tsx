@@ -28,7 +28,7 @@ const AuthProvider: FC = ({ children }) => {
     token: null,
     email: null,
   });
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { push } = useRouter();
 
   const isUserLoggedIn = useCallback(async () => {
