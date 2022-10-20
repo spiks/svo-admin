@@ -167,6 +167,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
             <Row>
               <Pagination
                 className={style['pagination']}
+                current={page}
                 showSizeChanger
                 pageSize={pageSize}
                 onChange={handlePaginationChange}

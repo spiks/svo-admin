@@ -1,22 +1,20 @@
-import { Alert, Button, Tabs, Form, Input, Select, DatePicker, DatePickerProps, Row, Col } from 'antd';
-import { FC } from 'react';
+import { Alert, Button, Form, Input, Select, DatePicker, Row, Col } from 'antd';
+import { FC, useEffect } from 'react';
 import { Header } from '../Header/Header.component';
 import { FilterFilled, InfoCircleOutlined } from '@ant-design/icons';
-import { TagRender } from '../TagRender/TagRender.component';
 import { useRouter } from 'next/router';
 import { useBlogHeaderForm } from './BlogHeader.hooks/useBlogHeaderForm';
 import { useBlogHeaderQueryParams } from './BlogHeader.hooks/useBlogHeaderQueryParams';
 import moment from 'moment';
-import { BlogArticleTag } from 'generated';
+import { getListBlogTags } from 'api/blog/getListBlogTags';
+import { ApiRegularError } from 'api/errorClasses';
 
 const { Search } = Input;
 
-//  TODO: нужен метод listBlogTags, чтобы получить список всех тегов. На основании этого списка уже реализовывать поиск статей по тегам.
-const options: BlogArticleTag[] = [
-  { id: 'gold', name: 'Общая практика' },
-  { id: 'blue', name: 'Мотивация' },
-  { id: 'lime', name: 'Семья' },
-];
+let tagsOptions: {
+  value: string;
+  label: string;
+}[];
 
 export type BlogHeaderProps = {
   showFilters: boolean;
@@ -27,6 +25,24 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
   const { back, push } = useRouter();
   const { handleFiltersApply, handleResetFilters, handleFiltersChange, form } = useBlogHeaderForm();
   const { search, tags, publishDate } = useBlogHeaderQueryParams();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const response = await getListBlogTags();
+        tagsOptions = response.data.map((it) => {
+          return {
+            value: it.id,
+            label: it.name,
+          };
+        });
+      } catch (error) {
+        if (!(error instanceof ApiRegularError)) {
+          console.error('Неизвестная ошибка');
+        }
+      }
+    })();
+  }, []);
 
   const initialDate = publishDate ? moment(publishDate) : null;
 
@@ -109,15 +125,13 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                     tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
                   >
                     <Select
+                      options={tagsOptions}
                       size="large"
                       mode="multiple"
-                      tagRender={({ label, value, closable, onClose, ...props }) => {
-                        return (
-                          <TagRender label={label} value={value} closable={closable} onClose={onClose} {...props} />
-                        );
+                      onChange={(value) => {
+                        return value;
                       }}
                       style={{ width: '100%' }}
-                      options={options}
                     />
                   </Form.Item>
                 </Col>
