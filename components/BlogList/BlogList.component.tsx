@@ -48,6 +48,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
   const fetchBlogArticles = useCallback(
     (page) => {
       return getListBlogArticles({
+        status: null,
         search,
         isArchived: activeTab === 'archived',
         tags,
