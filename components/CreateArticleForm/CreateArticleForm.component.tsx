@@ -1,7 +1,6 @@
 import { Form, FormInstance, FormProps, notification } from 'antd';
 import { FC, createContext, useMemo } from 'react';
-import { AdminSubmitBlogArticle } from 'generated';
-import { submitBlogArticle } from 'api/blog/submitBlogArticle';
+import { AdminSubmitBlogArticle, submitBlogArticle } from 'api/blog/submitBlogArticle';
 import { TabKey } from 'pages/content/blog/createArticle';
 import { CreateArticleFormInformationTab } from './CreateArticleFormInformationTab/CreateArticleFormInformationTab.component';
 import { CreateArticleFormArticleTab } from './CreateArticleFormArticleTab/CreateArticleFormArticleTab.component';
