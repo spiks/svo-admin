@@ -36,6 +36,7 @@ const AuthProvider: FC = ({ children }) => {
     if (!storageToken) {
       TokenStorage.clearTokens();
       push('/login', undefined, { shallow: true });
+      setIsLoading(false);
       return;
     }
 
