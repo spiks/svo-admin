@@ -1,23 +1,23 @@
-import { PictureOutlined, ProfileOutlined, UserOutlined } from '@ant-design/icons';
+import { PictureOutlined, UserOutlined } from '@ant-design/icons';
 import { NAVIGATION } from '../../constants/navigation';
 
 export const SiderMenuItems = [
   // Content
-  // {
-  //   url: NAVIGATION.content,
-  //   label: 'Контент',
-  //   icon: <PictureOutlined />,
-  //   children: [
-  //     {
-  //       label: 'Блог',
-  //       url: NAVIGATION.blog,
-  //     },
-  //     {
-  //       label: 'Мероприятия',
-  //       url: NAVIGATION.events,
-  //     },
-  //   ],
-  // },
+  {
+    url: NAVIGATION.content,
+    label: 'Контент',
+    icon: <PictureOutlined />,
+    children: [
+      {
+        label: 'Блог',
+        url: NAVIGATION.blog,
+      },
+      // {
+      //   label: 'Мероприятия',
+      //   url: NAVIGATION.events,
+      // },
+    ],
+  },
   // Users
   {
     url: NAVIGATION.users,

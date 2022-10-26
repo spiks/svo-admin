@@ -3,9 +3,9 @@ import { TabList } from '@components/TabList/TabList.component';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import { useCallback, useState } from 'react';
-import { BlogHeader } from '../../../components/BlogHeader/BlogHeader.component';
-import { MainLayout } from '../../../components/MainLayout/MainLayout.component';
-import { PageWrapper } from '../../../components/PageWrapper/PageWrapper.component';
+import { BlogHeader } from '@components/BlogHeader/BlogHeader.component';
+import { MainLayout } from '@components/MainLayout/MainLayout.component';
+import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 
 const BlogListComponent = dynamic(() => import('@components/BlogList/BlogList.component'), {
   loading: () => <SplashScreenLoader />,
