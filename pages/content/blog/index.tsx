@@ -6,21 +6,23 @@ import { useCallback, useState } from 'react';
 import { BlogHeader } from '@components/BlogHeader/BlogHeader.component';
 import { MainLayout } from '@components/MainLayout/MainLayout.component';
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
+import { ArticleBlogStatus } from '../../../generated';
 
 const BlogListComponent = dynamic(() => import('@components/BlogList/BlogList.component'), {
   loading: () => <SplashScreenLoader />,
 });
+export type TabKey = ArticleBlogStatus | 'article_archived';
 
-export type TabKey = 'published' | 'archived';
-
-const tabListItems: { label: string; key: TabKey }[] = [
-  { label: 'Опубликованные', key: 'published' },
-  { label: 'Архивные', key: 'archived' },
+const tabListItems: { label: string; key: ArticleBlogStatus | 'article_archived' }[] = [
+  { label: 'Опубликованные', key: 'article_published' },
+  { label: 'Архивные', key: 'article_archived' },
+  { label: 'На модерации', key: 'article_awaiting_review' },
+  { label: 'Отклоненные', key: 'article_rejected' },
 ];
 
 const BlogPage: NextPage = () => {
   const [showFilters, setShowFilters] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<TabKey>('published');
+  const [activeTab, setActiveTab] = useState<ArticleBlogStatus>('article_published');
 
   const handleTabListChange = useCallback((key) => {
     setActiveTab(key);
