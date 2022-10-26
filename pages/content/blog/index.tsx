@@ -11,6 +11,7 @@ import { ArticleBlogStatus } from '../../../generated';
 const BlogListComponent = dynamic(() => import('@components/BlogList/BlogList.component'), {
   loading: () => <SplashScreenLoader />,
 });
+
 export type TabKey = ArticleBlogStatus | 'article_archived';
 
 const tabListItems: { label: string; key: ArticleBlogStatus | 'article_archived' }[] = [
