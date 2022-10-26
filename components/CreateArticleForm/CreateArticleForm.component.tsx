@@ -1,6 +1,6 @@
-import { Form, FormInstance, FormProps, notification } from 'antd';
+import { Form, FormInstance } from 'antd';
 import { FC, createContext, useMemo } from 'react';
-import { AdminSubmitBlogArticle, submitBlogArticle } from 'api/blog/submitBlogArticle';
+import { AdminSubmitBlogArticle } from 'api/blog/submitBlogArticle';
 import { TabKey } from 'pages/content/blog/createArticle';
 import { CreateArticleFormInformationTab } from './CreateArticleFormInformationTab/CreateArticleFormInformationTab.component';
 import { CreateArticleFormArticleTab } from './CreateArticleFormArticleTab/CreateArticleFormArticleTab.component';
@@ -12,31 +12,14 @@ type CreateArticleFormContextValue = {
 
 export const CreateArticleFormContext = createContext<CreateArticleFormContextValue>({});
 
-const CreateArticleForm: FC<{ activeTab: TabKey; handleTabListChange: (key: TabKey) => void }> = ({
-  activeTab,
-  handleTabListChange,
-}) => {
-  const [form] = Form.useForm<AdminSubmitBlogArticle>();
+type CreateArticleFormProps = {
+  activeTab: TabKey;
+  handleTabListChange: (key: TabKey) => void;
+  onFinish: (values: AdminSubmitBlogArticle) => void;
+  form: FormInstance<AdminSubmitBlogArticle>;
+};
 
-  const onFinish: FormProps<AdminSubmitBlogArticle>['onFinish'] = async () => {
-    const values: AdminSubmitBlogArticle = form.getFieldsValue(true);
-    try {
-      await submitBlogArticle(values);
-      notification.success({
-        type: 'success',
-        message: 'Успех',
-        description: 'Статья успешно создана',
-      });
-      form.resetFields();
-    } catch (err) {
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Не удалось создать статью. Проверьте, все ли поля заполнены верно.',
-      });
-    }
-  };
-
+const CreateArticleForm: FC<CreateArticleFormProps> = ({ activeTab, handleTabListChange, form, onFinish }) => {
   const renderForm = () => {
     switch (activeTab) {
       case 'information':
@@ -60,6 +43,7 @@ const CreateArticleForm: FC<{ activeTab: TabKey; handleTabListChange: (key: TabK
           cover: null,
           shortText: null,
           showPreviewFromArticle: false,
+          showInBlockInterestingAndUseful: false,
         }}
         form={form}
         onFinish={onFinish}

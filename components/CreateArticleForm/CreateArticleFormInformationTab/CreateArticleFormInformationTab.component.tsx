@@ -64,6 +64,9 @@ export const CreateArticleFormInformationTab: FC = () => {
           options={tagOptions}
         />
       </Form.Item>
+      <Form.Item wrapperCol={{ offset: 6, span: 18 }} valuePropName="checked" name={'showInBlockInterestingAndUseful'}>
+        <Checkbox defaultChecked={false}>{'Показывать в “Интересно и полезно”'}</Checkbox>
+      </Form.Item>
       <Form.Item name={'cover'} label="Обложка статьи" valuePropName={'fileList'}>
         <Row gutter={16}>
           <Col span={6}>

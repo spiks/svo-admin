@@ -3,13 +3,14 @@ import { MainLayout } from '@components/MainLayout/MainLayout.component';
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import SplashScreenLoader from '@components/SplashScreenLoader/SplashScreenLoader.component';
 import { TabList } from '@components/TabList/TabList.component';
-import { BreadcrumbProps, Button } from 'antd';
+import { BreadcrumbProps, Button, Form, FormProps, notification } from 'antd';
 import { Route } from 'antd/lib/breadcrumb/Breadcrumb';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
+import { AdminSubmitBlogArticle, submitBlogArticle } from '../../../../api/blog/submitBlogArticle';
 
 const CreateArticleFormComponent = dynamic(() => import('@components/CreateArticleForm/CreateArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -48,6 +49,27 @@ const CreateArticlePage: NextPage = () => {
     setActiveTab(key);
   }, []);
 
+  const [form] = Form.useForm<AdminSubmitBlogArticle>();
+
+  const onFinish: FormProps<AdminSubmitBlogArticle>['onFinish'] = useCallback(async () => {
+    const values: AdminSubmitBlogArticle = form.getFieldsValue(true);
+    try {
+      await submitBlogArticle(values);
+      notification.success({
+        type: 'success',
+        message: 'Успех',
+        description: 'Статья успешно создана',
+      });
+      form.resetFields();
+    } catch (err) {
+      notification.error({
+        type: 'error',
+        message: 'Ошибка',
+        description: 'Не удалось создать статью. Проверьте, все ли поля заполнены верно.',
+      });
+    }
+  }, [form]);
+
   return (
     <MainLayout>
       <Header
@@ -59,13 +81,23 @@ const CreateArticlePage: NextPage = () => {
           <Button onClick={back} type="text" key="1">
             Закрыть
           </Button>,
+          activeTab === 'article' ? (
+            <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
+              Опубликовать
+            </Button>
+          ) : null,
         ]}
       >
         <TabList items={tabListItems} defaultActiveKey={'active'} onChange={handleTabListChange} />
       </Header>
       <div style={{ overflow: 'auto' }}>
         <PageWrapper>
-          <CreateArticleFormComponent activeTab={activeTab} handleTabListChange={handleTabListChange} />
+          <CreateArticleFormComponent
+            form={form}
+            onFinish={onFinish}
+            activeTab={activeTab}
+            handleTabListChange={handleTabListChange}
+          />
         </PageWrapper>
       </div>
     </MainLayout>
