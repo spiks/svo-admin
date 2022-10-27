@@ -4,7 +4,7 @@ import { Badge, Button, Col, List, Pagination, Row, Switch } from 'antd';
 import { getListBlogArticles } from 'api/blog/getListBlogArticles';
 import { markBlogArticlesAsArchived } from 'api/blog/markBlogArticlesAsArchived';
 import { DateWithTimezone } from 'generated';
-import { TabKey } from 'pages/content/blog';
+import { ArticleBlogStatus } from 'pages/content/blog';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { getTimeZoneToString } from 'utility/getTimeZoneToString';
 import { BlogArticle } from '../BlogArticle/BlogArticle.component';
@@ -12,7 +12,7 @@ import style from './BlogList.module.css';
 
 export type BlogListProps = {
   showFilters: boolean;
-  activeTab: TabKey;
+  activeTab: ArticleBlogStatus;
 };
 
 const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {

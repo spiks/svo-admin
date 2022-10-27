@@ -3,7 +3,7 @@ import { AdminBlogArticle } from 'generated';
 import moment from 'moment';
 import { FC } from 'react';
 import { Image } from '../Image/Image.component';
-import { TabKey as ArticleBlogStatus } from '../../pages/content/blog';
+import { ArticleBlogStatus } from '../../pages/content/blog';
 import { UserOutlined } from '@ant-design/icons';
 
 export type BlogArticleProps = {

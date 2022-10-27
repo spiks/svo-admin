@@ -12,7 +12,7 @@ export const CreateArticleFormArticleTab: FC = () => {
 
   return (
     <div style={{ padding: '56px' }}>
-      <h1 style={{ textAlign: 'start', marginBottom: '40px', fontSize: '24px' }}>{values?.title}</h1>
+      <h1 style={{ textAlign: 'start', marginBottom: '40px', fontSize: '24px' }}>{values?.title || 'Без названия'}</h1>
       <Form.Item noStyle rules={[{ required: true, message: 'Введите текст статьи' }]} name={'text'}>
         <MarkdownEditor initialValue={values?.text} />
       </Form.Item>
