@@ -1,27 +1,32 @@
 import { TagRender } from '@components/TagRender/TagRender.component';
-import { Button, Checkbox, Col, Divider, Form, notification, Row, Select, Typography, Upload } from 'antd';
+import { Checkbox, Col, Divider, Form, notification, Row, Select, Typography, Upload } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { uploadFile } from 'api/upload/uploadFile';
 import { PlusOutlined } from '@ant-design/icons';
-import { FC, useContext } from 'react';
-import { CreateArticleFormContext } from '../CreateArticleForm.component';
+import { FC } from 'react';
 import type { RcFile, UploadFile } from 'antd/es/upload/interface';
 import { UploadChangeParam } from 'antd/lib/upload';
 
 const { Text } = Typography;
 
-const tagOptions = [{ label: 'Общая практика' }, { label: 'Мотивация' }, { label: 'Семья' }];
+const tagOptions = [
+  { label: 'Общая практика', value: 'gold' },
+  { label: 'Мотивация', value: 'blue' },
+  { label: 'Семья', value: 'lime' },
+];
 
-export const CreateArticleFormInformationTab: FC = () => {
-  const formContext = useContext(CreateArticleFormContext);
-  const form = formContext?.form;
+type Props = {
+  setUploadedToken: (value: string) => void;
+};
 
+export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }) => {
   const handleChange = async (info: UploadChangeParam<UploadFile>) => {
     const { data: credentials } = await requestFileUploadUrl('article_cover');
     try {
       const { data: uploaded } = await uploadFile(credentials, info.fileList[0].originFileObj as RcFile);
-      form?.setFieldValue('cover', uploaded.token);
+      //form?.setFieldValue('cover', uploaded.token);
+      setUploadedToken(uploaded.token);
     } catch (err) {
       if (err instanceof Error) {
         notification.error({
@@ -92,19 +97,7 @@ export const CreateArticleFormInformationTab: FC = () => {
           </Col>
         </Row>
       </Form.Item>
-      <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-        <Button
-          onClick={() => {
-            if (formContext.handleTabListChange) {
-              formContext.handleTabListChange('article');
-            }
-          }}
-          size={'large'}
-          type={'primary'}
-        >
-          {'Продолжить'}
-        </Button>
-      </Form.Item>
+      {children}
     </div>
   );
 };

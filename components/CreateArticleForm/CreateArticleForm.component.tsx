@@ -1,16 +1,9 @@
-import { Form, FormInstance } from 'antd';
-import { FC, createContext, useMemo } from 'react';
+import { Button, Col, Form, FormInstance } from 'antd';
+import { FC } from 'react';
 import { AdminSubmitBlogArticle } from 'api/blog/submitBlogArticle';
-import { TabKey } from 'pages/content/blog/createArticle';
-import { CreateArticleFormInformationTab } from './CreateArticleFormInformationTab/CreateArticleFormInformationTab.component';
-import { CreateArticleFormArticleTab } from './CreateArticleFormArticleTab/CreateArticleFormArticleTab.component';
-
-type CreateArticleFormContextValue = {
-  form?: FormInstance<AdminSubmitBlogArticle>;
-  handleTabListChange?: (key: TabKey) => void;
-};
-
-export const CreateArticleFormContext = createContext<CreateArticleFormContextValue>({});
+import { TabKey } from '../../constants/blogTabs';
+import { ArticleTextForm } from '@components/ArticleForm/ArticleTextForm/ArticleTextForm.component';
+import { ArticleInformationForm } from '@components/ArticleForm/ArticleInformationForm/ArticleInformationForm.component';
 
 type CreateArticleFormProps = {
   activeTab: TabKey;
@@ -20,40 +13,49 @@ type CreateArticleFormProps = {
 };
 
 const CreateArticleForm: FC<CreateArticleFormProps> = ({ activeTab, handleTabListChange, form, onFinish }) => {
+  const values = form?.getFieldsValue(true);
+
   const renderForm = () => {
     switch (activeTab) {
       case 'information':
-        return <CreateArticleFormInformationTab />;
+        return (
+          <ArticleInformationForm setUploadedToken={(token) => form?.setFieldValue('cover', token)}>
+            <Col offset={6} span={16}>
+              <Button onClick={() => handleTabListChange('article')} size={'large'} type={'primary'}>
+                {'Продолжить'}
+              </Button>
+            </Col>
+          </ArticleInformationForm>
+        );
       case 'article':
-        return <CreateArticleFormArticleTab />;
+        return (
+          <ArticleTextForm
+            title={values?.title}
+            text={values?.text}
+            onReturnBackButtonClick={() => {
+              handleTabListChange('information');
+            }}
+          />
+        );
     }
   };
 
-  const contextValue = useMemo(() => {
-    return {
-      form,
-      handleTabListChange,
-    };
-  }, [form, handleTabListChange]);
-
   return (
-    <CreateArticleFormContext.Provider value={contextValue}>
-      <Form
-        initialValues={{
-          cover: null,
-          shortText: null,
-          showPreviewFromArticle: false,
-          showInBlockInterestingAndUseful: false,
-        }}
-        form={form}
-        onFinish={onFinish}
-        layout="horizontal"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 24 }}
-      >
-        {renderForm}
-      </Form>
-    </CreateArticleFormContext.Provider>
+    <Form
+      initialValues={{
+        cover: null,
+        shortText: null,
+        showPreviewFromArticle: false,
+        showInBlockInterestingAndUseful: false,
+      }}
+      form={form}
+      onFinish={onFinish}
+      layout="horizontal"
+      labelCol={{ span: 6 }}
+      wrapperCol={{ span: 24 }}
+    >
+      {renderForm}
+    </Form>
   );
 };
 
