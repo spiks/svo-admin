@@ -18,7 +18,7 @@ export type BlogListProps = {
 };
 
 const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
-  const [multipleChoice, setMultipleChoice] = useState<boolean>(true);
+  const [multipleChoice, setMultipleChoice] = useState<boolean>(false);
   const [selectedArticles, setSelectedArticles] = useState<string[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -108,7 +108,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
           selectedArticles.push(article.id);
         }
         setSelectedArticles([...selectedArticles]);
-      } else if (!article.isArchived) {
+      } else {
         switch (article.status) {
           case 'article_published': {
             router.push(`${NAVIGATION.blog}/editArticle/${article.id}`);
