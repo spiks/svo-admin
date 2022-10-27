@@ -3,12 +3,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge, Button, Col, List, Pagination, Row, Switch } from 'antd';
 import { getListBlogArticles } from 'api/blog/getListBlogArticles';
 import { markBlogArticlesAsArchived } from 'api/blog/markBlogArticlesAsArchived';
-import { DateWithTimezone } from 'generated';
+import { AdminBlogArticle, DateWithTimezone } from 'generated';
 import { ArticleBlogStatus } from 'pages/content/blog';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { getTimeZoneToString } from 'utility/getTimeZoneToString';
 import { BlogArticle } from '../BlogArticle/BlogArticle.component';
 import style from './BlogList.module.css';
+import { router } from 'next/client';
+import { NAVIGATION } from '../../constants/navigation';
 
 export type BlogListProps = {
   showFilters: boolean;
@@ -96,17 +98,31 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
     setSelectedArticles([]);
   };
 
-  const handleSelectArticle = (id: string) => {
-    if (multipleChoice) {
-      const index = selectedArticles.indexOf(id);
-      if (index !== -1) {
-        selectedArticles.splice(index, 1);
-      } else {
-        selectedArticles.push(id);
+  const handleSelectArticle = useCallback(
+    (article: AdminBlogArticle) => {
+      if (multipleChoice) {
+        const index = selectedArticles.indexOf(article.id);
+        if (index !== -1) {
+          selectedArticles.splice(index, 1);
+        } else {
+          selectedArticles.push(article.id);
+        }
+        setSelectedArticles([...selectedArticles]);
+      } else if (!article.isArchived) {
+        switch (article.status) {
+          case 'article_published': {
+            router.push(`${NAVIGATION.blog}/editArticle/${article.id}`);
+            break;
+          }
+          case 'article_awaiting_review': {
+            router.push(`${NAVIGATION.blog}/moderateArticle/${article.id}`);
+            break;
+          }
+        }
       }
-      setSelectedArticles([...selectedArticles]);
-    }
-  };
+    },
+    [multipleChoice, selectedArticles],
+  );
 
   const selectAllArticles = () => {
     if (idArticles) {
@@ -188,7 +204,11 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
       renderItem={(item) => {
         return (
           <List.Item style={{ padding: '24px 16px 27px 16px' }}>
-            <BlogArticle selectedArticles={selectedArticles} handleSelectArticle={handleSelectArticle} {...item} />
+            <BlogArticle
+              selectedArticles={selectedArticles}
+              handleSelectArticle={() => handleSelectArticle(item)}
+              {...item}
+            />
           </List.Item>
         );
       }}

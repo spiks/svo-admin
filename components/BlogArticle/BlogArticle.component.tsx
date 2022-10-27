@@ -8,7 +8,7 @@ import { UserOutlined } from '@ant-design/icons';
 
 export type BlogArticleProps = {
   selectedArticles: string[];
-  handleSelectArticle: (value: string) => void;
+  handleSelectArticle: () => void;
   status: ArticleBlogStatus;
 };
 
@@ -56,9 +56,7 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
       }
       hoverable={!selectedArticle}
       bordered={false}
-      onClick={() => {
-        handleSelectArticle(id);
-      }}
+      onClick={handleSelectArticle}
     >
       <Row justify="space-between">
         <Col style={{ marginBottom: tags.length ? '24px' : '0' }} span={14}>
