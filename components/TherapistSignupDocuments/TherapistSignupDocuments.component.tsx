@@ -20,7 +20,7 @@ export const TherapistSignupDocuments: FC = () => {
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
   const docs = useMemo(() => {
-    return Object.entries(documents).map(([key, value]) => {
+    return Object.entries({ ...documents, diploma: documents.diploma[0] }).map(([key, value]) => {
       const onApprove = async () => {
         switch (key) {
           case 'passport':
@@ -117,7 +117,7 @@ export const TherapistSignupDocuments: FC = () => {
 
   // Индикация возможности завершения модерации документов
   const canEndModeration = useMemo(() => {
-    return Object.values(documents).every((doc) => {
+    return Object.values({ ...documents, diploma: documents.diploma[0] }).every((doc) => {
       return doc?.isApprovedByModerator !== null;
     });
   }, [documents]);
