@@ -18,7 +18,10 @@ export const getTherapistDocuments = async (id: string) => {
   return {
     passport: passport.data,
     inn: inn.data,
-    diploma: diploma.data[0] || null,
+    diploma:
+      diploma.data.map((it) => {
+        return it;
+      }) || null,
     snils: snils.data,
   };
 };
