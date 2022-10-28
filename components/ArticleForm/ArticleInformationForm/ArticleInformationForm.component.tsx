@@ -39,7 +39,7 @@ export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }
     notification.error({
       type: 'error',
       message: 'Ошибка',
-      description: 'Не удалось загрузить теги для категоризации стетьм',
+      description: 'Не удалось загрузить теги для категоризации статьи',
     }),
   );
 
