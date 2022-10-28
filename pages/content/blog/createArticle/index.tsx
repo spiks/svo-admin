@@ -11,6 +11,7 @@ import { useCallback, useState } from 'react';
 import { AdminSubmitBlogArticle, submitBlogArticle } from '../../../../api/blog/submitBlogArticle';
 import { TabKey, tabListItems } from '../../../../constants/blogTabs';
 import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItemRender';
+import { NAVIGATION } from '../../../../constants/navigation';
 
 const CreateArticleFormComponent = dynamic(() => import('@components/CreateArticleForm/CreateArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -31,7 +32,7 @@ const routes: BreadcrumbProps['routes'] = [
 const CreateArticlePage: NextPage = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('information');
 
-  const { back } = useRouter();
+  const { back, push } = useRouter();
 
   const handleTabListChange = useCallback((key) => {
     setActiveTab(key);
@@ -48,6 +49,7 @@ const CreateArticlePage: NextPage = () => {
         message: 'Успех',
         description: 'Статья успешно создана',
       });
+      await push(NAVIGATION.blog);
       form.resetFields();
     } catch (err) {
       notification.error({
@@ -56,7 +58,7 @@ const CreateArticlePage: NextPage = () => {
         description: 'Не удалось создать статью. Проверьте, все ли поля заполнены верно.',
       });
     }
-  }, [form]);
+  }, [form, push]);
 
   return (
     <MainLayout>

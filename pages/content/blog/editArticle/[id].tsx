@@ -9,10 +9,10 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import { AdminUpdateBlogArticle, updateBlogArticle } from '../../../../api/blog/updateBlogArticle';
-import { useQuery } from '@tanstack/react-query';
-import { getBlogArticle } from '../../../../api/blog/getBlogArticle';
 import { TabKey, tabListItems } from '../../../../constants/blogTabs';
 import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItemRender';
+import { useEditArticle } from '../../../../hooks/useGetBlogArticle';
+import { NAVIGATION } from '../../../../constants/navigation';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -34,32 +34,9 @@ const EditArticlePage: NextPage = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('information');
   const { query } = useRouter();
   const articleId = (query['id'] as string) ?? '';
-
   const [form] = Form.useForm<AdminUpdateBlogArticle>();
-
-  const { data: article } = useQuery(['blog-article'], () => getBlogArticle(articleId), {
-    onError: () =>
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Непридвенная ошибка',
-      }),
-    onSuccess: (article) => {
-      form.setFieldsValue({
-        title: article?.data.title,
-        tags: article?.data.tags,
-        cover: null,
-        shortText: article?.data.shortText || undefined,
-        text: article?.data.text,
-        id: article?.data.id,
-        showPreviewFromArticle: article?.data.showPreviewFromArticle,
-        showInBlockInterestingAndUseful: article?.data.showPreviewFromArticle,
-        isArchived: article?.data.showPreviewFromArticle,
-      });
-    },
-  });
-
-  const { back } = useRouter();
+  const article = useEditArticle(form, articleId);
+  const { back, push } = useRouter();
 
   const handleTabListChange = useCallback((key) => {
     setActiveTab(key);
@@ -74,6 +51,7 @@ const EditArticlePage: NextPage = () => {
         message: 'Успех',
         description: 'Статья успешно изменена',
       });
+      await push(NAVIGATION.blog);
       form.resetFields();
     } catch (err) {
       notification.error({
@@ -82,15 +60,15 @@ const EditArticlePage: NextPage = () => {
         description: 'Не удалось изменить статью. Проверьте, все ли поля заполнены верно.',
       });
     }
-  }, [form]);
+  }, [form, push]);
 
   return (
     <MainLayout>
       <Header
         onBack={back}
-        breadcrumb={{ routes: getRoutes(article?.data.title || ''), itemRender: blogBreadcrumbItemRender }}
+        breadcrumb={{ routes: getRoutes(article?.title || ''), itemRender: blogBreadcrumbItemRender }}
         style={{ background: 'white' }}
-        title={article?.data.title}
+        title={article?.title}
         extra={[
           <Button onClick={back} type="text" key="1">
             Закрыть

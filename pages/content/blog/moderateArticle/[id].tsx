@@ -9,13 +9,13 @@ import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import React, { useCallback, useState } from 'react';
 import { AdminUpdateBlogArticle, updateBlogArticle } from '../../../../api/blog/updateBlogArticle';
-import { useQuery } from '@tanstack/react-query';
-import { getBlogArticle } from '../../../../api/blog/getBlogArticle';
 import { TabKey, tabListItems } from '../../../../constants/blogTabs';
 import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItemRender';
 import { publishArticle } from '../../../../api/blog/publishArticle';
 import { RejectArticleModal } from '@components/RejectArticleModal/RejectArticleModal.component';
 import { AdminRejectBlogArticle, rejectArticle } from '../../../../api/blog/rejectArticle';
+import { useEditArticle } from '../../../../hooks/useGetBlogArticle';
+import { NAVIGATION } from '../../../../constants/navigation';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -40,29 +40,9 @@ const ModerateArticlePage: NextPage = () => {
 
   const [form] = Form.useForm<AdminUpdateBlogArticle>();
 
-  const { data: article } = useQuery(['blog-article'], () => getBlogArticle(articleId), {
-    onError: () =>
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Непридвенная ошибка',
-      }),
-    onSuccess: (article) => {
-      form.setFieldsValue({
-        title: article?.data.title,
-        tags: article?.data.tags,
-        cover: null,
-        shortText: article?.data.shortText || undefined,
-        text: article?.data.text,
-        id: article?.data.id,
-        showPreviewFromArticle: article?.data.showPreviewFromArticle,
-        showInBlockInterestingAndUseful: article?.data.showPreviewFromArticle,
-        isArchived: article?.data.showPreviewFromArticle,
-      });
-    },
-  });
+  const article = useEditArticle(form, articleId);
 
-  const { back } = useRouter();
+  const { back, push } = useRouter();
 
   const handleTabListChange = useCallback((key) => {
     setActiveTab(key);
@@ -94,6 +74,7 @@ const ModerateArticlePage: NextPage = () => {
         message: 'Успех',
         description: 'Статья успешно изменена',
       });
+      await push(NAVIGATION.blog);
       form.resetFields();
     } catch (err) {
       notification.error({
@@ -102,7 +83,7 @@ const ModerateArticlePage: NextPage = () => {
         description: 'Не удалось изменить статью. Проверьте, все ли поля заполнены верно.',
       });
     }
-  }, [form]);
+  }, [form, push]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -116,6 +97,7 @@ const ModerateArticlePage: NextPage = () => {
         message: 'Успех',
         description: 'Статья не будет опубликована',
       });
+      await push(NAVIGATION.blog);
       rejectArticleForm.resetFields();
     } catch (err) {
       notification.error({
@@ -126,7 +108,7 @@ const ModerateArticlePage: NextPage = () => {
     } finally {
       setIsModalVisible(false);
     }
-  }, [articleId, rejectArticleForm]);
+  }, [articleId, push, rejectArticleForm]);
 
   const handleToggleModal = useCallback(() => {
     setIsModalVisible(!isModalVisible);
@@ -137,13 +119,13 @@ const ModerateArticlePage: NextPage = () => {
       <Header
         onBack={back}
         breadcrumb={{
-          routes: getRoutes(article?.data.title || ''),
+          routes: getRoutes(article?.title || ''),
           itemRender: (route, params, routes) => blogBreadcrumbItemRender(route, params, routes),
         }}
         style={{ background: 'white' }}
         title={
           <div style={{ display: 'flex', alignItems: 'center', columnGap: '12px' }}>
-            {article?.data.title}
+            {article?.title}
             <Tag
               key="1"
               color={'#FFFBE6'}

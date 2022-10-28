@@ -1,20 +1,14 @@
-import { Alert, Button, Form, Input, Select, DatePicker, Row, Col } from 'antd';
-import { FC, useEffect } from 'react';
+import { Alert, Button, Form, Input, Select, DatePicker, Row, Col, notification } from 'antd';
+import { FC } from 'react';
 import { Header } from '../Header/Header.component';
 import { FilterFilled, InfoCircleOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { useBlogHeaderForm } from './BlogHeader.hooks/useBlogHeaderForm';
 import { useBlogHeaderQueryParams } from './BlogHeader.hooks/useBlogHeaderQueryParams';
 import moment from 'moment';
-import { getListBlogTags } from 'api/blog/getListBlogTags';
-import { ApiRegularError } from 'api/errorClasses';
+import { useGetListBlogTags } from '../../hooks/useGetListBlogTags';
 
 const { Search } = Input;
-
-let tagsOptions: {
-  value: string;
-  label: string;
-}[];
 
 export type BlogHeaderProps = {
   showFilters: boolean;
@@ -26,23 +20,13 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
   const { handleFiltersApply, handleResetFilters, handleFiltersChange, form } = useBlogHeaderForm();
   const { search, tags, publishDate } = useBlogHeaderQueryParams();
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await getListBlogTags();
-        tagsOptions = response.data.map((it) => {
-          return {
-            value: it.id,
-            label: it.name,
-          };
-        });
-      } catch (error) {
-        if (!(error instanceof ApiRegularError)) {
-          console.error('Неизвестная ошибка');
-        }
-      }
-    })();
-  }, []);
+  const tagsOptions = useGetListBlogTags(() =>
+    notification.error({
+      type: 'error',
+      message: 'Ошибка',
+      description: 'Не удалось загрузить теги для фильтрации статей',
+    }),
+  );
 
   const initialDate = publishDate ? moment(publishDate) : null;
 
@@ -117,24 +101,31 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                     />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
-                  <Form.Item
-                    style={{ width: '100%' }}
-                    label="Теги"
-                    name="tags"
-                    tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
-                  >
-                    <Select
-                      options={tagsOptions}
-                      size="large"
-                      mode="multiple"
-                      onChange={(value) => {
-                        return value;
-                      }}
+                {tagsOptions?.length ? (
+                  <Col span={12}>
+                    <Form.Item
                       style={{ width: '100%' }}
-                    />
-                  </Form.Item>
-                </Col>
+                      label="Теги"
+                      name="tags"
+                      tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+                    >
+                      <Select
+                        options={tagsOptions.map((it) => {
+                          return {
+                            value: it.id,
+                            label: it.name,
+                          };
+                        })}
+                        size="large"
+                        mode="multiple"
+                        onChange={(value) => {
+                          return value;
+                        }}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                  </Col>
+                ) : null}
               </Row>
               <Row justify="space-between" align="bottom">
                 <Col>

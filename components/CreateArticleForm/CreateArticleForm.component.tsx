@@ -45,6 +45,7 @@ const CreateArticleForm: FC<CreateArticleFormProps> = ({ activeTab, handleTabLis
       initialValues={{
         cover: null,
         shortText: null,
+        tags: [],
         showPreviewFromArticle: false,
         showInBlockInterestingAndUseful: false,
       }}

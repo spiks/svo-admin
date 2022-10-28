@@ -7,14 +7,9 @@ import { PlusOutlined } from '@ant-design/icons';
 import { FC } from 'react';
 import type { RcFile, UploadFile } from 'antd/es/upload/interface';
 import { UploadChangeParam } from 'antd/lib/upload';
+import { useGetListBlogTags } from '../../../hooks/useGetListBlogTags';
 
 const { Text } = Typography;
-
-const tagOptions = [
-  { label: 'Общая практика', value: 'gold' },
-  { label: 'Мотивация', value: 'blue' },
-  { label: 'Семья', value: 'lime' },
-];
 
 type Props = {
   setUploadedToken: (value: string) => void;
@@ -39,6 +34,14 @@ export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }
       }
     }
   };
+
+  const tagsOptions = useGetListBlogTags(() =>
+    notification.error({
+      type: 'error',
+      message: 'Ошибка',
+      description: 'Не удалось загрузить теги для категоризации стетьм',
+    }),
+  );
 
   return (
     <div style={{ padding: '80px 160px' }}>
@@ -65,7 +68,12 @@ export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }
             return <TagRender label={label} value={value} closable={closable} onClose={onClose} {...props} />;
           }}
           style={{ width: '100%' }}
-          options={tagOptions}
+          options={tagsOptions?.map((it) => {
+            return {
+              value: it.id,
+              label: it.name,
+            };
+          })}
         />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 6, span: 18 }} valuePropName="checked" name={'showInBlockInterestingAndUseful'}>
