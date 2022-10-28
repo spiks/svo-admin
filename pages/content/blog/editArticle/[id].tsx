@@ -11,8 +11,9 @@ import { useCallback, useState } from 'react';
 import { AdminUpdateBlogArticle, updateBlogArticle } from '../../../../api/blog/updateBlogArticle';
 import { TabKey, tabListItems } from '../../../../constants/blogTabs';
 import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItemRender';
-import { useEditArticle } from '../../../../hooks/useGetBlogArticle';
+import { useGetBlogArticle } from '../../../../hooks/useGetBlogArticle';
 import { NAVIGATION } from '../../../../constants/navigation';
+import { updateBlogArticleCover } from '../../../../api/blog/updateBlogArticleCover';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -35,8 +36,9 @@ const EditArticlePage: NextPage = () => {
   const { query } = useRouter();
   const articleId = (query['id'] as string) ?? '';
   const [form] = Form.useForm<AdminUpdateBlogArticle>();
-  const article = useEditArticle(form, articleId);
+  const article = useGetBlogArticle(form, articleId);
   const { back, push } = useRouter();
+  const [uploadedFileToken, setUploadedFileToken] = useState<string | undefined>();
 
   const handleTabListChange = useCallback((key) => {
     setActiveTab(key);

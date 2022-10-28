@@ -3,7 +3,7 @@ import { AdminUpdateBlogArticle } from '../api/blog/updateBlogArticle';
 import { useQuery } from '@tanstack/react-query';
 import { getBlogArticle } from '../api/blog/getBlogArticle';
 
-export const useEditArticle = (form: FormInstance<AdminUpdateBlogArticle>, articleId: string) => {
+export const useGetBlogArticle = (form: FormInstance<AdminUpdateBlogArticle>, articleId: string) => {
   const { data: article } = useQuery(['blog-article'], () => getBlogArticle(articleId), {
     onError: () =>
       notification.error({
@@ -15,7 +15,6 @@ export const useEditArticle = (form: FormInstance<AdminUpdateBlogArticle>, artic
       form.setFieldsValue({
         title: article?.data.title,
         tags: article?.data.tags,
-        cover: null,
         shortText: article?.data.shortText || undefined,
         text: article?.data.text,
         id: article?.data.id,

@@ -14,8 +14,8 @@ import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItem
 import { publishArticle } from '../../../../api/blog/publishArticle';
 import { RejectArticleModal } from '@components/RejectArticleModal/RejectArticleModal.component';
 import { AdminRejectBlogArticle, rejectArticle } from '../../../../api/blog/rejectArticle';
-import { useEditArticle } from '../../../../hooks/useGetBlogArticle';
 import { NAVIGATION } from '../../../../constants/navigation';
+import { useGetBlogArticle } from '../../../../hooks/useGetBlogArticle';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -40,7 +40,7 @@ const ModerateArticlePage: NextPage = () => {
 
   const [form] = Form.useForm<AdminUpdateBlogArticle>();
 
-  const article = useEditArticle(form, articleId);
+  const article = useGetBlogArticle(form, articleId);
 
   const { back, push } = useRouter();
 
