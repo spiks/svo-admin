@@ -1,27 +1,26 @@
 import { TagRender } from '@components/TagRender/TagRender.component';
-import { Button, Checkbox, Col, Divider, Form, notification, Row, Select, Typography, Upload } from 'antd';
+import { Checkbox, Col, Divider, Form, notification, Row, Select, Typography, Upload } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { uploadFile } from 'api/upload/uploadFile';
 import { PlusOutlined } from '@ant-design/icons';
-import { FC, useContext } from 'react';
-import { CreateArticleFormContext } from '../CreateArticleForm.component';
+import { FC } from 'react';
 import type { RcFile, UploadFile } from 'antd/es/upload/interface';
 import { UploadChangeParam } from 'antd/lib/upload';
+import { useGetListBlogTags } from '../../../hooks/useGetListBlogTags';
 
 const { Text } = Typography;
 
-const tagOptions = [{ label: 'Общая практика' }, { label: 'Мотивация' }, { label: 'Семья' }];
+type Props = {
+  setUploadedToken: (value: string) => void;
+};
 
-export const CreateArticleFormInformationTab: FC = () => {
-  const formContext = useContext(CreateArticleFormContext);
-  const form = formContext?.form;
-
+export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }) => {
   const handleChange = async (info: UploadChangeParam<UploadFile>) => {
     const { data: credentials } = await requestFileUploadUrl('article_cover');
     try {
       const { data: uploaded } = await uploadFile(credentials, info.fileList[0].originFileObj as RcFile);
-      form?.setFieldValue('cover', uploaded.token);
+      setUploadedToken(uploaded.token);
     } catch (err) {
       if (err instanceof Error) {
         notification.error({
@@ -36,6 +35,14 @@ export const CreateArticleFormInformationTab: FC = () => {
     }
   };
 
+  const tagsOptions = useGetListBlogTags(() =>
+    notification.error({
+      type: 'error',
+      message: 'Ошибка',
+      description: 'Не удалось загрузить теги для категоризации статьи',
+    }),
+  );
+
   return (
     <div style={{ padding: '80px 160px' }}>
       <h1 style={{ textAlign: 'center', marginBottom: '48px', fontSize: '38px' }}>{'Информация'}</h1>
@@ -45,13 +52,13 @@ export const CreateArticleFormInformationTab: FC = () => {
         required
         label="Заголовок статьи"
       >
-        <TextArea showCount maxLength={100} />
+        <TextArea style={{ marginBottom: '16px' }} showCount maxLength={100} />
       </Form.Item>
       <Form.Item name={'shortText'} label="Краткое описание">
         <TextArea style={{ marginBottom: '24px' }} showCount maxLength={400} />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 6, span: 18 }} valuePropName="checked" name={'showPreviewFromArticle'}>
-        <Checkbox defaultChecked={false}>{'Показывать начало статьи вместо краткого описания'}</Checkbox>
+        <Checkbox>{'Показывать начало статьи вместо краткого описания'}</Checkbox>
       </Form.Item>
       <Form.Item rules={[{ required: true, message: 'Укажите теги' }]} name={'tags'} required label="Теги">
         <Select
@@ -61,8 +68,16 @@ export const CreateArticleFormInformationTab: FC = () => {
             return <TagRender label={label} value={value} closable={closable} onClose={onClose} {...props} />;
           }}
           style={{ width: '100%' }}
-          options={tagOptions}
+          options={tagsOptions?.map((it) => {
+            return {
+              value: it.id,
+              label: it.name,
+            };
+          })}
         />
+      </Form.Item>
+      <Form.Item wrapperCol={{ offset: 6, span: 18 }} valuePropName="checked" name={'showInBlockInterestingAndUseful'}>
+        <Checkbox>{'Показывать в “Интересно и полезно”'}</Checkbox>
       </Form.Item>
       <Form.Item name={'cover'} label="Обложка статьи" valuePropName={'fileList'}>
         <Row gutter={16}>
@@ -89,19 +104,7 @@ export const CreateArticleFormInformationTab: FC = () => {
           </Col>
         </Row>
       </Form.Item>
-      <Form.Item wrapperCol={{ offset: 6, span: 16 }}>
-        <Button
-          onClick={() => {
-            if (formContext.handleTabListChange) {
-              formContext.handleTabListChange('article');
-            }
-          }}
-          size={'large'}
-          type={'primary'}
-        >
-          {'Продолжить'}
-        </Button>
-      </Form.Item>
+      {children}
     </div>
   );
 };

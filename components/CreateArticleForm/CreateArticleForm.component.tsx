@@ -1,75 +1,62 @@
-import { Form, FormInstance, FormProps, notification } from 'antd';
-import { FC, createContext, useMemo } from 'react';
-import { AdminSubmitBlogArticle, submitBlogArticle } from 'api/blog/submitBlogArticle';
-import { TabKey } from 'pages/content/blog/createArticle';
-import { CreateArticleFormInformationTab } from './CreateArticleFormInformationTab/CreateArticleFormInformationTab.component';
-import { CreateArticleFormArticleTab } from './CreateArticleFormArticleTab/CreateArticleFormArticleTab.component';
+import { Button, Col, Form, FormInstance } from 'antd';
+import { FC } from 'react';
+import { AdminSubmitBlogArticle } from 'api/blog/submitBlogArticle';
+import { TabKey } from '../../constants/blogTabs';
+import { ArticleTextForm } from '@components/ArticleForm/ArticleTextForm/ArticleTextForm.component';
+import { ArticleInformationForm } from '@components/ArticleForm/ArticleInformationForm/ArticleInformationForm.component';
 
-type CreateArticleFormContextValue = {
-  form?: FormInstance<AdminSubmitBlogArticle>;
-  handleTabListChange?: (key: TabKey) => void;
+type CreateArticleFormProps = {
+  activeTab: TabKey;
+  handleTabListChange: (key: TabKey) => void;
+  onFinish: (values: AdminSubmitBlogArticle) => void;
+  form: FormInstance<AdminSubmitBlogArticle>;
 };
 
-export const CreateArticleFormContext = createContext<CreateArticleFormContextValue>({});
-
-const CreateArticleForm: FC<{ activeTab: TabKey; handleTabListChange: (key: TabKey) => void }> = ({
-  activeTab,
-  handleTabListChange,
-}) => {
-  const [form] = Form.useForm<AdminSubmitBlogArticle>();
-
-  const onFinish: FormProps<AdminSubmitBlogArticle>['onFinish'] = async () => {
-    const values: AdminSubmitBlogArticle = form.getFieldsValue(true);
-    try {
-      await submitBlogArticle(values);
-      notification.success({
-        type: 'success',
-        message: 'Успех',
-        description: 'Статья успешно создана',
-      });
-      form.resetFields();
-    } catch (err) {
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Не удалось создать статью. Проверьте, все ли поля заполнены верно.',
-      });
-    }
-  };
+const CreateArticleForm: FC<CreateArticleFormProps> = ({ activeTab, handleTabListChange, form, onFinish }) => {
+  const values = form?.getFieldsValue(true);
 
   const renderForm = () => {
     switch (activeTab) {
       case 'information':
-        return <CreateArticleFormInformationTab />;
+        return (
+          <ArticleInformationForm setUploadedToken={(token) => form?.setFieldValue('cover', token)}>
+            <Col offset={6} span={16}>
+              <Button onClick={() => handleTabListChange('article')} size={'large'} type={'primary'}>
+                {'Продолжить'}
+              </Button>
+            </Col>
+          </ArticleInformationForm>
+        );
       case 'article':
-        return <CreateArticleFormArticleTab />;
+        return (
+          <ArticleTextForm
+            title={values?.title}
+            text={values?.text}
+            onReturnBackButtonClick={() => {
+              handleTabListChange('information');
+            }}
+          />
+        );
     }
   };
 
-  const contextValue = useMemo(() => {
-    return {
-      form,
-      handleTabListChange,
-    };
-  }, [form, handleTabListChange]);
-
   return (
-    <CreateArticleFormContext.Provider value={contextValue}>
-      <Form
-        initialValues={{
-          cover: null,
-          shortText: null,
-          showPreviewFromArticle: false,
-        }}
-        form={form}
-        onFinish={onFinish}
-        layout="horizontal"
-        labelCol={{ span: 6 }}
-        wrapperCol={{ span: 24 }}
-      >
-        {renderForm}
-      </Form>
-    </CreateArticleFormContext.Provider>
+    <Form
+      initialValues={{
+        cover: null,
+        shortText: null,
+        tags: [],
+        showPreviewFromArticle: false,
+        showInBlockInterestingAndUseful: false,
+      }}
+      form={form}
+      onFinish={onFinish}
+      layout="horizontal"
+      labelCol={{ span: 6 }}
+      wrapperCol={{ span: 24 }}
+    >
+      {renderForm}
+    </Form>
   );
 };
 

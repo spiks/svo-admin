@@ -8,46 +8,50 @@ import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
-import { AdminSubmitBlogArticle, submitBlogArticle } from '../../../../api/blog/submitBlogArticle';
+import { AdminUpdateBlogArticle, updateBlogArticle } from '../../../../api/blog/updateBlogArticle';
 import { TabKey, tabListItems } from '../../../../constants/blogTabs';
 import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItemRender';
+import { useGetBlogArticle } from '../../../../hooks/useGetBlogArticle';
 import { NAVIGATION } from '../../../../constants/navigation';
+import { updateBlogArticleCover } from '../../../../api/blog/updateBlogArticleCover';
 
-const CreateArticleFormComponent = dynamic(() => import('@components/CreateArticleForm/CreateArticleForm.component'), {
+const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
   ssr: false,
 });
 
-const routes: BreadcrumbProps['routes'] = [
+const getRoutes = (title: string): BreadcrumbProps['routes'] => [
   {
     path: '',
     breadcrumbName: 'Блог',
   },
   {
-    path: 'createArticle',
-    breadcrumbName: 'Создание статьи',
+    path: 'editArticle',
+    breadcrumbName: title,
   },
 ];
 
-const CreateArticlePage: NextPage = () => {
+const EditArticlePage: NextPage = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('information');
-
+  const { query } = useRouter();
+  const articleId = (query['id'] as string) ?? '';
+  const [form] = Form.useForm<AdminUpdateBlogArticle>();
+  const article = useGetBlogArticle(form, articleId);
   const { back, push } = useRouter();
+  const [uploadedFileToken, setUploadedFileToken] = useState<string | undefined>();
 
   const handleTabListChange = useCallback((key) => {
     setActiveTab(key);
   }, []);
 
-  const [form] = Form.useForm<AdminSubmitBlogArticle>();
-
-  const onFinish: FormProps<AdminSubmitBlogArticle>['onFinish'] = useCallback(async () => {
-    const values: AdminSubmitBlogArticle = form.getFieldsValue(true);
+  const onFinish: FormProps<AdminUpdateBlogArticle>['onFinish'] = useCallback(async () => {
+    const values: AdminUpdateBlogArticle = form.getFieldsValue(true);
     try {
-      await submitBlogArticle(values);
+      await updateBlogArticle(values);
       notification.success({
         type: 'success',
         message: 'Успех',
-        description: 'Статья успешно создана',
+        description: 'Статья успешно изменена',
       });
       await push(NAVIGATION.blog);
       form.resetFields();
@@ -55,7 +59,7 @@ const CreateArticlePage: NextPage = () => {
       notification.error({
         type: 'error',
         message: 'Ошибка',
-        description: 'Не удалось создать статью. Проверьте, все ли поля заполнены верно.',
+        description: 'Не удалось изменить статью. Проверьте, все ли поля заполнены верно.',
       });
     }
   }, [form, push]);
@@ -64,25 +68,23 @@ const CreateArticlePage: NextPage = () => {
     <MainLayout>
       <Header
         onBack={back}
-        breadcrumb={{ routes, itemRender: blogBreadcrumbItemRender }}
+        breadcrumb={{ routes: getRoutes(article?.title || ''), itemRender: blogBreadcrumbItemRender }}
         style={{ background: 'white' }}
-        title={'Создание статьи'}
+        title={article?.title}
         extra={[
           <Button onClick={back} type="text" key="1">
             Закрыть
           </Button>,
-          activeTab === 'article' ? (
-            <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
-              Опубликовать
-            </Button>
-          ) : null,
+          <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
+            Сохранить
+          </Button>,
         ]}
       >
         <TabList items={tabListItems} defaultActiveKey={'active'} onChange={handleTabListChange} />
       </Header>
       <div style={{ overflow: 'auto' }}>
         <PageWrapper>
-          <CreateArticleFormComponent
+          <EditArticleFormComponent
             form={form}
             onFinish={onFinish}
             activeTab={activeTab}
@@ -94,4 +96,4 @@ const CreateArticlePage: NextPage = () => {
   );
 };
 
-export default CreateArticlePage;
+export default EditArticlePage;
