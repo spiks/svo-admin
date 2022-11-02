@@ -2,11 +2,13 @@ import { Alert, BreadcrumbProps, Button, Tabs } from 'antd';
 import { Route } from 'antd/lib/breadcrumb/Breadcrumb';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { FC } from 'react';
+import { TherapistPageContext } from 'pages/users/therapists/[id]';
+import { FC, useContext } from 'react';
 import { Header } from '../Header/Header.component';
 
-export const UserProfileHeader: FC<{ username?: string; id?: string }> = ({ username = 'Дейнерис' }) => {
-  const { TabPane } = Tabs;
+export const UserProfileHeader: FC = ({ children }) => {
+  const { therapist } = useContext(TherapistPageContext);
+
   const { back } = useRouter();
 
   const routes: BreadcrumbProps['routes'] = [
@@ -15,8 +17,12 @@ export const UserProfileHeader: FC<{ username?: string; id?: string }> = ({ user
       breadcrumbName: 'Пользователи',
     },
     {
-      path: 'patients',
-      breadcrumbName: 'Клиенты',
+      path: 'therapists',
+      breadcrumbName: 'Психологи',
+    },
+    {
+      path: `${therapist.id}`,
+      breadcrumbName: `${therapist.fullName}`,
     },
   ];
 
@@ -36,7 +42,9 @@ export const UserProfileHeader: FC<{ username?: string; id?: string }> = ({ user
       style={{ backgroundColor: '#FFFFFF' }}
       title={
         <div>
-          <span style={{ marginRight: '12px' }}>{`Просмотр профиля пользователя ${username}`}</span>
+          <span
+            style={{ marginRight: '12px' }}
+          >{`Просмотр профиля пользователя ${therapist.fullName} (${therapist.status})`}</span>
           <Button size="large">Заблокировать</Button>
         </div>
       }
@@ -52,17 +60,7 @@ export const UserProfileHeader: FC<{ username?: string; id?: string }> = ({ user
           </Button>
         </>
       }
-      footer={
-        <Tabs style={{ paddingLeft: '36px' }} defaultActiveKey="1">
-          <TabPane tab="Сведения" key="1" />
-          <TabPane tab="Документы" key="2" />
-          <TabPane tab="Договор" key="3" />
-          <TabPane tab="Личные аккаунты" key="4" />
-          <TabPane tab="Методы и техники" key="5" />
-          <TabPane tab="Презентация" key="6" />
-          <TabPane tab="Логи" key="7" />
-        </Tabs>
-      }
+      footer={children}
     >
       <Alert
         style={{ borderRadius: '8px', marginLeft: '36px' }}

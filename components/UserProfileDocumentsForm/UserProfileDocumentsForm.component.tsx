@@ -15,7 +15,6 @@ import { updateTherapistPassport } from 'api/therapist/updateTherapistPassport';
 import { updateTherapistSnils } from 'api/therapist/updateTherapistSnils';
 import { updateTherapistInn } from 'api/therapist/updateTherapistInn';
 import { updateTherapistDiplomaOfHigherEducation } from 'api/therapist/updateTherapistDiplomaOfHigherEducation';
-import { useForm } from 'antd/lib/form/Form';
 import { deleteTherapistDiplomaOfHigherEducation } from 'api/therapist/deleteTherapistDiplomaOfHigherEducation';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
 
@@ -48,7 +47,7 @@ export const countryOptions = [
 export const UserProfileDocumentsForm: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const [form] = useForm<RussianDiplomaOfHigherEducation>();
+  const [form] = Form.useForm<RussianDiplomaOfHigherEducation>();
 
   const { documents, therapist } = useContext(TherapistPageContext);
 
@@ -122,29 +121,6 @@ export const UserProfileDocumentsForm: FC = () => {
         type: 'error',
         message: 'Ошибка',
         description: 'Не удалось сохранить ИНН.',
-      });
-    }
-  };
-
-  // Изменение диплома
-
-  const submitDiplomaForm = async (id: Uuid) => {
-    const values = form.getFieldsValue();
-    try {
-      await updateTherapistDiplomaOfHigherEducation({
-        diplomaInformation: { ...values, graduationYear: +values.graduationYear },
-        diplomaId: id,
-      });
-      notification.success({
-        type: 'success',
-        message: 'Успех',
-        description: 'Диплом сохранён',
-      });
-    } catch (e) {
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Не удалось сохранить диплом.',
       });
     }
   };
@@ -568,8 +544,25 @@ export const UserProfileDocumentsForm: FC = () => {
               }
             >
               <Form
-                form={form}
-                name={it.id}
+                onFinish={async (values: RussianDiplomaOfHigherEducation) => {
+                  try {
+                    await updateTherapistDiplomaOfHigherEducation({
+                      diplomaInformation: { ...values, graduationYear: +values.graduationYear },
+                      diplomaId: it.id,
+                    });
+                    notification.success({
+                      type: 'success',
+                      message: 'Успех',
+                      description: 'Диплом сохранён',
+                    });
+                  } catch (e) {
+                    notification.error({
+                      type: 'error',
+                      message: 'Ошибка',
+                      description: 'Не удалось сохранить диплом.',
+                    });
+                  }
+                }}
                 initialValues={{
                   country: it.information.country,
                   educationalInstitution: it.information.educationalInstitution,
@@ -652,13 +645,7 @@ export const UserProfileDocumentsForm: FC = () => {
                   />
                 </Form.Item>
                 <Form.Item>
-                  <Button
-                    onClick={() => {
-                      submitDiplomaForm(it.id);
-                    }}
-                    htmlType={'submit'}
-                    type={'primary'}
-                  >
+                  <Button htmlType={'submit'} type={'primary'}>
                     Сохранить
                   </Button>
                 </Form.Item>

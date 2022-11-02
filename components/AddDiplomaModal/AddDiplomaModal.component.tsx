@@ -4,7 +4,6 @@ import { UploadOutlined } from '@ant-design/icons';
 import { RcFile, UploadChangeParam, UploadFile } from 'antd/lib/upload';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { uploadFile } from 'api/upload/uploadFile';
-import { useForm } from 'antd/es/form/Form';
 import { RussianDiplomaOfHigherEducation, UploadedFileToken, Uuid } from 'generated';
 import { submitTherapistDiplomaOfHigherEducation } from 'api/blog/submitTherapistDiplomaOfHigherEducation';
 import { countryOptions } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.component';
@@ -19,7 +18,7 @@ export type AddDiplomaModalProps = {
 };
 
 export const AddDiplomaModal: FC<AddDiplomaModalProps> = ({ therapistId, visible, onOk, onCancel }) => {
-  const [form] = useForm<RussianDiplomaOfHigherEducation>();
+  const [form] = Form.useForm<RussianDiplomaOfHigherEducation>();
   const [diplomaToken, setDiplomaToken] = useState<UploadedFileToken | null>(null);
 
   const refetch = useTherapistSignupQueriesRefresh(therapistId);
