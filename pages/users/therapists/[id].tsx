@@ -17,6 +17,7 @@ import { UserProfileHeader } from '@components/UserProfileHeader/UserProfileHead
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import { TabList } from '@components/TabList/TabList.component';
 import { UserProfileDocumentsForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.component';
+import { TherapistContractSection } from '@components/TherapistContractSection/TherapistContractSection.component';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -29,13 +30,13 @@ enum STAGE {
 export enum USER_TAB_KEY {
   INFORMATION = 'INFORMATION',
   DOCUMENTS = 'DOCUMENTS',
-  // CONTRACT = 'CONTRACT',
+  CONTRACT = 'CONTRACT',
 }
 
 const tabListItems: { label: string; key: USER_TAB_KEY }[] = [
   { label: 'Сведения', key: USER_TAB_KEY.INFORMATION },
   { label: 'Документы', key: USER_TAB_KEY.DOCUMENTS },
-  // { label: 'Договор', key: USER_TAB_KEY.CONTRACT },
+  { label: 'Договор', key: USER_TAB_KEY.CONTRACT },
 ];
 
 type TherapistPageContextValue = {
@@ -161,8 +162,12 @@ const TherapistPage: NextPage = () => {
           </PageWrapper>
         );
 
-      // case 'CONTRACT':
-      //   return <span>{'Здесь будет договор'}</span>;
+      case 'CONTRACT':
+        return (
+          <PageWrapper>
+            <TherapistContractSection />
+          </PageWrapper>
+        );
     }
   };
 
