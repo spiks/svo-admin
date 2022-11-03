@@ -1,10 +1,23 @@
 import { Alert, BreadcrumbProps, Button, Tabs } from 'antd';
 import { Route } from 'antd/lib/breadcrumb/Breadcrumb';
+import { TherapistProfileStatus } from 'generated';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { FC, useContext } from 'react';
 import { Header } from '../Header/Header.component';
+
+const therapistStatusName: Record<TherapistProfileStatus, string> = {
+  active: 'Активный',
+  contract_awaiting_review: 'Договор находится на проверке',
+  contract_not_submitted_yet: 'Договор ещё не был отправлен',
+  contract_rejected: 'Договор отклонен',
+  documents_not_submitted_yet: 'Документы ещё не отправлены',
+  documents_awaiting_review: 'Документы на проверке',
+  documents_rejected: 'Документы отклонены',
+  interview_failed: 'Интервью провалено',
+  interview_processing: 'На этапе интервью',
+};
 
 export const UserProfileHeader: FC = ({ children }) => {
   const { therapist } = useContext(TherapistPageContext);
@@ -22,7 +35,7 @@ export const UserProfileHeader: FC = ({ children }) => {
     },
     {
       path: `${therapist.id}`,
-      breadcrumbName: `${therapist.fullName}`,
+      breadcrumbName: `${therapist.fullName ?? 'Аноним'}`,
     },
   ];
 
@@ -42,9 +55,9 @@ export const UserProfileHeader: FC = ({ children }) => {
       style={{ backgroundColor: '#FFFFFF' }}
       title={
         <div>
-          <span
-            style={{ marginRight: '12px' }}
-          >{`Просмотр профиля пользователя ${therapist.fullName} (${therapist.status})`}</span>
+          <span style={{ marginRight: '12px' }}>{`Просмотр профиля пользователя ${therapist.fullName ?? 'Аноним'} (${
+            therapistStatusName[therapist.status]
+          })`}</span>
           <Button size="large">Заблокировать</Button>
         </div>
       }
