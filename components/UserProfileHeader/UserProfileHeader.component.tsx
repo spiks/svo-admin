@@ -26,14 +26,14 @@ export const UserProfileHeader: FC = ({ children }) => {
     },
   ];
 
-  const itemRender = (route: Route, params: any, routes: Route[], paths: string[]) => {
+  const itemRender = (route: Route, params: any, routes: Route[]) => {
     const first = routes.indexOf(route) === 0;
     const last = routes.indexOf(route) === routes.length - 1;
 
     return first || last ? (
       <span>{route.breadcrumbName}</span>
     ) : (
-      <Link href={paths.join('/')}>{route.breadcrumbName}</Link>
+      <Link href={'/users/therapists'}>{route.breadcrumbName}</Link>
     );
   };
 
