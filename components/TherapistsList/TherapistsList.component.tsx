@@ -87,6 +87,10 @@ const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
     }
   }, [phone, search]);
 
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
+
   const fetchTherapists = useCallback(
     (page) => {
       return getTherapistList({
