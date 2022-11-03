@@ -35,7 +35,7 @@ const AuthProvider: FC = ({ children }) => {
     const storageToken = TokenStorage.getTokens()?.accessToken;
     if (!storageToken) {
       TokenStorage.clearTokens();
-      push('/login', undefined, { shallow: true });
+      await push('/login', undefined, { shallow: true });
       setIsLoading(false);
       return;
     }
@@ -45,6 +45,7 @@ const AuthProvider: FC = ({ children }) => {
       token: storageToken,
       email: email.data,
     });
+    await push('/users/therapists', undefined, { shallow: true });
     setIsLoading(false);
 
     // если передать router, то будет бесконечный цикл
