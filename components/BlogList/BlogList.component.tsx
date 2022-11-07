@@ -188,6 +188,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
                 showSizeChanger
                 pageSize={pageSize}
                 onChange={handlePaginationChange}
+                pageSizeOptions={['10', '20', '50']}
               />
             </Row>
           </Row>
@@ -199,6 +200,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
         onChange: handlePaginationChange,
         total: blogArticlesList?.data.itemsAmount,
         showSizeChanger: true,
+        pageSizeOptions: ['10', '20', '50'],
       }}
       dataSource={blogArticlesList?.data.items}
       renderItem={(item) => {
