@@ -54,7 +54,13 @@ export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }
       >
         <TextArea style={{ marginBottom: '16px' }} showCount maxLength={100} />
       </Form.Item>
-      <Form.Item name={'shortText'} label="Краткое описание">
+      <Form.Item
+        normalize={(value) => {
+          return value ? value : null;
+        }}
+        name={'shortText'}
+        label="Краткое описание"
+      >
         <TextArea style={{ marginBottom: '24px' }} showCount maxLength={400} />
       </Form.Item>
       <Form.Item wrapperCol={{ offset: 6, span: 18 }} valuePropName="checked" name={'showPreviewFromArticle'}>

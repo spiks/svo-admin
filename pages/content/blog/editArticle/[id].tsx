@@ -46,8 +46,9 @@ const EditArticlePage: NextPage = () => {
 
   const onFinish: FormProps<AdminUpdateBlogArticle>['onFinish'] = useCallback(async () => {
     const values: AdminUpdateBlogArticle = form.getFieldsValue(true);
+
     try {
-      await updateBlogArticle(values);
+      await updateBlogArticle({ ...values, shortText: values.shortText ?? null });
       notification.success({
         type: 'success',
         message: 'Успех',
