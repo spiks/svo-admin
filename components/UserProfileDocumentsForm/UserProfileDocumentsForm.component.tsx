@@ -45,9 +45,7 @@ export const countryOptions = [
 ];
 
 export const UserProfileDocumentsForm: FC = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const [form] = Form.useForm<RussianDiplomaOfHigherEducation>();
+  // const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { documents, therapist } = useContext(TherapistPageContext);
 
@@ -146,13 +144,13 @@ export const UserProfileDocumentsForm: FC = () => {
     }
   };
 
-  const handleOk = () => {
-    setIsModalVisible(false);
-  };
+  // const handleOk = () => {
+  //   setIsModalVisible(false);
+  // };
 
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
+  // const handleCancel = () => {
+  //   setIsModalVisible(false);
+  // };
 
   return (
     <>
@@ -653,7 +651,6 @@ export const UserProfileDocumentsForm: FC = () => {
             </Panel>
           );
         })}
-
         {/* Курсы повышения квалификации */}
         {/* <Panel
           extra={
@@ -720,6 +717,8 @@ export const UserProfileDocumentsForm: FC = () => {
           </Form>
         </Panel> */}
       </Collapse>
+      {/* Убираем возможность добавления диплома администратором
+      Возможно, понадобится позже
       <Button
         size="large"
         style={{ width: '100%' }}
@@ -731,7 +730,7 @@ export const UserProfileDocumentsForm: FC = () => {
       >
         Добавить документ об образовании
       </Button>
-      <AddDiplomaModal therapistId={therapist.id} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} />
+      <AddDiplomaModal therapistId={therapist.id} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} /> */}
     </>
   );
 };
