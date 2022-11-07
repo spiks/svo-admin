@@ -118,7 +118,9 @@ export const TherapistSignupDocuments: FC = () => {
   // Индикация возможности завершения модерации документов
   const canEndModeration = useMemo(() => {
     return Object.values({ ...documents, diploma: documents.diploma[0] }).every((doc) => {
-      return doc?.isApprovedByModerator !== null;
+      if (doc) {
+        return doc?.isApprovedByModerator !== null;
+      }
     });
   }, [documents]);
 
