@@ -1,7 +1,7 @@
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, useContext } from 'react';
 import { Button, Col, Collapse, DatePicker, Form, FormProps, Input, notification, Row, Select, Upload } from 'antd';
-import { FileAddOutlined, CheckCircleFilled, CloseCircleFilled, DeleteFilled } from '@ant-design/icons';
-import { AddDiplomaModal } from '../AddDiplomaModal/AddDiplomaModal.component';
+import { CheckCircleFilled, CloseCircleFilled, DeleteFilled } from '@ant-design/icons';
+
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import moment from 'moment';
 import {
@@ -9,13 +9,11 @@ import {
   RussianDiplomaOfHigherEducation,
   RussianPassportInformation,
   SnilsInformation,
-  Uuid,
 } from 'generated';
 import { updateTherapistPassport } from 'api/therapist/updateTherapistPassport';
 import { updateTherapistSnils } from 'api/therapist/updateTherapistSnils';
 import { updateTherapistInn } from 'api/therapist/updateTherapistInn';
 import { updateTherapistDiplomaOfHigherEducation } from 'api/therapist/updateTherapistDiplomaOfHigherEducation';
-import { deleteTherapistDiplomaOfHigherEducation } from 'api/therapist/deleteTherapistDiplomaOfHigherEducation';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
 
 const { Panel } = Collapse;
@@ -120,27 +118,6 @@ export const UserProfileDocumentsForm: FC = () => {
         message: 'Ошибка',
         description: 'Не удалось сохранить ИНН.',
       });
-    }
-  };
-
-  // Удаление диплома
-
-  const deleteDiploma = async (diplomaId: Uuid) => {
-    try {
-      await deleteTherapistDiplomaOfHigherEducation(diplomaId);
-      notification.success({
-        type: 'success',
-        message: 'Успех',
-        description: 'Диплом удален',
-      });
-    } catch (err) {
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Не удалось удалить диплом.',
-      });
-    } finally {
-      refetch('documents');
     }
   };
 
@@ -502,29 +479,16 @@ export const UserProfileDocumentsForm: FC = () => {
             <Panel
               key={it.id}
               extra={
-                <Row align="middle" gutter={20}>
-                  <Col>
-                    <Form.Item style={{ margin: '0' }} label={'Статус'}>
-                      <Select
-                        defaultValue={it.isApprovedByModerator ? 'accepted' : 'rejected'}
-                        options={statusOptions}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        style={{ width: '133px' }}
-                      />
-                    </Form.Item>
-                  </Col>
-                  <Col>
-                    <DeleteFilled
-                      style={{ color: ' #1890FF' }}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        deleteDiploma(it.id);
-                      }}
-                    />
-                  </Col>
-                </Row>
+                <Form.Item style={{ margin: '0' }} label={'Статус'}>
+                  <Select
+                    defaultValue={it.isApprovedByModerator ? 'accepted' : 'rejected'}
+                    options={statusOptions}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    style={{ width: '133px' }}
+                  />
+                </Form.Item>
               }
               header={
                 <Row align="middle" gutter={17.5}>
@@ -717,20 +681,6 @@ export const UserProfileDocumentsForm: FC = () => {
           </Form>
         </Panel> */}
       </Collapse>
-      {/* Убираем возможность добавления диплома администратором
-      Возможно, понадобится позже
-      <Button
-        size="large"
-        style={{ width: '100%' }}
-        onClick={() => {
-          setIsModalVisible(true);
-        }}
-        icon={<FileAddOutlined />}
-        type={'default'}
-      >
-        Добавить документ об образовании
-      </Button>
-      <AddDiplomaModal therapistId={therapist.id} visible={isModalVisible} onOk={handleOk} onCancel={handleCancel} /> */}
     </>
   );
 };
