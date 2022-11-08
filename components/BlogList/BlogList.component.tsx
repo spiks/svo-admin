@@ -160,25 +160,25 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
                   <span style={{ marginRight: '28px' }}>Множественный выбор</span>
                   <Switch onChange={toggleMultipleChoice} defaultChecked={multipleChoice} />
                 </Col>
-                {multipleChoice && (
-                  <Col>
-                    <Button
-                      onClick={() => {
-                        selectAllArticles();
-                      }}
-                      style={{ marginRight: '8px' }}
-                    >
-                      Выбрать всё
-                    </Button>
-                    <Button
-                      onClick={() => {
-                        sendArticlesToArchive();
-                      }}
-                    >
-                      Отправить в архив
-                    </Button>
-                  </Col>
-                )}
+                <Col>
+                  <Button
+                    disabled={!multipleChoice}
+                    onClick={() => {
+                      selectAllArticles();
+                    }}
+                    style={{ marginRight: '8px' }}
+                  >
+                    Выбрать всё
+                  </Button>
+                  <Button
+                    disabled={!multipleChoice}
+                    onClick={() => {
+                      sendArticlesToArchive();
+                    }}
+                  >
+                    Отправить в архив
+                  </Button>
+                </Col>
               </Row>
             )}
             <Row>
