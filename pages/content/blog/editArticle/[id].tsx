@@ -13,7 +13,6 @@ import { TabKey, tabListItems } from '../../../../constants/blogTabs';
 import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItemRender';
 import { useGetBlogArticle } from '../../../../hooks/useGetBlogArticle';
 import { NAVIGATION } from '../../../../constants/navigation';
-import { updateBlogArticleCover } from '../../../../api/blog/updateBlogArticleCover';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -76,12 +75,19 @@ const EditArticlePage: NextPage = () => {
           <Button onClick={back} type="text" key="1">
             Закрыть
           </Button>,
-          <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
-            Сохранить
-          </Button>,
+          activeTab === 'article' ? (
+            <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
+              Опубликовать
+            </Button>
+          ) : null,
         ]}
       >
-        <TabList items={tabListItems} defaultActiveKey={'active'} onChange={handleTabListChange} />
+        <TabList
+          activeKey={activeTab}
+          items={tabListItems}
+          defaultActiveKey={'active'}
+          onChange={handleTabListChange}
+        />
       </Header>
       <div style={{ overflow: 'auto' }}>
         <PageWrapper>
