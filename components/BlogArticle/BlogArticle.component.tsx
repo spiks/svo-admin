@@ -45,6 +45,8 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
   selectedArticles,
   handleSelectArticle,
   status,
+  showPreviewFromArticle,
+  shortText,
 }) => {
   const selectedArticle = selectedArticles.includes(id);
   return (
@@ -81,7 +83,7 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
         </Col>
         <Col style={{ marginBottom: '24px' }} span={24}>
           <Typography.Paragraph ellipsis={{ rows: 3 }} type="secondary" style={{ fontSize: '16px' }}>
-            {text}
+            {showPreviewFromArticle ? text : shortText}
           </Typography.Paragraph>
         </Col>
         <Col span={14}>
