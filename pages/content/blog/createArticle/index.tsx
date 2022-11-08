@@ -78,7 +78,12 @@ const CreateArticlePage: NextPage = () => {
           ) : null,
         ]}
       >
-        <TabList items={tabListItems} defaultActiveKey={'active'} onChange={handleTabListChange} />
+        <TabList
+          activeKey={activeTab}
+          items={tabListItems}
+          defaultActiveKey={'active'}
+          onChange={handleTabListChange}
+        />
       </Header>
       <div style={{ overflow: 'auto' }}>
         <PageWrapper>

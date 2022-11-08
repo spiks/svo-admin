@@ -6,6 +6,7 @@ import { ArticleInformationForm } from '@components/ArticleForm/ArticleInformati
 import { AdminUpdateBlogArticle } from '../../api/blog/updateBlogArticle';
 import { Radio } from 'antd';
 import { updateBlogArticleCover } from '../../api/blog/updateBlogArticleCover';
+import { RightOutlined } from '@ant-design/icons';
 
 type EditArticleFormProps = {
   activeTab: TabKey;
@@ -30,11 +31,13 @@ const EditArticleForm: FC<EditArticleFormProps> = ({ activeTab, handleTabListCha
               </Radio.Group>
             </Form.Item>
             <Form.Item>
-              <Col offset={6} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <Button onClick={() => onFinish(form.getFieldsValue())} size={'large'} type={'primary'}>
-                  {'Сохранить'}
-                </Button>
-                <Button onClick={() => handleTabListChange('article')} size="middle" type="link">
+              <Col offset={6} span={16}>
+                <Button
+                  icon={<RightOutlined />}
+                  onClick={() => handleTabListChange('article')}
+                  size="large"
+                  type="link"
+                >
                   {'Перейти к статье'}
                 </Button>
               </Col>
