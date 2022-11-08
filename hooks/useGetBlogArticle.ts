@@ -19,8 +19,8 @@ export const useGetBlogArticle = (form: FormInstance<AdminUpdateBlogArticle>, ar
         text: article?.data.text,
         id: article?.data.id,
         showPreviewFromArticle: article?.data.showPreviewFromArticle,
-        showInBlockInterestingAndUseful: article?.data.showPreviewFromArticle,
-        isArchived: article?.data.showPreviewFromArticle,
+        showInBlockInterestingAndUseful: article?.data.showInBlockInterestingAndUseful,
+        isArchived: article?.data.isArchived,
       });
     },
   });
