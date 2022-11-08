@@ -97,27 +97,27 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
       {/* Toolbar */}
       <div className={styles['toolbar']}>
         {/* Bold */}
-        <button onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.BOLD)}>
+        <button type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.BOLD)}>
           <Image {...formatBoldSvg} alt={'bold'} unoptimized={true} />
         </button>
         {/* Italic */}
-        <button onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.ITALIC)}>
+        <button type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.ITALIC)}>
           <Image {...formatItalicSvg} alt={'italic'} unoptimized={true} />
         </button>
         {/* Underline */}
-        <button onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.UNDERLINE)}>
+        <button type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.UNDERLINE)}>
           <Image {...formatUnderlineSvg} alt={'underline'} unoptimized={true} />
         </button>
         {/* Strike through */}
-        <button onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.STRIKETHROUGH)}>
+        <button type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.STRIKETHROUGH)}>
           <Image {...formatStrikeThroughSvg} alt={'strike through'} unoptimized={true} />
         </button>
         {/* Dotted list */}
-        <button onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.UNORDERED_LIST_ITEM)}>
+        <button type="button" onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.UNORDERED_LIST_ITEM)}>
           <Image {...formatUnorderedListSvg} alt={'unordered list'} unoptimized={true} />
         </button>
         {/* Numeric list */}
-        <button onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.ORDERED_LIST_ITEM)}>
+        <button type="button" onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.ORDERED_LIST_ITEM)}>
           <Image {...formatOrderedListSvg} alt={'ordered list'} unoptimized={true} />
         </button>
         {/* BLock text type */}
@@ -136,7 +136,7 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
           }
           title="Тип текста"
         >
-          <button>
+          <button type="button">
             <Image {...formatSizeSvg} alt={'block text type'} unoptimized={true} />
           </button>
         </Popover>
