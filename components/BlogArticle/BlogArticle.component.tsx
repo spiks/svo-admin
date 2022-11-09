@@ -37,7 +37,6 @@ const getTagItem = (status: ArticleBlogStatus) => {
 export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
   id,
   title,
-  text,
   tags,
   author,
   publicationDate,
@@ -45,7 +44,6 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
   selectedArticles,
   handleSelectArticle,
   status,
-  showPreviewFromArticle,
   shortText,
 }) => {
   const selectedArticle = selectedArticles.includes(id);
