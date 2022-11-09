@@ -1,13 +1,17 @@
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useMemo } from 'react';
 import { Button, Col, Collapse, DatePicker, Form, FormProps, Input, notification, Row, Select, Upload } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled, DeleteFilled } from '@ant-design/icons';
 
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import moment from 'moment';
 import {
+  DiplomaOfHigherEducation,
+  Inn,
   InnInformation,
+  Passport,
   RussianDiplomaOfHigherEducation,
   RussianPassportInformation,
+  Snils,
   SnilsInformation,
 } from 'generated';
 import { updateTherapistPassport } from 'api/therapist/updateTherapistPassport';
@@ -15,9 +19,22 @@ import { updateTherapistSnils } from 'api/therapist/updateTherapistSnils';
 import { updateTherapistInn } from 'api/therapist/updateTherapistInn';
 import { updateTherapistDiplomaOfHigherEducation } from 'api/therapist/updateTherapistDiplomaOfHigherEducation';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
+import {
+  DiplomaServiceWithToken,
+  InnServiceWithToken,
+  PassportServiceWithToken,
+  SnilsServiceWithToken,
+} from 'api/services';
 
 const { Panel } = Collapse;
 const { TextArea } = Input;
+
+type TherapistDocumentsType = {
+  passport: Passport | null;
+  inn: Inn | null;
+  diploma: DiplomaOfHigherEducation[];
+  snils: Snils | null;
+};
 
 const genderOptions: { value: 'male' | 'female'; label: string }[] = [
   { value: 'male', label: 'Мужской' },
@@ -50,6 +67,95 @@ export const UserProfileDocumentsForm: FC = () => {
   const { passport, inn, snils, diploma } = documents;
 
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
+
+  //Индикация возможности редактировать документ терапевта администратором
+
+  const canEditAndModerateDocuments = useMemo(() => {
+    if (therapist.status !== 'documents_awaiting_review') {
+      return false;
+    }
+    return true;
+  }, [therapist.status]);
+
+  // Подтверждение документа
+
+  const handleApproveDocument = async (document: keyof TherapistDocumentsType) => {
+    switch (document) {
+      case 'passport':
+        await PassportServiceWithToken.acceptTherapistPassport({
+          requestBody: {
+            arguments: {
+              therapistId: therapist.id,
+            },
+          },
+        });
+        break;
+      case 'inn':
+        await InnServiceWithToken.acceptTherapistInn({
+          requestBody: {
+            arguments: {
+              therapistId: therapist.id,
+            },
+          },
+        });
+        break;
+      case 'diploma':
+        await DiplomaServiceWithToken.acceptTherapistDiplomaOfHigherEducation({
+          requestBody: {
+            arguments: {
+              diplomaId: diploma[0].id,
+            },
+          },
+        });
+        break;
+      case 'snils':
+        await SnilsServiceWithToken.acceptTherapistSnils({
+          requestBody: {
+            arguments: {
+              therapistId: therapist.id,
+            },
+          },
+        });
+        break;
+    }
+    await refetch('documents');
+  };
+
+  // Отклонение документа
+
+  const handleRejectDocument = async (document: keyof TherapistDocumentsType) => {
+    switch (document) {
+      case 'passport':
+        await PassportServiceWithToken.rejectTherapistPassport({
+          requestBody: { arguments: { therapistId: therapist.id } },
+        });
+        break;
+      case 'inn':
+        await InnServiceWithToken.rejectTherapistInn({
+          requestBody: { arguments: { therapistId: therapist.id } },
+        });
+        break;
+      case 'diploma':
+        await DiplomaServiceWithToken.rejectTherapistDiplomaOfHigherEducation({
+          requestBody: {
+            arguments: {
+              diplomaId: diploma[0].id,
+            },
+          },
+        });
+        break;
+      case 'snils':
+        await SnilsServiceWithToken.rejectTherapistSnils({
+          requestBody: {
+            arguments: {
+              therapistId: therapist.id,
+            },
+          },
+        });
+        break;
+    }
+    await refetch('documents');
+  };
 
   // Изменение паспорта
 
@@ -99,6 +205,15 @@ export const UserProfileDocumentsForm: FC = () => {
     }
   };
 
+  const getStatusDocument = (isApprovedByModerator: boolean | null | undefined) => {
+    if (isApprovedByModerator === null) {
+      return 'На проверке';
+    } else if (isApprovedByModerator) {
+      return 'accepted';
+    }
+    return 'rejected';
+  };
+
   // Изменение ИНН
 
   const submitInnForm: FormProps<InnInformation>['onFinish'] = async (values) => {
@@ -138,7 +253,11 @@ export const UserProfileDocumentsForm: FC = () => {
           extra={
             <Form.Item style={{ margin: '0' }} label={'Статус'}>
               <Select
-                defaultValue={passport?.isApprovedByModerator ? 'accepted' : 'rejected'}
+                disabled={!canEditAndModerateDocuments}
+                onChange={(value) => {
+                  value === 'accepted' ? handleApproveDocument('passport') : handleRejectDocument('passport');
+                }}
+                defaultValue={getStatusDocument(passport?.isApprovedByModerator)}
                 options={statusOptions}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -298,7 +417,7 @@ export const UserProfileDocumentsForm: FC = () => {
               </Col>
               <Col>
                 <Form.Item>
-                  <Button htmlType={'submit'} type="primary">
+                  <Button disabled={!canEditAndModerateDocuments} htmlType={'submit'} type="primary">
                     ОК
                   </Button>
                 </Form.Item>
@@ -311,7 +430,11 @@ export const UserProfileDocumentsForm: FC = () => {
           extra={
             <Form.Item style={{ margin: '0' }} label={'Статус'}>
               <Select
-                defaultValue={snils?.isApprovedByModerator ? 'accepted' : 'rejected'}
+                disabled={!canEditAndModerateDocuments}
+                onChange={(value) => {
+                  value === 'accepted' ? handleApproveDocument('snils') : handleRejectDocument('snils');
+                }}
+                defaultValue={getStatusDocument(snils?.isApprovedByModerator)}
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
@@ -380,7 +503,7 @@ export const UserProfileDocumentsForm: FC = () => {
               </Col>
               <Col>
                 <Form.Item>
-                  <Button htmlType="submit" type="primary">
+                  <Button disabled={!canEditAndModerateDocuments} htmlType="submit" type="primary">
                     ОК
                   </Button>
                 </Form.Item>
@@ -393,7 +516,11 @@ export const UserProfileDocumentsForm: FC = () => {
           extra={
             <Form.Item style={{ margin: '0' }} label={'Статус'}>
               <Select
-                defaultValue={inn?.isApprovedByModerator ? 'accepted' : 'rejected'}
+                disabled={!canEditAndModerateDocuments}
+                onChange={(value) => {
+                  value === 'accepted' ? handleApproveDocument('inn') : handleRejectDocument('inn');
+                }}
+                defaultValue={getStatusDocument(inn?.isApprovedByModerator)}
                 options={statusOptions}
                 onClick={(e) => {
                   e.stopPropagation();
@@ -462,7 +589,7 @@ export const UserProfileDocumentsForm: FC = () => {
               </Col>
               <Col>
                 <Form.Item>
-                  <Button htmlType="submit" type="primary">
+                  <Button disabled={!canEditAndModerateDocuments} htmlType="submit" type="primary">
                     ОК
                   </Button>
                 </Form.Item>
@@ -481,7 +608,11 @@ export const UserProfileDocumentsForm: FC = () => {
               extra={
                 <Form.Item style={{ margin: '0' }} label={'Статус'}>
                   <Select
-                    defaultValue={it.isApprovedByModerator ? 'accepted' : 'rejected'}
+                    disabled={!canEditAndModerateDocuments}
+                    onChange={(value) => {
+                      value === 'accepted' ? handleApproveDocument('diploma') : handleRejectDocument('diploma');
+                    }}
+                    defaultValue={getStatusDocument(it.isApprovedByModerator)}
                     options={statusOptions}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -607,7 +738,7 @@ export const UserProfileDocumentsForm: FC = () => {
                   />
                 </Form.Item>
                 <Form.Item>
-                  <Button htmlType={'submit'} type={'primary'}>
+                  <Button disabled={!canEditAndModerateDocuments} htmlType={'submit'} type={'primary'}>
                     Сохранить
                   </Button>
                 </Form.Item>

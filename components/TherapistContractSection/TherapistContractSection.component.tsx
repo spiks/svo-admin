@@ -1,28 +1,74 @@
-import { Col, Collapse, Form, Row, Typography, Upload } from 'antd';
+import { Col, Collapse, Form, notification, Row, Select, Typography, Upload } from 'antd';
 import CollapsePanel from 'antd/lib/collapse/CollapsePanel';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
-import { FC, useContext } from 'react';
+import { FC, useCallback, useContext, useMemo } from 'react';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { useContractsQuery } from 'hooks/useContractsQuery';
+import { acceptContract } from 'api/therapist/acceptContract';
+import { rejectContract } from 'api/therapist/rejectContract';
+
+const contractOptions: { value: 'accepted' | 'rejected'; label: string }[] = [
+  { value: 'accepted', label: 'Подтвержден' },
+  {
+    value: 'rejected',
+    label: 'Отклонен',
+  },
+];
 
 export const TherapistContractSection: FC = () => {
   const { therapist } = useContext(TherapistPageContext);
   const { signedContract } = useContractsQuery(therapist.id);
 
-  const getTherapistContractStatus = () => {
-    switch (therapist.status) {
-      case 'active':
-        return 'Договор подтвержден';
-      case 'contract_awaiting_review':
-        return 'Договор на проверке';
-      case 'contract_not_submitted_yet':
-        return 'Договор ещё не был отправлен';
-      case 'contract_rejected':
-        return 'Договор отклонен';
-      default:
-        return 'Договор ещё не был отправлен';
+  const canModerateContract = useMemo(() => {
+    if (therapist.status !== 'contract_awaiting_review') {
+      return false;
     }
+    return true;
+  }, [therapist.status]);
+
+  const handleApproveContract = useCallback(async () => {
+    try {
+      await acceptContract(therapist.id);
+      notification.success({
+        type: 'success',
+        message: 'Успех',
+        description: 'Договор подтвержден',
+      });
+    } catch (err) {
+      notification.error({
+        type: 'error',
+        message: 'Ошибка',
+        description: 'Не удалось подтвердить договор.',
+      });
+    }
+  }, [therapist.id]);
+
+  const handleRejectContract = useCallback(async () => {
+    try {
+      await rejectContract(therapist.id);
+      notification.success({
+        type: 'success',
+        message: 'Успех',
+        description: 'Договор отклонен',
+      });
+    } catch (err) {
+      notification.error({
+        type: 'error',
+        message: 'Ошибка',
+        description: 'Не удалось отклонить договор.',
+      });
+    }
+  }, [therapist.id]);
+
+  const getContractStatus = () => {
+    if (therapist.status === 'active') {
+      return 'accepted';
+    } else if (therapist.status === 'contract_awaiting_review') {
+      return 'На проверке';
+    }
+    return 'rejected';
   };
+
   return (
     <>
       <h2 style={{ marginBottom: '24px' }}>Договор</h2>
@@ -68,7 +114,18 @@ export const TherapistContractSection: FC = () => {
               </Col>
               <Col span={12}>
                 <Form.Item label={'Статус договора'}>
-                  <Typography.Text>{getTherapistContractStatus()}</Typography.Text>
+                  <Select
+                    onChange={(value) => {
+                      value === 'accepted' ? handleApproveContract() : handleRejectContract();
+                    }}
+                    disabled={!canModerateContract}
+                    defaultValue={getContractStatus()}
+                    options={contractOptions}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    style={{ width: '133px' }}
+                  />
                 </Form.Item>
               </Col>
             </Row>
