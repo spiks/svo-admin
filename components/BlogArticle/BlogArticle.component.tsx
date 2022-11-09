@@ -83,7 +83,7 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
         </Col>
         <Col style={{ marginBottom: '24px' }} span={24}>
           <Typography.Paragraph ellipsis={{ rows: 3 }} type="secondary" style={{ fontSize: '16px' }}>
-            {showPreviewFromArticle ? text : shortText}
+            {shortText}
           </Typography.Paragraph>
         </Col>
         <Col span={14}>
