@@ -65,11 +65,8 @@ export const UserProfileHeader: FC = ({ children }) => {
       breadcrumb={{ routes, itemRender }}
       extra={
         <>
-          <Button size="large" type="text">
+          <Button onClick={back} size="large" type="text">
             Закрыть
-          </Button>
-          <Button size="large" type="primary">
-            Сохранить
           </Button>
         </>
       }
