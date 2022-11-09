@@ -66,7 +66,7 @@ export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }
       <Form.Item wrapperCol={{ offset: 6, span: 18 }} valuePropName="checked" name={'showPreviewFromArticle'}>
         <Checkbox>{'Показывать начало статьи вместо краткого описания'}</Checkbox>
       </Form.Item>
-      <Form.Item rules={[{ required: true, message: 'Укажите теги' }]} name={'tags'} required label="Теги">
+      <Form.Item rules={[{ message: 'Укажите теги' }]} name={'tags'} label="Теги">
         <Select
           size="large"
           mode="multiple"
