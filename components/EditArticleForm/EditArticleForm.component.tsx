@@ -1,11 +1,9 @@
-import { Button, Col, Form, FormInstance } from 'antd';
-import { FC, useState } from 'react';
+import { Button, Col, Form, FormInstance, Radio } from 'antd';
+import { FC } from 'react';
 import { TabKey } from '../../constants/blogTabs';
 import { ArticleTextForm } from '@components/ArticleForm/ArticleTextForm/ArticleTextForm.component';
 import { ArticleInformationForm } from '@components/ArticleForm/ArticleInformationForm/ArticleInformationForm.component';
 import { AdminUpdateBlogArticle } from '../../api/blog/updateBlogArticle';
-import { Radio } from 'antd';
-import { updateBlogArticleCover } from '../../api/blog/updateBlogArticleCover';
 import { RightOutlined } from '@ant-design/icons';
 
 type EditArticleFormProps = {
@@ -17,13 +15,12 @@ type EditArticleFormProps = {
 
 const EditArticleForm: FC<EditArticleFormProps> = ({ activeTab, handleTabListChange, form, onFinish }) => {
   const values = form?.getFieldsValue(true);
-  const [uploadedFileToken, setUploadedFileToken] = useState<string>();
 
   const renderForm = () => {
     switch (activeTab) {
       case 'information':
         return (
-          <ArticleInformationForm setUploadedToken={(token) => setUploadedFileToken(token)}>
+          <ArticleInformationForm>
             <Form.Item name={'isArchived'} label={'Статус'} style={{ marginBottom: '48px' }} required={true}>
               <Radio.Group buttonStyle="solid">
                 <Radio.Button value={false}>Опубликовано</Radio.Button>
@@ -61,10 +58,8 @@ const EditArticleForm: FC<EditArticleFormProps> = ({ activeTab, handleTabListCha
     <Form
       initialValues={values}
       form={form}
-      onFinish={async (values) => {
-        if (uploadedFileToken) {
-          await updateBlogArticleCover({ id: values.id, cover: uploadedFileToken });
-        }
+      onFinish={async () => {
+        // В аргументе здесь values не содержит все необходимые нам значения, а только текущей активной формы.
         onFinish(values);
       }}
       layout="horizontal"

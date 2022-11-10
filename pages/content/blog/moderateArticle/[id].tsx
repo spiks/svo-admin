@@ -16,6 +16,7 @@ import { RejectArticleModal } from '@components/RejectArticleModal/RejectArticle
 import { AdminRejectBlogArticle, rejectArticle } from '../../../../api/blog/rejectArticle';
 import { NAVIGATION } from '../../../../constants/navigation';
 import { useGetBlogArticle } from '../../../../hooks/useGetBlogArticle';
+import { UploadFile } from 'antd/lib/upload/interface';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -38,9 +39,9 @@ const ModerateArticlePage: NextPage = () => {
   const { query } = useRouter();
   const articleId = (query['id'] as string) ?? '';
 
-  const [form] = Form.useForm<AdminUpdateBlogArticle>();
+  const [form] = Form.useForm<AdminUpdateBlogArticle & { cover: UploadFile[] }>();
 
-  const article = useGetBlogArticle(form, articleId);
+  const [article] = useGetBlogArticle(form, articleId);
 
   const { back, push } = useRouter();
 

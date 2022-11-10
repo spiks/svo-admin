@@ -1,40 +1,14 @@
 import { TagRender } from '@components/TagRender/TagRender.component';
 import { Checkbox, Col, Divider, Form, notification, Row, Select, Typography, Upload } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
-import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
-import { uploadFile } from 'api/upload/uploadFile';
 import { PlusOutlined } from '@ant-design/icons';
 import { FC } from 'react';
-import type { RcFile, UploadFile } from 'antd/es/upload/interface';
-import { UploadChangeParam } from 'antd/lib/upload';
 import { useGetListBlogTags } from '../../../hooks/useGetListBlogTags';
+import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 
 const { Text } = Typography;
 
-type Props = {
-  setUploadedToken: (value: string) => void;
-};
-
-export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }) => {
-  const handleChange = async (info: UploadChangeParam<UploadFile>) => {
-    const { data: credentials } = await requestFileUploadUrl('article_cover');
-    try {
-      const { data: uploaded } = await uploadFile(credentials, info.fileList[0].originFileObj as RcFile);
-      setUploadedToken(uploaded.token);
-    } catch (err) {
-      if (err instanceof Error) {
-        notification.error({
-          type: 'error',
-          message: 'Ошибка',
-          description: err.message,
-        });
-        return;
-      } else {
-        throw err;
-      }
-    }
-  };
-
+export const ArticleInformationForm: FC = ({ children }) => {
   const tagsOptions = useGetListBlogTags(() =>
     notification.error({
       type: 'error',
@@ -85,15 +59,23 @@ export const ArticleInformationForm: FC<Props> = ({ children, setUploadedToken }
       <Form.Item wrapperCol={{ offset: 6, span: 18 }} valuePropName="checked" name={'showInBlockInterestingAndUseful'}>
         <Checkbox>{'Показывать в “Интересно и полезно”'}</Checkbox>
       </Form.Item>
-      <Form.Item name={'cover'} label="Обложка статьи" valuePropName={'fileList'}>
+      <Form.Item label="Обложка статьи">
         <Row gutter={16}>
           <Col span={6}>
-            <Upload onChange={handleChange} maxCount={1} listType="picture-card">
-              <div>
-                <PlusOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
-            </Upload>
+            <Form.Item
+              name={'cover'}
+              valuePropName={'fileList'}
+              getValueFromEvent={(e: UploadChangeParam<UploadFile<unknown>>) => {
+                return e.fileList;
+              }}
+            >
+              <Upload maxCount={1} listType="picture-card" showUploadList={true}>
+                <div>
+                  <PlusOutlined />
+                  <div style={{ marginTop: '8px' }}>Загрузить</div>
+                </div>
+              </Upload>
+            </Form.Item>
           </Col>
           <Col span={18}>
             <Row>
