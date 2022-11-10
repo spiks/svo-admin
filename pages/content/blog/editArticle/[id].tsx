@@ -13,6 +13,10 @@ import { TabKey, tabListItems } from '../../../../constants/blogTabs';
 import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItemRender';
 import { useGetBlogArticle } from '../../../../hooks/useGetBlogArticle';
 import { NAVIGATION } from '../../../../constants/navigation';
+import { UploadFile } from 'antd/lib/upload/interface';
+import { requestFileUploadUrl } from '../../../../api/upload/requestFileUploadUrl';
+import { uploadFile } from '../../../../api/upload/uploadFile';
+import { updateBlogArticleCover } from '../../../../api/blog/updateBlogArticleCover';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -34,18 +38,40 @@ const EditArticlePage: NextPage = () => {
   const [activeTab, setActiveTab] = useState<TabKey>('information');
   const { query } = useRouter();
   const articleId = (query['id'] as string) ?? '';
-  const [form] = Form.useForm<AdminUpdateBlogArticle>();
-  const article = useGetBlogArticle(form, articleId);
+  const [form] = Form.useForm<AdminUpdateBlogArticle & { cover: UploadFile[] }>();
+  const [article, refetch] = useGetBlogArticle(form, articleId);
   const { back, push } = useRouter();
-  const [uploadedFileToken, setUploadedFileToken] = useState<string | undefined>();
 
   const handleTabListChange = useCallback((key) => {
     setActiveTab(key);
   }, []);
 
+  /* Сабмит изменений статьи */
   const onFinish: FormProps<AdminUpdateBlogArticle>['onFinish'] = useCallback(async () => {
-    const values: AdminUpdateBlogArticle = form.getFieldsValue(true);
+    const values: AdminUpdateBlogArticle & { cover: UploadFile[] } = form.getFieldsValue(true);
 
+    // Этап №1: Обновляем обложку
+    const isCoverChanged = Boolean(values?.cover?.[0].originFileObj);
+    if (isCoverChanged) {
+      const file = values.cover[0].originFileObj!;
+      try {
+        const { data: cred } = await requestFileUploadUrl('article_cover');
+        const coverToken = (await uploadFile(cred, file)).data.token;
+        await updateBlogArticleCover({
+          id: values.id,
+          cover: coverToken,
+        });
+      } catch (err) {
+        console.error(err);
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: `Не удалось загрузить изображение.`,
+        });
+      }
+    }
+
+    // Этап №2: Обновляем всё остальное
     try {
       await updateBlogArticle({ ...values, shortText: values.shortText ?? null });
       notification.success({
@@ -62,7 +88,9 @@ const EditArticlePage: NextPage = () => {
         description: 'Не удалось изменить статью. Проверьте, все ли поля заполнены верно.',
       });
     }
-  }, [form, push]);
+
+    await refetch();
+  }, [form, push, refetch]);
 
   return (
     <MainLayout>

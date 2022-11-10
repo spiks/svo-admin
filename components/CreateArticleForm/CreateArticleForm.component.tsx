@@ -19,7 +19,7 @@ const CreateArticleForm: FC<CreateArticleFormProps> = ({ activeTab, handleTabLis
     switch (activeTab) {
       case 'information':
         return (
-          <ArticleInformationForm setUploadedToken={(token) => form?.setFieldValue('cover', token)}>
+          <ArticleInformationForm>
             <Col offset={6} span={16}>
               <Button onClick={() => handleTabListChange('article')} size={'large'} type={'primary'}>
                 {'Продолжить'}
