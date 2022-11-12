@@ -1,4 +1,4 @@
-import { Alert, BreadcrumbProps, Button, Tabs } from 'antd';
+import { Alert, BreadcrumbProps, Button } from 'antd';
 import { Route } from 'antd/lib/breadcrumb/Breadcrumb';
 import { TherapistProfileStatus } from 'generated';
 import Link from 'next/link';
@@ -58,7 +58,8 @@ export const UserProfileHeader: FC = ({ children }) => {
           <span style={{ marginRight: '12px' }}>{`Просмотр профиля пользователя ${therapist.fullName ?? 'Аноним'} (${
             therapistStatusName[therapist.status]
           })`}</span>
-          <Button size="large">Заблокировать</Button>
+          {/* https://github.com/spiks/most-frontend-admin/issues/205#issuecomment-1312594745 */}
+          {/*<Button size="large">Заблокировать</Button>*/}
         </div>
       }
       onBack={back}
