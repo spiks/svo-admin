@@ -40,7 +40,15 @@ const AuthProvider: FC = ({ children }) => {
       return;
     }
 
-    const email = await getEmail();
+    let email: Awaited<ReturnType<typeof getEmail>>;
+    try {
+      email = await getEmail();
+    } catch (err) {
+      TokenStorage.clearTokens();
+      await push('/login');
+      return;
+    }
+
     setCredentials({
       token: storageToken,
       email: email.data,
