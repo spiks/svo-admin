@@ -51,7 +51,7 @@ const EditArticlePage: NextPage = () => {
     const values: AdminUpdateBlogArticle & { cover: UploadFile[] } = form.getFieldsValue(true);
 
     // Этап №1: Обновляем обложку
-    const isCoverChanged = Boolean(values?.cover?.[0].originFileObj);
+    const isCoverChanged = Boolean(values?.cover?.[0]?.originFileObj);
     if (isCoverChanged) {
       const file = values.cover[0].originFileObj!;
       try {
