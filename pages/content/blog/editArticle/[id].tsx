@@ -103,11 +103,9 @@ const EditArticlePage: NextPage = () => {
           <Button onClick={back} type="text" key="1">
             Закрыть
           </Button>,
-          activeTab === 'article' ? (
-            <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
-              Опубликовать
-            </Button>
-          ) : null,
+          <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
+            Опубликовать
+          </Button>,
         ]}
       >
         <TabList
