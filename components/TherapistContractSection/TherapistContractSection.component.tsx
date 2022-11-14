@@ -6,6 +6,7 @@ import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { useContractsQuery } from 'hooks/useContractsQuery';
 import { acceptContract } from 'api/therapist/acceptContract';
 import { rejectContract } from 'api/therapist/rejectContract';
+import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
 
 const contractOptions: { value: 'accepted' | 'rejected'; label: string }[] = [
   { value: 'accepted', label: 'Подтвержден' },
@@ -18,6 +19,7 @@ const contractOptions: { value: 'accepted' | 'rejected'; label: string }[] = [
 export const TherapistContractSection: FC = () => {
   const { therapist } = useContext(TherapistPageContext);
   const { signedContract } = useContractsQuery(therapist.id);
+  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
   const canModerateContract = useMemo(() => {
     if (therapist.status !== 'contract_awaiting_review') {
@@ -40,8 +42,10 @@ export const TherapistContractSection: FC = () => {
         message: 'Ошибка',
         description: 'Не удалось подтвердить договор.',
       });
+    } finally {
+      await refetch('therapist');
     }
-  }, [therapist.id]);
+  }, [therapist.id, refetch]);
 
   const handleRejectContract = useCallback(async () => {
     try {
@@ -57,8 +61,10 @@ export const TherapistContractSection: FC = () => {
         message: 'Ошибка',
         description: 'Не удалось отклонить договор.',
       });
+    } finally {
+      await refetch('therapist');
     }
-  }, [therapist.id]);
+  }, [therapist.id, refetch]);
 
   const getContractStatus = () => {
     if (therapist.status === 'active') {
