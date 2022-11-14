@@ -51,7 +51,7 @@ const EditArticlePage: NextPage = () => {
     const values: AdminUpdateBlogArticle & { cover: UploadFile[] } = form.getFieldsValue(true);
 
     // Этап №1: Обновляем обложку
-    const isCoverChanged = Boolean(values?.cover?.[0].originFileObj);
+    const isCoverChanged = Boolean(values?.cover?.[0]?.originFileObj);
     if (isCoverChanged) {
       const file = values.cover[0].originFileObj!;
       try {
@@ -103,11 +103,9 @@ const EditArticlePage: NextPage = () => {
           <Button onClick={back} type="text" key="1">
             Закрыть
           </Button>,
-          activeTab === 'article' ? (
-            <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
-              Опубликовать
-            </Button>
-          ) : null,
+          <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
+            Опубликовать
+          </Button>,
         ]}
       >
         <TabList
