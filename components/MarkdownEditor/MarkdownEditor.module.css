@@ -22,8 +22,9 @@
 .markdown-editor {
   display: flex;
   flex-direction: column-reverse;
-  max-height: 94px;
+  height: 94px;
   overflow: auto;
+  resize: vertical;
 }
 
 /* Whole input area */
