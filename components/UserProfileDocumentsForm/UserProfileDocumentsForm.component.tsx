@@ -1,6 +1,6 @@
 import React, { FC, useContext, useMemo } from 'react';
 import { Button, Col, Collapse, DatePicker, Form, FormProps, Input, notification, Row, Select, Upload } from 'antd';
-import { CheckCircleFilled, CloseCircleFilled, DeleteFilled } from '@ant-design/icons';
+import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
 
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import moment from 'moment';
@@ -25,6 +25,7 @@ import {
   PassportServiceWithToken,
   SnilsServiceWithToken,
 } from 'api/services';
+import { MaskedInput } from 'antd-mask-input';
 
 const { Panel } = Collapse;
 const { TextArea } = Input;
@@ -377,10 +378,13 @@ export const UserProfileDocumentsForm: FC = () => {
                       pattern: /^[0-9]{3}-[0-9]{3}$/,
                     },
                   ]}
+                  normalize={(value) => {
+                    return value;
+                  }}
                   name={'issuerId'}
                   label={'Код подразделения'}
                 >
-                  <Input maxLength={7} />
+                  <MaskedInput mask={'000-000'} />
                 </Form.Item>
               </Col>
             </Row>
@@ -480,7 +484,7 @@ export const UserProfileDocumentsForm: FC = () => {
                   name={'number'}
                   label="СНИЛС"
                 >
-                  <Input maxLength={14} />
+                  <MaskedInput mask={'000-000-000 00'} />
                 </Form.Item>
               </Col>
               <Col>
