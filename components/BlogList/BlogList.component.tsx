@@ -9,8 +9,8 @@ import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { getTimeZoneToString } from 'utility/getTimeZoneToString';
 import { BlogArticle } from '../BlogArticle/BlogArticle.component';
 import style from './BlogList.module.css';
-import { router } from 'next/client';
 import { NAVIGATION } from '../../constants/navigation';
+import { useRouter } from 'next/router';
 
 export type BlogListProps = {
   showFilters: boolean;
@@ -18,6 +18,7 @@ export type BlogListProps = {
 };
 
 const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
+  const { push } = useRouter();
   const [multipleChoice, setMultipleChoice] = useState<boolean>(false);
   const [selectedArticles, setSelectedArticles] = useState<string[]>([]);
   const [page, setPage] = useState(1);
@@ -111,16 +112,17 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
       } else {
         switch (article.status) {
           case 'article_published': {
-            router.push(`${NAVIGATION.blog}/editArticle/${article.id}`);
+            push(`${NAVIGATION.blog}/editArticle/${article.id}`);
             break;
           }
           case 'article_awaiting_review': {
-            router.push(`${NAVIGATION.blog}/moderateArticle/${article.id}`);
+            push(`${NAVIGATION.blog}/moderateArticle/${article.id}`);
             break;
           }
         }
       }
     },
+    // eslint-disable-next-line
     [multipleChoice, selectedArticles],
   );
 

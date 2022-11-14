@@ -17,6 +17,7 @@ import { UploadFile } from 'antd/lib/upload/interface';
 import { requestFileUploadUrl } from '../../../../api/upload/requestFileUploadUrl';
 import { uploadFile } from '../../../../api/upload/uploadFile';
 import { updateBlogArticleCover } from '../../../../api/blog/updateBlogArticleCover';
+import { useQueryClient } from '@tanstack/react-query';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -35,11 +36,12 @@ const getRoutes = (title: string): BreadcrumbProps['routes'] => [
 ];
 
 const EditArticlePage: NextPage = () => {
+  const client = useQueryClient();
   const [activeTab, setActiveTab] = useState<TabKey>('information');
   const { query } = useRouter();
   const articleId = (query['id'] as string) ?? '';
   const [form] = Form.useForm<AdminUpdateBlogArticle & { cover: UploadFile[] }>();
-  const [article, refetch] = useGetBlogArticle(form, articleId);
+  const [article] = useGetBlogArticle(form, articleId);
   const { back, push } = useRouter();
 
   const handleTabListChange = useCallback((key) => {
@@ -79,6 +81,9 @@ const EditArticlePage: NextPage = () => {
         message: 'Успех',
         description: 'Статья успешно изменена',
       });
+      // Сбрасываем кэщ (обновляем статьи в списке)
+      await client.invalidateQueries({ queryKey: ['articles'] });
+      // Перенаправляем на список статьей
       await push(NAVIGATION.blog);
       form.resetFields();
     } catch (err) {
@@ -88,9 +93,7 @@ const EditArticlePage: NextPage = () => {
         description: 'Не удалось изменить статью. Проверьте, все ли поля заполнены верно.',
       });
     }
-
-    await refetch();
-  }, [form, push, refetch]);
+  }, [form, client, push]);
 
   return (
     <MainLayout>
