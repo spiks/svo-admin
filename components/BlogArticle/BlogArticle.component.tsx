@@ -76,6 +76,7 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
               height={78}
               alt={'image'}
               src={'https://' + cover.sizes.original.url}
+              unoptimized={true}
             />
           )}
         </Col>
