@@ -1,7 +1,7 @@
-import { Col, Collapse, Form, notification, Row, Select, Typography, Upload } from 'antd';
+import { Checkbox, Col, Collapse, Form, notification, Row, Select, Upload } from 'antd';
 import CollapsePanel from 'antd/lib/collapse/CollapsePanel';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
-import { FC, useCallback, useContext, useMemo } from 'react';
+import { FC, useCallback, useContext, useMemo, useState } from 'react';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { useContractsQuery } from 'hooks/useContractsQuery';
 import { acceptContract } from 'api/therapist/acceptContract';
@@ -17,9 +17,14 @@ const contractOptions: { value: 'accepted' | 'rejected'; label: string }[] = [
 ];
 
 export const TherapistContractSection: FC = () => {
+  const [accepted, setAccepted] = useState<boolean>(false);
   const { therapist } = useContext(TherapistPageContext);
   const { signedContract } = useContractsQuery(therapist.id);
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
+
+  const toggleAccept = useCallback(() => {
+    setAccepted(!accepted);
+  }, [accepted]);
 
   const canModerateContract = useMemo(() => {
     if (therapist.status !== 'contract_awaiting_review') {
@@ -29,6 +34,15 @@ export const TherapistContractSection: FC = () => {
   }, [therapist.status]);
 
   const handleApproveContract = useCallback(async () => {
+    if (!accepted) {
+      notification.warning({
+        type: 'warning',
+        message: 'Предупреждение',
+        description:
+          'Для изменения статуса контракта пользователя, необходимо подтвердить соответствие договора нормативно-правовым актам, этическим нормам и не нарушает законодательства Российской Федерации',
+      });
+      return;
+    }
     try {
       await acceptContract(therapist.id);
       notification.success({
@@ -45,7 +59,7 @@ export const TherapistContractSection: FC = () => {
     } finally {
       await refetch('therapist');
     }
-  }, [therapist.id, refetch]);
+  }, [therapist.id, refetch, accepted]);
 
   const handleRejectContract = useCallback(async () => {
     try {
@@ -100,7 +114,7 @@ export const TherapistContractSection: FC = () => {
         >
           <Form layout="vertical">
             <Row justify={'space-between'} align="middle">
-              <Col span={12}>
+              <Col flex={'inherit'} span={8}>
                 <Form.Item label={'Подписанный договор'}>
                   {signedContract ? (
                     <Upload
@@ -118,14 +132,14 @@ export const TherapistContractSection: FC = () => {
                   )}
                 </Form.Item>
               </Col>
-              <Col span={12}>
+              <Col flex={'inherit'} span={8}>
                 <Form.Item label={'Статус договора'}>
                   <Select
-                    onChange={(value) => {
+                    onSelect={(value: string) => {
                       value === 'accepted' ? handleApproveContract() : handleRejectContract();
                     }}
-                    disabled={!canModerateContract}
                     defaultValue={getContractStatus()}
+                    disabled={!canModerateContract}
                     options={contractOptions}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -133,6 +147,11 @@ export const TherapistContractSection: FC = () => {
                     style={{ width: '133px' }}
                   />
                 </Form.Item>
+              </Col>
+              <Col flex={'inherit'} span={8}>
+                <Checkbox disabled={!canModerateContract} checked={accepted} onChange={toggleAccept}>
+                  Я подтверждаю!
+                </Checkbox>
               </Col>
             </Row>
           </Form>
