@@ -72,7 +72,12 @@ const CreateArticlePage: NextPage = () => {
             Закрыть
           </Button>,
           activeTab === 'article' ? (
-            <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
+            <Button
+              disabled={!(Boolean(form.getFieldValue('title')) && Boolean(form.getFieldValue('text')))}
+              onClick={() => onFinish(form.getFieldsValue())}
+              type={'primary'}
+              key="2"
+            >
               Опубликовать
             </Button>
           ) : null,
