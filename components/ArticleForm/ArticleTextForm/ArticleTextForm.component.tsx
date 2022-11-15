@@ -13,7 +13,7 @@ export const ArticleTextForm: FC<Props> = ({ text, title, onReturnBackButtonClic
   return (
     <div style={{ padding: '56px' }}>
       <h1 style={{ textAlign: 'start', marginBottom: '40px', fontSize: '24px' }}>{title || 'Без названия'}</h1>
-      <Form.Item noStyle rules={[{ required: true, message: 'Введите текст статьи' }]} name={'text'}>
+      <Form.Item rules={[{ required: true, message: 'Введите текст статьи' }]} name={'text'}>
         <MarkdownEditor initialValue={text} />
       </Form.Item>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '48px' }}>
@@ -23,7 +23,7 @@ export const ArticleTextForm: FC<Props> = ({ text, title, onReturnBackButtonClic
           </Button>
         </Form.Item>
         <Form.Item>
-          <Button size="large" type="primary" htmlType="submit">
+          <Button disabled={!(Boolean(title) && Boolean(text))} size="large" type="primary" htmlType="submit">
             {'Опубликовать'}
           </Button>
         </Form.Item>

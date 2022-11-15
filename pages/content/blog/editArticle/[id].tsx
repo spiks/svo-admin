@@ -106,7 +106,12 @@ const EditArticlePage: NextPage = () => {
           <Button onClick={back} type="text" key="1">
             Закрыть
           </Button>,
-          <Button onClick={() => onFinish(form.getFieldsValue())} type={'primary'} key="2">
+          <Button
+            onClick={() => onFinish(form.getFieldsValue())}
+            disabled={!(Boolean(form.getFieldValue('title')) && Boolean(form.getFieldValue('text')))}
+            type={'primary'}
+            key="2"
+          >
             Опубликовать
           </Button>,
         ]}
