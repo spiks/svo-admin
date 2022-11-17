@@ -18,6 +18,7 @@ import { requestFileUploadUrl } from '../../../../api/upload/requestFileUploadUr
 import { uploadFile } from '../../../../api/upload/uploadFile';
 import { updateBlogArticleCover } from '../../../../api/blog/updateBlogArticleCover';
 import { useQueryClient } from '@tanstack/react-query';
+import { removeBlogArticleCover } from '../../../../api/blog/removeBlogArticleCover';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -71,6 +72,17 @@ const EditArticlePage: NextPage = () => {
           description: `Не удалось загрузить изображение.`,
         });
       }
+    } else if (!isCoverChanged && article?.cover?.sizes) {
+      try {
+        await removeBlogArticleCover({ id: values.id });
+      } catch (err) {
+        console.error(err);
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: `Не удалось удалить обложку.`,
+        });
+      }
     }
 
     // Этап №2: Обновляем всё остальное
@@ -93,7 +105,7 @@ const EditArticlePage: NextPage = () => {
         description: 'Не удалось изменить статью. Проверьте, все ли поля заполнены верно.',
       });
     }
-  }, [form, client, push]);
+  }, [form, article?.cover?.sizes, client, push]);
 
   return (
     <MainLayout>
