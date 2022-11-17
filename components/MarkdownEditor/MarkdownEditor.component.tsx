@@ -129,9 +129,9 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
               style={{ display: 'flex', flexDirection: 'column', rowGap: '8px' }}
             >
               <Radio.Button value={MarkdownEditorBlockType.HEADER_ONE}>Заголовок</Radio.Button>
-              <Radio.Button value={MarkdownEditorBlockType.HEADER_THREE}>Подзаголовок</Radio.Button>
+              {/*<Radio.Button value={MarkdownEditorBlockType.HEADER_THREE}>Подзаголовок</Radio.Button>*/}
               <Radio.Button value={MarkdownEditorBlockType.PARAGRAPH}>Основной текст</Radio.Button>
-              <Radio.Button value={MarkdownEditorBlockType.UNSTYLED}>Чистый текст</Radio.Button>
+              {/*<Radio.Button value={MarkdownEditorBlockType.UNSTYLED}>Чистый текст</Radio.Button>*/}
             </Radio.Group>
           }
           title="Тип текста"
