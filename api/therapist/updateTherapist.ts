@@ -14,7 +14,6 @@ export type UpdateTherapistRequestType = {
   id: Uuid;
   phone: Phone;
   specializations: SpecializationsUuidList;
-  avatar: MediaImage | null;
   biography: LongDescription | null;
   fullName: FullName | null;
   email: Email | null;

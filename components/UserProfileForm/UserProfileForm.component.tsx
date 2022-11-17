@@ -1,11 +1,15 @@
-import { Avatar, Button, Col, Divider, Form, FormProps, Input, notification, Row, Select } from 'antd';
+import { Button, Divider, Form, FormProps, Input, notification, Select, Upload } from 'antd';
+import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useContext, useMemo } from 'react';
-import { PhoneOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
-import { TherapistPageContext, USER_TAB_KEY } from 'pages/users/therapists/[id]';
-import { Image } from '@components/Image/Image.component';
+import { PhoneOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
+import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { WorkExperienceYears } from 'generated';
 import { updateTherapist, UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
+import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
+import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
+import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
+import { uploadFile } from 'api/upload/uploadFile';
 
 export const workExperienceYearsNames: Record<WorkExperienceYears, string> = {
   from_1_to_2_years: '1-2 года',
@@ -84,7 +88,36 @@ export const UserProfileForm: FC = () => {
       .flat();
   }, [therapist.specializations]);
 
-  const onFinish: FormProps<UpdateTherapistRequestType>['onFinish'] = async (values) => {
+  const onFinish: FormProps<UpdateTherapistRequestType & { avatar: UploadFile[] }>['onFinish'] = async (values) => {
+    const isAvatarChanged = Boolean(values?.avatar?.[0]?.originFileObj);
+    if (isAvatarChanged) {
+      const file = values.avatar[0].originFileObj!;
+      try {
+        const { data: cred } = await requestFileUploadUrl('avatar');
+        const avatarToken = (await uploadFile(cred, file)).data.token;
+        await updateTherapistAvatar({
+          therapistId: therapist.id,
+          avatar: avatarToken,
+        });
+      } catch (err) {
+        console.error(err);
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: `Не удалось загрузить изображение.`,
+        });
+      }
+    } else if (!isAvatarChanged && therapist?.avatar?.sizes) {
+      try {
+        await removeTherapistAvatar(therapist.id);
+      } catch (err) {
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: 'Не удалось удалить изображение',
+        });
+      }
+    }
     try {
       // TODO: убрать workPrinciples из запроса, когда удалят его из метода updateTherapist и getTherapist
       await updateTherapist({
@@ -108,6 +141,19 @@ export const UserProfileForm: FC = () => {
     }
   };
 
+  const getAvatar = () => {
+    const avatar: UploadFile[] = [];
+    const therapisAvatar = therapist.avatar?.sizes.small;
+    if (therapisAvatar) {
+      avatar.push({
+        uid: '0',
+        name: 'avatar.webp',
+        url: 'https://' + therapisAvatar.url,
+      });
+    }
+    return avatar;
+  };
+
   return (
     <Form
       onFinish={onFinish}
@@ -118,7 +164,7 @@ export const UserProfileForm: FC = () => {
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
       initialValues={{
-        avatar: therapist.avatar,
+        avatar: getAvatar(),
         fullName: therapist.fullName,
         email: therapist.email,
         phone: therapist.phone,
@@ -128,22 +174,20 @@ export const UserProfileForm: FC = () => {
       }}
     >
       <Divider>Персональные данные</Divider>
-      <Form.Item label="Изображение профиля" name="avatar">
-        <Row gutter={16}>
-          <Col>
-            {therapist.avatar ? (
-              <Image
-                width={104}
-                height={104}
-                layout={'fixed'}
-                alt={'avatar'}
-                src={`https://${therapist.avatar?.sizes.original.url}`}
-              />
-            ) : (
-              <Avatar shape="square" size={104} icon={<UserOutlined />} />
-            )}
-          </Col>
-        </Row>
+      <Form.Item
+        label="Изображение профиля"
+        name={'avatar'}
+        valuePropName={'fileList'}
+        getValueFromEvent={(e: UploadChangeParam<UploadFile<unknown>>) => {
+          return e.fileList;
+        }}
+      >
+        <Upload maxCount={1} listType="picture-card" showUploadList={true}>
+          <div>
+            <PlusOutlined />
+            <div style={{ marginTop: '8px' }}>Загрузить</div>
+          </div>
+        </Upload>
       </Form.Item>
       <Form.Item
         normalize={(value) => {
