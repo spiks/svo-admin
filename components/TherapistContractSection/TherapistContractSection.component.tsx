@@ -135,12 +135,12 @@ export const TherapistContractSection: FC = () => {
               <Col flex={'inherit'} span={8}>
                 <Form.Item label={'Статус договора'}>
                   <Select
-                    onSelect={(value: string) => {
-                      value === 'accepted' ? handleApproveContract() : handleRejectContract();
-                    }}
-                    defaultValue={getContractStatus()}
+                    value={getContractStatus()}
                     disabled={!canModerateContract}
                     options={contractOptions}
+                    onChange={(value) => {
+                      value === 'accepted' ? handleApproveContract() : handleRejectContract();
+                    }}
                     onClick={(e) => {
                       e.stopPropagation();
                     }}
