@@ -6,7 +6,7 @@ const nextConfig = {
   lessVarsFilePath: './styles/ant.less',
   lessVarsFilePathAppendToEndOfContent: false,
   images: {
-    domains: ['img.dev.most.spiks.dev', 'img.stage.most.spiks.dev', 'storage.yandexcloud.net'],
+    domains: ['img.dev.most.spiks.dev', 'img.stage.most.spiks.dev', 'storage.yandexcloud.net', 'img.lk.mostme.ru'],
   },
   publicRuntimeConfig: {
     API_BASE_URL: process.env.API_BASE_URL,
