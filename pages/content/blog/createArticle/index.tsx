@@ -3,7 +3,7 @@ import { MainLayout } from '@components/MainLayout/MainLayout.component';
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import SplashScreenLoader from '@components/SplashScreenLoader/SplashScreenLoader.component';
 import { TabList } from '@components/TabList/TabList.component';
-import { BreadcrumbProps, Button, Form, FormProps, notification } from 'antd';
+import { BreadcrumbProps, Button, Form, FormProps, notification, UploadFile } from 'antd';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -12,6 +12,8 @@ import { AdminSubmitBlogArticle, submitBlogArticle } from '../../../../api/blog/
 import { TabKey, tabListItems } from '../../../../constants/blogTabs';
 import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItemRender';
 import { NAVIGATION } from '../../../../constants/navigation';
+import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
+import { uploadFile } from 'api/upload/uploadFile';
 
 const CreateArticleFormComponent = dynamic(() => import('@components/CreateArticleForm/CreateArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -41,9 +43,26 @@ const CreateArticlePage: NextPage = () => {
   const [form] = Form.useForm<AdminSubmitBlogArticle>();
 
   const onFinish: FormProps<AdminSubmitBlogArticle>['onFinish'] = useCallback(async () => {
-    const values: AdminSubmitBlogArticle = form.getFieldsValue(true);
+    const values: Omit<AdminSubmitBlogArticle, 'cover'> & { cover: UploadFile[] } = form.getFieldsValue(true);
+    let coverToken = null;
+    //Проверяем, загружена ли у нас обложка
+    const isCoverUploaded = Boolean(values?.cover?.[0]?.originFileObj);
+    if (isCoverUploaded) {
+      const file = values.cover[0].originFileObj!;
+      try {
+        const { data: cred } = await requestFileUploadUrl('article_cover');
+        coverToken = (await uploadFile(cred, file)).data.token;
+      } catch (err) {
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: `Не удалось загрузить изображение.`,
+        });
+        return;
+      }
+    }
     try {
-      await submitBlogArticle(values);
+      await submitBlogArticle({ ...values, cover: coverToken });
       notification.success({
         type: 'success',
         message: 'Успех',
