@@ -72,7 +72,7 @@ const EditArticlePage: NextPage = () => {
           description: `Не удалось загрузить изображение.`,
         });
       }
-    } else if (!isCoverChanged && article?.cover?.sizes) {
+    } else if (!isCoverChanged && !values.cover.length && article?.cover?.sizes) {
       try {
         await removeBlogArticleCover({ id: values.id });
       } catch (err) {
