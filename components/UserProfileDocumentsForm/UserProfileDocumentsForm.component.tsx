@@ -1,7 +1,6 @@
 import React, { FC, useContext, useMemo } from 'react';
 import { Button, Col, Collapse, DatePicker, Form, FormProps, Input, notification, Row, Select, Upload } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
-
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import moment from 'moment';
 import {
@@ -78,6 +77,28 @@ export const UserProfileDocumentsForm: FC = () => {
     return true;
   }, [therapist.status]);
 
+  const handleApproveDiploma = async (diplomaId: string) => {
+    await DiplomaServiceWithToken.acceptTherapistDiplomaOfHigherEducation({
+      requestBody: {
+        arguments: {
+          diplomaId: diplomaId,
+        },
+      },
+    });
+    refetch('documents');
+  };
+
+  const handleRejectDiploma = async (diplomaId: string) => {
+    await DiplomaServiceWithToken.rejectTherapistDiplomaOfHigherEducation({
+      requestBody: {
+        arguments: {
+          diplomaId: diplomaId,
+        },
+      },
+    });
+    refetch('documents');
+  };
+
   // Подтверждение документа
 
   const handleApproveDocument = async (document: keyof TherapistDocumentsType) => {
@@ -96,15 +117,6 @@ export const UserProfileDocumentsForm: FC = () => {
           requestBody: {
             arguments: {
               therapistId: therapist.id,
-            },
-          },
-        });
-        break;
-      case 'diploma':
-        await DiplomaServiceWithToken.acceptTherapistDiplomaOfHigherEducation({
-          requestBody: {
-            arguments: {
-              diplomaId: diploma[0].id,
             },
           },
         });
@@ -134,15 +146,6 @@ export const UserProfileDocumentsForm: FC = () => {
       case 'inn':
         await InnServiceWithToken.rejectTherapistInn({
           requestBody: { arguments: { therapistId: therapist.id } },
-        });
-        break;
-      case 'diploma':
-        await DiplomaServiceWithToken.rejectTherapistDiplomaOfHigherEducation({
-          requestBody: {
-            arguments: {
-              diplomaId: diploma[0].id,
-            },
-          },
         });
         break;
       case 'snils':
@@ -254,7 +257,7 @@ export const UserProfileDocumentsForm: FC = () => {
           extra={
             <Form.Item style={{ margin: '0' }} label={'Статус'}>
               <Select
-                disabled={!canEditAndModerateDocuments}
+                disabled={!canEditAndModerateDocuments || passport?.isApprovedByModerator !== null}
                 onChange={(value) => {
                   value === 'accepted' ? handleApproveDocument('passport') : handleRejectDocument('passport');
                 }}
@@ -434,7 +437,7 @@ export const UserProfileDocumentsForm: FC = () => {
           extra={
             <Form.Item style={{ margin: '0' }} label={'Статус'}>
               <Select
-                disabled={!canEditAndModerateDocuments}
+                disabled={!canEditAndModerateDocuments || snils?.isApprovedByModerator !== null}
                 onChange={(value) => {
                   value === 'accepted' ? handleApproveDocument('snils') : handleRejectDocument('snils');
                 }}
@@ -520,7 +523,7 @@ export const UserProfileDocumentsForm: FC = () => {
           extra={
             <Form.Item style={{ margin: '0' }} label={'Статус'}>
               <Select
-                disabled={!canEditAndModerateDocuments}
+                disabled={!canEditAndModerateDocuments || inn?.isApprovedByModerator !== null}
                 onChange={(value) => {
                   value === 'accepted' ? handleApproveDocument('inn') : handleRejectDocument('inn');
                 }}
@@ -612,9 +615,9 @@ export const UserProfileDocumentsForm: FC = () => {
               extra={
                 <Form.Item style={{ margin: '0' }} label={'Статус'}>
                   <Select
-                    disabled={!canEditAndModerateDocuments}
+                    disabled={!canEditAndModerateDocuments || it.isApprovedByModerator !== null}
                     onChange={(value) => {
-                      value === 'accepted' ? handleApproveDocument('diploma') : handleRejectDocument('diploma');
+                      value === 'accepted' ? handleApproveDiploma(it.id) : handleRejectDiploma(it.id);
                     }}
                     defaultValue={getStatusDocument(it.isApprovedByModerator)}
                     options={statusOptions}
