@@ -32,7 +32,7 @@ export const TherapistSignupDocuments: FC = () => {
         await refetch('documents');
       };
       const onRejectDiploma = async () => {
-        await DiplomaServiceWithToken.acceptTherapistDiplomaOfHigherEducation({
+        await DiplomaServiceWithToken.rejectTherapistDiplomaOfHigherEducation({
           requestBody: {
             arguments: {
               diplomaId: it.id,
@@ -169,7 +169,7 @@ export const TherapistSignupDocuments: FC = () => {
     <Spin spinning={isLoading || isUpdating}>
       <Form>
         <Form.Item label={'Необходимые документы'}>
-          <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>{[docs, diploma]}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>{[...docs, ...diploma]}</div>
         </Form.Item>
         <Row justify={'center'} gutter={8}>
           <Col>
