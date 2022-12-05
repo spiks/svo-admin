@@ -10,7 +10,7 @@ import {
   PassportServiceWithToken,
   SnilsServiceWithToken,
 } from '../../api/services';
-import { DiplomaOfHigherEducation } from '../../generated';
+
 import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 import { finishTherapistDocumentModeration } from '../../api/therapist/finishTherapistDocumentModeration';
 import { s3ToUrl } from '../../utility/s3ToUrl';
@@ -19,97 +19,118 @@ export const TherapistSignupDocuments: FC = () => {
   const { documents, therapist, isLoading } = useContext(TherapistPageContext);
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
-  const docs = useMemo(() => {
-    return Object.entries({ ...documents, diploma: documents.diploma[0] }).map(([key, value]) => {
-      const onApprove = async () => {
-        switch (key) {
-          case 'passport':
-            await PassportServiceWithToken.acceptTherapistPassport({
-              requestBody: {
-                arguments: {
-                  therapistId: therapist.id,
-                },
-              },
-            });
-            break;
-          case 'inn':
-            await InnServiceWithToken.acceptTherapistInn({
-              requestBody: {
-                arguments: {
-                  therapistId: therapist.id,
-                },
-              },
-            });
-            break;
-          case 'diploma':
-            await DiplomaServiceWithToken.acceptTherapistDiplomaOfHigherEducation({
-              requestBody: {
-                arguments: {
-                  diplomaId: (value as DiplomaOfHigherEducation).id,
-                },
-              },
-            });
-            break;
-          case 'snils':
-            await SnilsServiceWithToken.acceptTherapistSnils({
-              requestBody: {
-                arguments: {
-                  therapistId: therapist.id,
-                },
-              },
-            });
-            break;
-        }
+  const diploma = useMemo(() => {
+    return documents.diploma.map((it) => {
+      const onApproveDiploma = async () => {
+        await DiplomaServiceWithToken.acceptTherapistDiplomaOfHigherEducation({
+          requestBody: {
+            arguments: {
+              diplomaId: it.id,
+            },
+          },
+        });
         await refetch('documents');
       };
-
-      const onReject = async () => {
-        switch (key) {
-          case 'passport':
-            await PassportServiceWithToken.rejectTherapistPassport({
-              requestBody: { arguments: { therapistId: therapist.id } },
-            });
-            break;
-          case 'inn':
-            await InnServiceWithToken.rejectTherapistInn({
-              requestBody: { arguments: { therapistId: therapist.id } },
-            });
-            break;
-          case 'diploma':
-            await DiplomaServiceWithToken.rejectTherapistDiplomaOfHigherEducation({
-              requestBody: {
-                arguments: {
-                  diplomaId: (value as DiplomaOfHigherEducation).id,
-                },
-              },
-            });
-            break;
-          case 'snils':
-            await SnilsServiceWithToken.rejectTherapistSnils({
-              requestBody: {
-                arguments: {
-                  therapistId: therapist.id,
-                },
-              },
-            });
-            break;
-        }
+      const onRejectDiploma = async () => {
+        await DiplomaServiceWithToken.acceptTherapistDiplomaOfHigherEducation({
+          requestBody: {
+            arguments: {
+              diplomaId: it.id,
+            },
+          },
+        });
         await refetch('documents');
       };
-
       return (
         <Document
-          key={key}
-          style={getDocumentStyle(value?.isApprovedByModerator, therapist.status)}
-          onApproved={onApprove}
-          onReject={onReject}
+          key={it.id}
+          style={getDocumentStyle(it?.isApprovedByModerator, therapist.status)}
+          onApproved={onApproveDiploma}
+          onReject={onRejectDiploma}
           document={{
-            name: documentName[key] as string,
-            link: s3ToUrl(value?.document.url),
+            name: 'Диплом',
+            link: s3ToUrl(it?.document.url),
           }}
         />
       );
     });
+  }, [documents.diploma, therapist.status, refetch]);
+
+  const docs = useMemo(() => {
+    return Object.entries({ passport: documents.passport, snils: documents.snils, inn: documents.inn }).map(
+      ([key, value]) => {
+        const onApprove = async () => {
+          switch (key) {
+            case 'passport':
+              await PassportServiceWithToken.acceptTherapistPassport({
+                requestBody: {
+                  arguments: {
+                    therapistId: therapist.id,
+                  },
+                },
+              });
+              break;
+            case 'inn':
+              await InnServiceWithToken.acceptTherapistInn({
+                requestBody: {
+                  arguments: {
+                    therapistId: therapist.id,
+                  },
+                },
+              });
+              break;
+            case 'snils':
+              await SnilsServiceWithToken.acceptTherapistSnils({
+                requestBody: {
+                  arguments: {
+                    therapistId: therapist.id,
+                  },
+                },
+              });
+              break;
+          }
+          await refetch('documents');
+        };
+
+        const onReject = async () => {
+          switch (key) {
+            case 'passport':
+              await PassportServiceWithToken.rejectTherapistPassport({
+                requestBody: { arguments: { therapistId: therapist.id } },
+              });
+              break;
+            case 'inn':
+              await InnServiceWithToken.rejectTherapistInn({
+                requestBody: { arguments: { therapistId: therapist.id } },
+              });
+              break;
+            case 'snils':
+              await SnilsServiceWithToken.rejectTherapistSnils({
+                requestBody: {
+                  arguments: {
+                    therapistId: therapist.id,
+                  },
+                },
+              });
+              break;
+          }
+          await refetch('documents');
+        };
+
+        return (
+          <Document
+            key={key}
+            style={getDocumentStyle(value?.isApprovedByModerator, therapist.status)}
+            onApproved={onApprove}
+            onReject={onReject}
+            document={{
+              name: documentName[key] as string,
+              link: s3ToUrl(value?.document.url),
+            }}
+          />
+        );
+      },
+    );
   }, [documents, refetch, therapist.id, therapist.status]);
 
   // Индикация обновления данных (не инициализация)
@@ -117,11 +138,13 @@ export const TherapistSignupDocuments: FC = () => {
 
   // Индикация возможности завершения модерации документов
   const canEndModeration = useMemo(() => {
-    return Object.values({ ...documents, diploma: documents.diploma[0] }).every((doc) => {
-      if (doc) {
-        return doc?.isApprovedByModerator !== null;
-      }
-    });
+    return Object.values({ ...documents })
+      .flat()
+      .every((doc) => {
+        if (doc) {
+          return doc?.isApprovedByModerator !== null;
+        }
+      });
   }, [documents]);
 
   // Индикация возможности перехода к следующему этапу регистрации терапевта
@@ -146,7 +169,7 @@ export const TherapistSignupDocuments: FC = () => {
     <Spin spinning={isLoading || isUpdating}>
       <Form>
         <Form.Item label={'Необходимые документы'}>
-          <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>{docs}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px' }}>{[docs, diploma]}</div>
         </Form.Item>
         <Row justify={'center'} gutter={8}>
           <Col>
@@ -154,7 +177,7 @@ export const TherapistSignupDocuments: FC = () => {
               type={'primary'}
               htmlType={'button'}
               onClick={finishModeration}
-              disabled={!canEndModeration || canContinue}
+              disabled={!canEndModeration || canContinue || therapist.status === 'documents_rejected'}
               loading={isUpdating}
             >
               Завершить модерацию
