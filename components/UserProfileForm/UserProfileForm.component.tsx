@@ -235,7 +235,17 @@ export const UserProfileForm: FC = () => {
       >
         <Input prefix={<PhoneOutlined style={{ color: '#52C41A' }} />} />
       </Form.Item>
-      <Form.Item hasFeedback label="Email" name="email">
+      <Form.Item
+        normalize={(value) => {
+          if (!value) {
+            return null;
+          }
+          return value;
+        }}
+        hasFeedback
+        label="Email"
+        name="email"
+      >
         <Input prefix={<MailOutlined style={{ color: '#52C41A' }} />} type={'email'} />
       </Form.Item>
       <Divider>Свеления о проф. деятельности</Divider>
