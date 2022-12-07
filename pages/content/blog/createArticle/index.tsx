@@ -53,11 +53,13 @@ const CreateArticlePage: NextPage = () => {
         const { data: cred } = await requestFileUploadUrl('article_cover');
         coverToken = (await uploadFile(cred, file)).data.token;
       } catch (err) {
-        notification.error({
-          type: 'error',
-          message: 'Ошибка',
-          description: `Не удалось загрузить изображение.`,
-        });
+        if (!(err instanceof Error)) {
+          notification.error({
+            type: 'error',
+            message: 'Ошибка',
+            description: 'Неизвестная ошибка',
+          });
+        }
         return;
       }
     }
