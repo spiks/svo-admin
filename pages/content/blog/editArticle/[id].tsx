@@ -65,12 +65,13 @@ const EditArticlePage: NextPage = () => {
           cover: coverToken,
         });
       } catch (err) {
-        console.error(err);
-        notification.error({
-          type: 'error',
-          message: 'Ошибка',
-          description: `Не удалось загрузить изображение.`,
-        });
+        if (!(err instanceof Error)) {
+          notification.error({
+            type: 'error',
+            message: 'Ошибка',
+            description: `Неизвестная ошибка`,
+          });
+        }
       }
     } else if (!isCoverChanged && !values.cover.length && article?.cover?.sizes) {
       try {

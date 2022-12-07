@@ -69,7 +69,31 @@ export const ArticleInformationForm: FC = ({ children }) => {
                 return e.fileList;
               }}
             >
-              <Upload maxCount={1} listType="picture-card" showUploadList={true}>
+              <Upload
+                beforeUpload={(file) => {
+                  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+                  const isMaxSize = file.size < 15728640;
+
+                  if (!isJpgOrPng) {
+                    notification.error({
+                      type: 'error',
+                      message: 'Ошибка',
+                      description: `${file.name} имееет неверный формат!`,
+                    });
+                  }
+                  if (!isMaxSize) {
+                    notification.error({
+                      type: 'error',
+                      message: 'Ошибка',
+                      description: `Превышен максимальный размер файла!`,
+                    });
+                  }
+                  return (isJpgOrPng && isMaxSize) || Upload.LIST_IGNORE;
+                }}
+                maxCount={1}
+                listType="picture-card"
+                showUploadList={true}
+              >
                 <div>
                   <PlusOutlined />
                   <div style={{ marginTop: '8px' }}>Загрузить</div>
