@@ -125,7 +125,7 @@ export const TherapistSignupDocuments: FC = () => {
             onReject={onReject}
             document={{
               name: documentName[key] as string,
-              link: s3ToUrl(value?.document.url),
+              link: s3ToUrl(value?.document?.url),
             }}
           />
         );

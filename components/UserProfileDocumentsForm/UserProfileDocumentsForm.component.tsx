@@ -59,6 +59,21 @@ export const countryOptions = [
   },
 ];
 
+export const getPassportFormInitialValues = ({ information }: Passport) => {
+  return {
+    country: information.country,
+    fullName: information.fullName,
+    gender: information.gender,
+    birthday: moment(information.birthday),
+    placeOfBirth: information.placeOfBirth,
+    serial: 'serial' in information ? information.serial : '',
+    number: information.number,
+    issuedAt: moment(information.issuedAt),
+    issuerId: 'issuerId' in information ? information.issuerId : '',
+    issuerName: information.issuerName,
+  };
+};
+
 export const UserProfileDocumentsForm: FC = () => {
   // const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -71,10 +86,7 @@ export const UserProfileDocumentsForm: FC = () => {
   //Индикация возможности редактировать документ терапевта администратором
 
   const canEditAndModerateDocuments = useMemo(() => {
-    if (therapist.status !== 'documents_awaiting_review') {
-      return false;
-    }
-    return true;
+    return therapist.status === 'documents_awaiting_review';
   }, [therapist.status]);
 
   const handleApproveDiploma = async (diplomaId: string) => {
@@ -166,7 +178,7 @@ export const UserProfileDocumentsForm: FC = () => {
   const submitPassportForm: FormProps<RussianPassportInformation>['onFinish'] = async (values) => {
     try {
       await updateTherapistPassport({
-        passportInformation: {
+        information: {
           ...values,
           issuedAt: moment(values.issuedAt).format('YYYY-MM-DD'),
           birthday: moment(values.birthday).format('YYYY-MM-DD'),
@@ -288,18 +300,7 @@ export const UserProfileDocumentsForm: FC = () => {
         >
           <Form
             onFinish={submitPassportForm}
-            initialValues={{
-              country: passport?.information.country,
-              fullName: passport?.information.fullName,
-              gender: passport?.information.gender,
-              birthday: moment(passport?.information.birthday),
-              placeOfBirth: passport?.information.placeOfBirth,
-              serial: passport?.information.serial,
-              number: passport?.information.number,
-              issuedAt: moment(passport?.information.issuedAt),
-              issuerId: passport?.information.issuerId,
-              issuerName: passport?.information.issuerName,
-            }}
+            initialValues={passport ? getPassportFormInitialValues(passport) : undefined}
             size="large"
             layout="vertical"
           >
@@ -406,14 +407,14 @@ export const UserProfileDocumentsForm: FC = () => {
             <Row align="middle" justify="space-between">
               <Col>
                 <Form.Item>
-                  {passport && (
+                  {passport && passport.document && (
                     <Upload
                       showUploadList={{
                         showRemoveIcon: false,
                       }}
                       defaultFileList={[
                         {
-                          uid: passport.document.originalFileName,
+                          uid: passport?.document.originalFileName,
                           name: passport?.document.originalFileName,
                           url: passport?.document.url,
                         },
