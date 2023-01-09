@@ -1,14 +1,5 @@
 import { TherapistServiceWithToken } from 'api/services';
-import {
-  Email,
-  FullName,
-  LongDescription,
-  MediaImage,
-  Phone,
-  SpecializationsUuidList,
-  Uuid,
-  WorkExperienceYears,
-} from 'generated';
+import { Email, FullName, LongDescription, Phone, SpecializationsUuidList, Uuid, WorkExperienceYears } from 'generated';
 
 export type UpdateTherapistRequestType = {
   id: Uuid;
@@ -19,6 +10,8 @@ export type UpdateTherapistRequestType = {
   email: Email | null;
   workExperienceYears: WorkExperienceYears | null;
   workPrinciples: LongDescription | null;
+  creed: string | null;
+  additionalSpecializations: string;
 };
 
 export const updateTherapist = (request: UpdateTherapistRequestType) => {
