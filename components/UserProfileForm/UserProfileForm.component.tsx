@@ -3,54 +3,12 @@ import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useContext, useMemo } from 'react';
 import { PhoneOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
-import { WorkExperienceYears } from 'generated';
 import { updateTherapist, UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
 import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
-
-export const workExperienceYearsNames: Record<WorkExperienceYears, string> = {
-  from_1_to_2_years: '1-2 года',
-  from_3_to_4_years: '3-4 года',
-  from_5_to_7_years: ' 5-7 лет',
-  from_8_to_10_years: ' 8-10 лет',
-  less_than_a_year: 'Меньше года',
-  more_than_10_years: 'Более 10 лет',
-  student: 'Студент',
-};
-
-export const ProfessionalActivityModalGaps: { value: WorkExperienceYears; label: string }[] = [
-  {
-    value: 'student',
-    label: 'Студент',
-  },
-  {
-    value: 'less_than_a_year',
-    label: 'Менее года',
-  },
-  {
-    value: 'from_1_to_2_years',
-    label: '1-2 года',
-  },
-  {
-    value: 'from_3_to_4_years',
-    label: '3-4 года',
-  },
-  {
-    value: 'from_5_to_7_years',
-    label: '5-7 лет',
-  },
-  {
-    value: 'from_8_to_10_years',
-    label: '8-10 лет',
-  },
-  {
-    value: 'more_than_10_years',
-    label: 'Более 10 лет',
-  },
-];
 
 export const UserProfileForm: FC = () => {
   const { TextArea } = Input;
@@ -169,9 +127,9 @@ export const UserProfileForm: FC = () => {
         fullName: therapist.fullName,
         email: therapist.email,
         phone: therapist.phone,
-        workExperienceYears: therapist.workExperienceYears,
         biography: therapist.biography,
         specializations: selectedSpecialication,
+        employments: therapist.employments,
       }}
     >
       <Divider>Персональные данные</Divider>
@@ -248,10 +206,16 @@ export const UserProfileForm: FC = () => {
       >
         <Input prefix={<MailOutlined style={{ color: '#52C41A' }} />} type={'email'} />
       </Form.Item>
-      <Divider>Свеления о проф. деятельности</Divider>
-      <Form.Item label="Стаж" name="workExperienceYears">
-        <Select options={ProfessionalActivityModalGaps} />
-      </Form.Item>
+      <Divider>Сведения о проф. деятельности</Divider>
+      <Form.List name="employments">
+        {(fieldsEmployment) => {
+          return (
+            <Form.Item label="Стаж" name="workExperienceYears">
+              <Input type="number" />
+            </Form.Item>
+          );
+        }}
+      </Form.List>
       <Form.Item
         normalize={(value) => {
           return value;
