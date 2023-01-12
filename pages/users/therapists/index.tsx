@@ -10,13 +10,15 @@ import dynamic from 'next/dynamic';
 import SplashScreenLoader from '@components/SplashScreenLoader/SplashScreenLoader.component';
 import { TherapistProfileStatus } from '../../../generated';
 import { DefaultOptionType } from 'rc-select/lib/Select';
+import { useRouter } from 'next/router';
+import { NAVIGATION } from '../../../constants/navigation';
 
 const TherapistsListComponent = dynamic(() => import('@components/TherapistsList/TherapistsList.component'), {
   loading: () => <SplashScreenLoader />,
 });
 
 export enum TAB_KEY {
-  ACTIVE = 'ACTIVE',
+  ACTIVE = 'active',
   REGISTERING = 'registering',
   BLOCKED = 'blocked',
 }
@@ -56,14 +58,20 @@ const getOptions = (activeTab: TAB_KEY): DefaultOptionType[] | undefined => {
 };
 
 const TherapistsPage: NextPage = () => {
-  const [activeTab, setActiveTab] = useState<TAB_KEY>(TAB_KEY.ACTIVE);
   const [form] = Form.useForm<UsersQueryParams>();
   const [profileStatus, setProfileStatus] = useState<TherapistProfileStatus>();
+  const router = useRouter();
 
-  const handleTabListChange = useCallback((key) => {
-    setActiveTab(key);
-    setProfileStatus(undefined);
-  }, []);
+  const handleTabListChange = useCallback(
+    (key) => {
+      router.push(`${NAVIGATION.therapists}?activeTab=${key}`);
+      setProfileStatus(undefined);
+    },
+    [router],
+  );
+
+  const queryActiveTab = router.query.activeTab as TAB_KEY;
+  const activeTab = Object.values(TAB_KEY).includes(queryActiveTab) ? queryActiveTab : TAB_KEY.ACTIVE;
 
   return (
     <MainLayout>
@@ -74,8 +82,9 @@ const TherapistsPage: NextPage = () => {
         searchPlaceholder={'Начните вводить имя терапевта'}
       >
         <TabList
-          items={tabListItems}
           defaultActiveKey={'active'}
+          items={tabListItems}
+          activeKey={activeTab}
           onChange={handleTabListChange}
           tabBarExtraContent={
             getOptions(activeTab) ? (
