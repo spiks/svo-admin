@@ -1,7 +1,7 @@
-import { Button, Divider, Form, FormProps, Input, notification, Select, Upload } from 'antd';
+import { Button, Divider, Form, FormProps, Input, notification, Upload } from 'antd';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
-import { FC, useContext, useMemo } from 'react';
-import { PhoneOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
+import { FC, useContext } from 'react';
+import { MailOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { updateTherapist, UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
@@ -11,40 +11,9 @@ import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
 
 export const UserProfileForm: FC = () => {
-  const { TextArea } = Input;
-
   const [form] = Form.useForm();
-
   const { therapist } = useContext(TherapistPageContext);
-
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
-
-  const selectedSpecialication = useMemo(() => {
-    return therapist.specializations
-      .map((it) => {
-        return it.items
-          .filter((it) => {
-            return it.isSelected;
-          })
-          .map((it) => {
-            return it.id;
-          });
-      })
-      .flat();
-  }, [therapist.specializations]);
-
-  const tagsOptions: { label: string; value: string }[] = useMemo(() => {
-    return therapist.specializations
-      .map((it) => {
-        return it.items.map((it) => {
-          return {
-            label: it.name,
-            value: it.id,
-          };
-        });
-      })
-      .flat();
-  }, [therapist.specializations]);
 
   const onFinish: FormProps<UpdateTherapistRequestType & { avatar: UploadFile[] }>['onFinish'] = async (values) => {
     const isAvatarChanged = Boolean(values?.avatar?.[0]?.originFileObj);
@@ -78,11 +47,14 @@ export const UserProfileForm: FC = () => {
       }
     }
     try {
-      // TODO: убрать workPrinciples из запроса, когда удалят его из метода updateTherapist и getTherapist
       await updateTherapist({
         ...values,
         id: therapist.id,
         workPrinciples: null,
+        biography: null,
+        creed: null,
+        specializations: [],
+        additionalSpecializations: null,
       });
       notification.success({
         type: 'success',
@@ -102,12 +74,12 @@ export const UserProfileForm: FC = () => {
 
   const getAvatar = () => {
     const avatar: UploadFile[] = [];
-    const therapisAvatar = therapist.avatar?.sizes.small;
-    if (therapisAvatar) {
+    const therapistAvatar = therapist.avatar?.sizes.small;
+    if (therapistAvatar) {
       avatar.push({
         uid: '0',
         name: 'avatar.webp',
-        url: 'https://' + therapisAvatar.url,
+        url: 'https://' + therapistAvatar.url,
       });
     }
     return avatar;
@@ -127,9 +99,6 @@ export const UserProfileForm: FC = () => {
         fullName: therapist.fullName,
         email: therapist.email,
         phone: therapist.phone,
-        biography: therapist.biography,
-        specializations: selectedSpecialication,
-        employments: therapist.employments,
       }}
     >
       <Divider>Персональные данные</Divider>
@@ -179,8 +148,9 @@ export const UserProfileForm: FC = () => {
           }
           return value;
         }}
-        label="ФИО"
+        label="Имя на платформе"
         name="fullName"
+        rules={[{ required: true, message: 'Пожалуйста, введите имя' }]}
       >
         <Input />
       </Form.Item>
@@ -203,55 +173,11 @@ export const UserProfileForm: FC = () => {
         hasFeedback
         label="Email"
         name="email"
+        rules={[{ required: true, type: 'email', message: 'Пожалуйста, введите электронную почту' }]}
+        required={true}
       >
         <Input prefix={<MailOutlined style={{ color: '#52C41A' }} />} type={'email'} />
       </Form.Item>
-      <Divider>Сведения о проф. деятельности</Divider>
-      <Form.List name="employments">
-        {(fieldsEmployment) => {
-          return (
-            <Form.Item label="Стаж" name="workExperienceYears">
-              <Input type="number" />
-            </Form.Item>
-          );
-        }}
-      </Form.List>
-      <Form.Item
-        normalize={(value) => {
-          return value;
-        }}
-        label="Специализация"
-        name="specializations"
-      >
-        <Select mode="multiple" style={{ width: '100%' }} options={tagsOptions} />
-      </Form.Item>
-      {/* <Form.Item required label="Исследуемые темы" name="topics">
-        <Select
-          mode="multiple"
-          tagRender={({ label, value, closable, onClose, ...props }) => {
-            return <TagRender label={label} value={value} closable={closable} onClose={onClose} {...props} />;
-          }}
-          style={{ width: '100%' }}
-          options={tags}
-        />
-      </Form.Item> */}
-      <Divider>Сведения о пользователе</Divider>
-      <Form.Item
-        normalize={(value) => {
-          if (!value) {
-            return null;
-          }
-          return value;
-        }}
-        label="О психологе"
-        name="biography"
-      >
-        <TextArea showCount maxLength={1000} />
-      </Form.Item>
-      {/* Было решено отказаться от этого блока
-      <Form.Item label="Принципы ведения приёма" name="workPrinciples">
-        <TextArea showCount maxLength={200} />
-      </Form.Item> */}
       <Form.Item wrapperCol={{ offset: '8' }}>
         <Button type="primary" htmlType="submit">
           Сохранить
