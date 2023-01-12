@@ -53,19 +53,20 @@ const rowSelection: TableRowSelection<GridView> = {
 const queryStatusLists: Record<TAB_KEY, TherapistProfileStatus[]> = {
   // Только активные пользователи
   [TAB_KEY.ACTIVE]: ['active'],
-  [TAB_KEY.AWAITING]: [
+  [TAB_KEY.REGISTERING]: [
     'contract_awaiting_review',
     'contract_not_submitted_yet',
-    'contract_rejected',
     'documents_awaiting_review',
     'documents_not_submitted_yet',
     'documents_rejected',
-    'interview_failed',
     'interview_processing',
   ],
+  [TAB_KEY.BLOCKED]: ['interview_failed', 'contract_rejected'],
 };
 
-const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
+type Props = { activeTab: TAB_KEY; profileStatus?: TherapistProfileStatus };
+
+const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
   const { push } = useRouter();
   const isMounted = useRef(true);
   const [isMultipleChoice] = useState(false);
@@ -106,19 +107,19 @@ const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
           field: 'createdAt',
           orderDirection: sortOrderCuts[sortOrder],
         },
-        statuses: queryStatusLists[activeTab],
+        statuses: profileStatus ? [profileStatus] : queryStatusLists[activeTab],
       });
     },
-    [activeTab, pageSize, phone, search, sortOrder],
+    [activeTab, pageSize, phone, profileStatus, search, sortOrder],
   );
 
   const queryClient = useQueryClient();
 
   const getQueryKey = useCallback(
     (page) => {
-      return ['therapists', page, activeTab, search, phone, pageSize, sortOrder];
+      return ['therapists', page, activeTab, search, phone, pageSize, sortOrder, profileStatus];
     },
-    [activeTab, pageSize, phone, search, sortOrder],
+    [activeTab, pageSize, phone, search, sortOrder, profileStatus],
   );
 
   const { isFetching, data: therapistsList } = useQuery(
@@ -162,7 +163,7 @@ const TherapistsList: FC<{ activeTab: TAB_KEY }> = ({ activeTab }) => {
               justifyContent: 'space-between',
             }}
           >
-            <Badge count={0} offset={[23, 7]} showZero={false}>
+            <Badge count={therapistsList?.data.itemsAmount} offset={[23, 7]} showZero={false}>
               Найдено пользователей:
             </Badge>
             {/*<Form.Item*/}
