@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Tabs } from 'antd';
 import styles from './TabList.module.css';
-import { TabKey } from 'constants/blogTabs';
+import { TabsProps } from 'antd/lib/tabs';
 
 const { TabPane } = Tabs;
 
@@ -10,15 +10,22 @@ type TabListItem = {
   key: string;
 };
 
-interface TabListProps {
+type TabListProps = {
   items: TabListItem[];
   defaultActiveKey: string;
   onChange: (key: string) => void;
   activeKey?: string;
-}
-export const TabList: FC<TabListProps> = ({ items, defaultActiveKey, onChange, activeKey }) => {
+} & TabsProps;
+
+export const TabList: FC<TabListProps> = ({ items, tabBarExtraContent, defaultActiveKey, onChange, activeKey }) => {
   return (
-    <Tabs activeKey={activeKey} defaultActiveKey={defaultActiveKey} onChange={onChange} className={styles['tab-list']}>
+    <Tabs
+      tabBarExtraContent={tabBarExtraContent}
+      activeKey={activeKey}
+      defaultActiveKey={defaultActiveKey}
+      onChange={onChange}
+      className={styles['tab-list']}
+    >
       {items.map((it) => {
         return <TabPane key={it.key} tab={it.label} />;
       })}
