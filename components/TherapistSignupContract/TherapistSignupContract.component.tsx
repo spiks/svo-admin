@@ -5,19 +5,14 @@ import { requestFileUploadUrl } from '../../api/upload/requestFileUploadUrl';
 import { uploadFile } from '../../api/upload/uploadFile';
 import { submitContract } from '../../api/therapist/submitContract';
 import { TherapistPageContext } from '../../pages/users/therapists/[id]';
-import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 import { Document, DocumentProps } from '../Document/Document.component';
 import { getSignedContractStyle } from './TherapistSignupContract.utils';
-import { acceptContract } from '../../api/therapist/acceptContract';
-import { rejectContract } from '../../api/therapist/rejectContract';
 import { useContractsQuery, useContractsQueryRefresh } from '../../hooks/useContractsQuery';
-import { s3ToUrl } from '../../utility/s3ToUrl';
 
 export const TherapistSignupContract: FC = () => {
   const { therapist, isLoading: contextLoading } = useContext(TherapistPageContext);
-  const { contract, signedContract, isLoading: contractsLoading } = useContractsQuery(therapist.id);
+  const { contract, isLoading: contractsLoading } = useContractsQuery(therapist.id);
   const refetchContract = useContractsQueryRefresh(therapist.id);
-  const refetchTherapist = useTherapistSignupQueriesRefresh(therapist.id);
 
   const isLoading = useMemo(() => {
     return contextLoading || contractsLoading;
@@ -96,66 +91,14 @@ export const TherapistSignupContract: FC = () => {
     return Boolean(contractToken);
   }, [contractToken]);
 
-  const canApprove = useCallback(() => {
-    if (!accepted) {
-      notification.warning({
-        type: 'warning',
-        message: 'Предупреждение',
-        description:
-          'Для изменения статуса контракта пользователя, необходимо подтвердить соответствие договора нормативно-правовым актам',
-      });
-      return false;
-    }
-    return true;
-  }, [accepted]);
-
-  // Стиль отображаемого блока с загруженным файлом подписанного пользователем контракта
+  // OBSOLETE: Новые макеты, это вообще стоит удалить
   const signedDocumentProps = useMemo<DocumentProps>(() => {
     return {
-      document: {
-        name: 'Контракт',
-        ...(signedContract && { link: s3ToUrl(signedContract.url) }),
-      },
+      name: 'Контракт',
+      href: '#',
       style: getSignedContractStyle(therapist.status),
-      // Подтверждение контракта подписанного пользователем
-      async onApproved() {
-        if (!canApprove()) {
-          return;
-        }
-
-        try {
-          await acceptContract(therapist.id);
-        } catch (err) {
-          notification.error({
-            type: 'error',
-            message: 'Ошибка',
-            description: 'Не удалось подтвердить правильность контракта загруженного пользователем',
-          });
-        } finally {
-          await refetchTherapist('therapist');
-        }
-      },
-      // Отклонение контракта подписанного пользователем
-      async onReject() {
-        try {
-          await rejectContract(therapist.id);
-          notification.success({
-            type: 'success',
-            message: 'Успех',
-            description: 'Контракт отправленный пользователем отклонён!',
-          });
-        } catch (err) {
-          notification.error({
-            type: 'error',
-            message: 'Ошибка',
-            description: 'Не удалось отклонить контракт загруженный пользователем',
-          });
-        } finally {
-          await refetchTherapist('therapist');
-        }
-      },
     };
-  }, [canApprove, refetchTherapist, signedContract, therapist.id, therapist.status]);
+  }, [therapist.status]);
 
   return (
     <Spin spinning={isLoading}>

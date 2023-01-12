@@ -1,27 +1,8 @@
 import { TherapistServiceWithToken } from 'api/services';
-import {
-  AdditionalSpecializations,
-  Email,
-  FullName,
-  LongDescription,
-  Phone,
-  SpecializationsUuidList,
-  TherapistEmployments,
-  Uuid,
-} from 'generated';
 
-export type UpdateTherapistRequestType = {
-  id: Uuid;
-  phone: Phone;
-  specializations: SpecializationsUuidList;
-  additionalSpecializations: AdditionalSpecializations | null;
-  biography: LongDescription | null;
-  creed: LongDescription | null;
-  fullName: FullName | null;
-  email: Email | null;
-  employments: TherapistEmployments;
-  workPrinciples: LongDescription | null;
-};
+export type UpdateTherapistRequestType = Parameters<
+  typeof TherapistServiceWithToken.updateTherapist
+>[0]['requestBody']['arguments'];
 
 export const updateTherapist = (request: UpdateTherapistRequestType) => {
   return TherapistServiceWithToken.updateTherapist({

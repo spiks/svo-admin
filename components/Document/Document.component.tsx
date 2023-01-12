@@ -1,35 +1,17 @@
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useMemo } from 'react';
 import styles from './Document.module.css';
 import { DocumentStyleIcon } from './Document.utils';
-import { Button, Spin } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { ArrowRightOutlined } from '@ant-design/icons';
 
 export type DocumentProps = {
   style: 'rejected' | 'approved' | 'pending' | 'empty';
-  onApproved: () => Promise<void>;
-  onReject: () => Promise<void>;
-  document: {
-    name: string;
-    link?: string;
-  };
+  // Ссылка по которой переводит кнопка "Подробнее";
+  href: string;
+  name: string;
 };
 
-export const Document: FC<DocumentProps> = ({ style, document, onApproved, onReject }) => {
-  const [loading, setLoading] = useState(false);
-
-  const onAction = useCallback(
-    async (type: 'approve' | 'reject') => {
-      setLoading(true);
-      if (type === 'approve' && onApproved) {
-        await onApproved();
-      } else if (type === 'reject' && onReject) {
-        await onReject();
-      }
-      setLoading(false);
-    },
-    [onApproved, onReject],
-  );
-
+export const Document: FC<DocumentProps> = ({ style, name, href }) => {
   const className = useMemo(() => {
     return [styles['document'], styles[style]].join(' ');
     // eslint-disable-next-line
@@ -40,26 +22,22 @@ export const Document: FC<DocumentProps> = ({ style, document, onApproved, onRej
   }, [style]);
 
   return (
-    <Spin spinning={loading}>
-      <div className={className}>
-        <Button icon={icon} type={'link'}>
-          {document.name}
+    <div className={className}>
+      <Button icon={icon} type={'link'}>
+        {name}
+      </Button>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          columnGap: '4px',
+        }}
+      >
+        <Button size={'small'} icon={<ArrowRightOutlined />} href={href}>
+          Подробнее
         </Button>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            columnGap: '4px',
-          }}
-        >
-          <Button size={'small'} icon={<UploadOutlined />} target={'_blank'} download={true} href={document.link}>
-            Загрузить
-          </Button>
-          <Button size={'small'} icon={DocumentStyleIcon['approved']} onClick={onAction.bind(null, 'approve')} />
-          <Button size={'small'} icon={DocumentStyleIcon['rejected']} onClick={onAction.bind(null, 'reject')} />
-        </div>
       </div>
-    </Spin>
+    </div>
   );
 };
