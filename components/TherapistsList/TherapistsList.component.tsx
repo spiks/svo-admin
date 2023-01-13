@@ -15,16 +15,17 @@ const columns: ColumnsType<GridView> = [
   {
     title: 'Имя пользователя',
     dataIndex: 'fullName',
-  },
-  {
-    title: 'Номер телефона',
-    dataIndex: 'phone',
-    width: 153,
+    render: (text) => <a>{text || 'Аноним'}</a>,
   },
   {
     title: 'Профили',
     dataIndex: 'profiles',
     width: 200,
+  },
+  {
+    title: 'Номер телефона',
+    dataIndex: 'phone',
+    width: 153,
   },
   {
     title: 'Дата регистрации',
@@ -68,6 +69,7 @@ type Props = { activeTab: TAB_KEY; profileStatus?: TherapistProfileStatus };
 
 const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
   const { push } = useRouter();
+
   const isMounted = useRef(true);
   const [isMultipleChoice] = useState(false);
 

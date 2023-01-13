@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { Alert, Button, Col, Form, Input, PageHeader, Row } from 'antd';
 import { FilterFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
@@ -26,15 +26,10 @@ export const UsersHeader: FC<UserHeaderProps> = ({
   subTitle,
   children,
 }) => {
-  const { back, replace, pathname } = useRouter();
+  const { back } = useRouter();
   const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters } =
     useUsersHeaderForm(form);
   const { search, phone } = useUsersQueryParams();
-
-  useEffect(() => {
-    replace(pathname, undefined, { shallow: true });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div
