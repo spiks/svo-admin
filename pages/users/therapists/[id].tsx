@@ -1,16 +1,16 @@
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
-import { MainLayout } from '../../../components/MainLayout/MainLayout.component';
-import { Divider, PageHeader, Result, Steps } from 'antd';
-import { NotFoundLayout } from '../../../components/NotFoundLayout/NotFoundLayout.component';
+import { MainLayout } from '@components/MainLayout/MainLayout.component';
+import { Divider, PageHeader, Result, Steps, Typography } from 'antd';
+import { NotFoundLayout } from '@components/NotFoundLayout/NotFoundLayout.component';
 import { Step } from 'rc-steps';
 import { TherapistProfile } from '../../../generated';
 import { getTherapistDocuments } from '../../../api/therapist/getTherapistDocuments';
 import { useTherapistSignupQueries } from '../../../hooks/useTherapistSignupQueries';
-import { TherapistSignupDocuments } from '../../../components/TherapistSignupDocuments/TherapistSignupDocuments.component';
-import { TherapistSignupInterview } from '../../../components/TherapistSignupInterview/TherapistSignupInterview.component';
-import { TherapistSignupContract } from '../../../components/TherapistSignupContract/TherapistSignupContract.component';
+import { TherapistSignupDocuments } from '@components/TherapistSignupDocuments/TherapistSignupDocuments.component';
+import { TherapistSignupInterview } from '@components/TherapistSignupInterview/TherapistSignupInterview.component';
+import { TherapistSignupContract } from '@components/TherapistSignupContract/TherapistSignupContract.component';
 import { SmileOutlined } from '@ant-design/icons';
 import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.component';
 import { UserProfileHeader } from '@components/UserProfileHeader/UserProfileHeader.component';
@@ -31,12 +31,22 @@ export enum USER_TAB_KEY {
   INFORMATION = 'INFORMATION',
   DOCUMENTS = 'DOCUMENTS',
   CONTRACT = 'CONTRACT',
+  ACCOUNTS = 'ACCOUNTS',
+  PRACTICE = 'PRACTICE',
+  PRESENTATION = 'PRESENTATION',
+  PRINCIPLES = 'PRINCIPLES',
+  ABOUT = 'ABOUT',
 }
 
 const tabListItems: { label: string; key: USER_TAB_KEY }[] = [
   { label: 'Сведения', key: USER_TAB_KEY.INFORMATION },
   { label: 'Документы', key: USER_TAB_KEY.DOCUMENTS },
   { label: 'Договор', key: USER_TAB_KEY.CONTRACT },
+  { label: 'Личные аккаунты', key: USER_TAB_KEY.ACCOUNTS },
+  { label: 'Моя практика и специализации', key: USER_TAB_KEY.PRACTICE },
+  { label: 'Презентация', key: USER_TAB_KEY.PRESENTATION },
+  { label: 'Принципы работы', key: USER_TAB_KEY.PRINCIPLES },
+  { label: 'Важное обо мне', key: USER_TAB_KEY.ABOUT },
 ];
 
 type TherapistPageContextValue = {
@@ -49,17 +59,26 @@ type TherapistPageContextValue = {
 export const TherapistPageContext = createContext({} as TherapistPageContextValue);
 
 const TherapistPage: NextPage = () => {
-  const { query } = useRouter();
+  const { query, replace } = useRouter();
+
   const therapistId = useMemo(() => {
     return query['id'] as string;
     // eslint-disable-next-line
   }, [query['id']]);
 
+  const activeTab = useMemo<USER_TAB_KEY>(() => {
+    const tabKey = String(query['section']);
+    const allKeys = tabListItems.map((tab) => {
+      return tab.key.toLowerCase();
+    });
+    return (allKeys.includes(tabKey) ? tabKey.toUpperCase() : USER_TAB_KEY.INFORMATION) as USER_TAB_KEY;
+  }, [query]);
+
   const { isLoading, isError, therapist, documents } = useTherapistSignupQueries(therapistId);
 
   const [currentStage, setCurrentStage] = useState<STAGE>(STAGE.DOCUMENTS);
-  const [activeTab, setActiveTab] = useState<USER_TAB_KEY>(USER_TAB_KEY.INFORMATION);
 
+  // Stage detection
   useEffect(() => {
     if (isLoading || !therapist) {
       return;
@@ -86,9 +105,18 @@ const TherapistPage: NextPage = () => {
     }
   }, [isLoading, therapist]);
 
-  const handleTabListChange = useCallback((key) => {
-    setActiveTab(key);
-  }, []);
+  // Tab change
+  const handleTabListChange = useCallback(
+    (key) => {
+      replace({
+        query: {
+          ...query,
+          section: key.toLowerCase(),
+        },
+      });
+    },
+    [replace, query],
+  );
 
   const contextValue = useMemo(() => {
     return {
@@ -108,64 +136,31 @@ const TherapistPage: NextPage = () => {
     return <MainLayout loading={true} />;
   }
 
-  const render = () => {
+  const renderTabContents = () => {
     switch (activeTab) {
-      case 'INFORMATION':
+      case USER_TAB_KEY.INFORMATION:
         return (
-          <>
-            <PageWrapper>
-              <div
-                style={{
-                  padding: '40px 80px',
-                  background: '#FFFFFF',
-                }}
-              >
-                <PageHeader title={`Регистрация психолога`} subTitle={therapistId} style={{ padding: 0 }} />
-                <div style={{ marginTop: '40px' }}>
-                  <Steps current={currentStage} labelPlacement={'vertical'}>
-                    <Step title={'Предоставление документов'} />
-                    <Step title={'Обработка интервью'} />
-                    <Step title={'Заключение договора'} />
-                  </Steps>
-                </div>
-                <Divider />
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  {(() => {
-                    switch (currentStage) {
-                      case STAGE.CONTRACT:
-                        return <TherapistSignupContract />;
-                      case STAGE.DOCUMENTS:
-                        return <TherapistSignupDocuments />;
-                      case STAGE.INTERVIEW:
-                        return <TherapistSignupInterview />;
-                      case STAGE.ACTIVE:
-                        return (
-                          <Result
-                            icon={<SmileOutlined />}
-                            title="Терапевт имеет уже подтверждённый и активированный аккаунт!"
-                          />
-                        );
-                    }
-                  })()}
-                </div>
-              </div>
-            </PageWrapper>
-            <PageWrapper>
-              <UserProfileForm />
-            </PageWrapper>
-          </>
+          <PageWrapper>
+            <UserProfileForm />
+          </PageWrapper>
         );
-      case 'DOCUMENTS':
+      case USER_TAB_KEY.DOCUMENTS:
         return (
           <PageWrapper>
             <UserProfileDocumentsForm />
           </PageWrapper>
         );
 
-      case 'CONTRACT':
+      case USER_TAB_KEY.CONTRACT:
         return (
           <PageWrapper>
             <TherapistContractSection />
+          </PageWrapper>
+        );
+      default:
+        return (
+          <PageWrapper>
+            <Typography.Text type={'danger'}>Данный раздел ещё не готов.</Typography.Text>
           </PageWrapper>
         );
     }
@@ -175,9 +170,48 @@ const TherapistPage: NextPage = () => {
     <TherapistPageContext.Provider value={contextValue}>
       <MainLayout>
         <UserProfileHeader>
-          <TabList items={tabListItems} defaultActiveKey={'information'} onChange={handleTabListChange} />
+          <TabList items={tabListItems} defaultActiveKey={USER_TAB_KEY.INFORMATION} onChange={handleTabListChange} />
         </UserProfileHeader>
-        <div style={{ overflow: 'auto' }}>{render()}</div>
+        <div style={{ overflow: 'auto' }}>
+          <PageWrapper>
+            <div
+              style={{
+                padding: '40px 80px',
+                background: '#FFFFFF',
+              }}
+            >
+              <PageHeader title={`Регистрация психолога`} subTitle={therapistId} style={{ padding: 0 }} />
+              <div style={{ marginTop: '40px' }}>
+                <Steps current={currentStage} labelPlacement={'vertical'}>
+                  <Step title={'Предоставление документов'} />
+                  <Step title={'Обработка интервью'} />
+                  <Step title={'Заключение договора'} />
+                </Steps>
+              </div>
+              <Divider />
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                {(() => {
+                  switch (currentStage) {
+                    case STAGE.CONTRACT:
+                      return <TherapistSignupContract />;
+                    case STAGE.DOCUMENTS:
+                      return <TherapistSignupDocuments />;
+                    case STAGE.INTERVIEW:
+                      return <TherapistSignupInterview />;
+                    case STAGE.ACTIVE:
+                      return (
+                        <Result
+                          icon={<SmileOutlined />}
+                          title="Терапевт имеет уже подтверждённый и активированный аккаунт!"
+                        />
+                      );
+                  }
+                })()}
+              </div>
+            </div>
+          </PageWrapper>
+          {renderTabContents()}
+        </div>
       </MainLayout>
     </TherapistPageContext.Provider>
   );

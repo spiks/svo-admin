@@ -33,7 +33,6 @@ const AuthProvider: FC = ({ children }) => {
 
   const isUserLoggedIn = useCallback(async () => {
     const storageToken = TokenStorage.getTokens()?.accessToken;
-
     if (!storageToken) {
       TokenStorage.clearTokens();
       await push('/login', undefined, { shallow: false });
@@ -54,8 +53,16 @@ const AuthProvider: FC = ({ children }) => {
       token: storageToken,
       email: email.data,
     });
+
+    if (window.location.pathname.startsWith('/login')) {
+      await push('/users/therapists', undefined, { shallow: false });
+    }
+
     setIsLoading(false);
-  }, [push]);
+
+    // если передать router, то будет бесконечный цикл
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     (async () => {
