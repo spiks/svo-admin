@@ -18,6 +18,7 @@ import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import { TabList } from '@components/TabList/TabList.component';
 import { TherapistDocumentsForm } from '@components/UserProfileDocumentsForm/TherapistDocumentsForm';
 import { TherapistContractSection } from '@components/TherapistContractSection/TherapistContractSection.component';
+import { UserPresentationForm } from '@components/UserPresentationForm/UserPresentationForm.component';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -155,6 +156,12 @@ const TherapistPage: NextPage = () => {
         return (
           <PageWrapper>
             <TherapistContractSection />
+          </PageWrapper>
+        );
+      case USER_TAB_KEY.PRESENTATION:
+        return (
+          <PageWrapper>
+            <UserPresentationForm />
           </PageWrapper>
         );
       default:

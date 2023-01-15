@@ -12,6 +12,7 @@ import {
   TherapistInterviewService,
   TherapistService,
   UploadingFilesService,
+  VideoPresentationService,
 } from '../generated';
 
 export const PatientServiceWithToken = provideToken(PatientService);
@@ -26,3 +27,4 @@ export const TherapistInterviewServiceWithToken = provideToken(TherapistIntervie
 export const TherapistContractServiceWithToken = provideToken(TherapistContractService);
 export const UploadingFilesServiceWithToken = provideToken(UploadingFilesService);
 export const AdminBlogServiceWithToken = provideToken(AdminBlogService);
+export const VideoPresentationWithToken = provideToken(VideoPresentationService);
