@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useUsersHeaderForm } from './UsersHeader.hooks/useUsersHeaderForm';
 import { REGEXP_PHONE } from '../../constants/regexp';
 import { useUsersQueryParams } from './UsersHeader.hooks/useUsersQueryParams';
+import { RegisterTherapistButton } from '@components/RegisterTherapistModal/RegisterTherapistModal.children/RegisterTherapistButton/RegisterTherapistButton.component';
 
 type UserHeaderProps = {
   title?: string;
@@ -50,9 +51,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
           <Button type={'link'} size={'large'} key={0}>
             Обратиться к FAQ
           </Button>,
-          // <Button type={'primary'} size={'large'} key={1}>
-          //   Добавить пользователя
-          // </Button>,
+          <RegisterTherapistButton key={1} />,
           <Button type={'default'} size={'large'} icon={<FilterFilled />} onClick={toggleShowFilters} key={2}>
             Параметры поиска
           </Button>,

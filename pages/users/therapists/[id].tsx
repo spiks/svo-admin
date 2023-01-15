@@ -16,7 +16,7 @@ import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.com
 import { UserProfileHeader } from '@components/UserProfileHeader/UserProfileHeader.component';
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import { TabList } from '@components/TabList/TabList.component';
-import { UserProfileDocumentsForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.component';
+import { TherapistDocumentsForm } from '@components/UserProfileDocumentsForm/TherapistDocumentsForm';
 import { TherapistContractSection } from '@components/TherapistContractSection/TherapistContractSection.component';
 
 // Этапы регистрации терапевта
@@ -147,7 +147,7 @@ const TherapistPage: NextPage = () => {
       case USER_TAB_KEY.DOCUMENTS:
         return (
           <PageWrapper>
-            <UserProfileDocumentsForm />
+            <TherapistDocumentsForm />
           </PageWrapper>
         );
 

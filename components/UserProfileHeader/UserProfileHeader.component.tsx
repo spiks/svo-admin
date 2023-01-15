@@ -74,7 +74,7 @@ export const UserProfileHeader: FC = ({ children }) => {
       footer={children}
     >
       <Alert
-        style={{ borderRadius: '8px', marginLeft: '36px' }}
+        style={{ borderRadius: '8px', marginLeft: '-32px' }}
         description="Информация об образовании размещена в разделе «Документы»"
         type="info"
         showIcon
