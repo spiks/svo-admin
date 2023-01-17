@@ -1,17 +1,17 @@
 import React, { FC, useContext } from 'react';
 import { Col, Collapse, Form, Result, Row, Spin } from 'antd';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
-import { PassportForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.component';
-import { useTherapistPassport } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistPassport';
-import { SelectStatus } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.children/SelectStatus.component';
-import { getDocumentIndicator } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.utils/getDocumentIndicator';
-import { useTherapistSnils } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistSnils';
-import { SnilsForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/SnilsForm/SnilsForm.component';
-import { useTherapistInn } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistInn';
-import { InnForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/InnForm/InnForm.component';
-import { useTherapistDiplomas } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistDiplomas';
-import { DiplomaForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
-import { AddDiplomaButton } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.children/AddDiplomaButton.component';
+import { PassportForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.component';
+import { useTherapistPassport } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistPassport';
+import { SelectStatus } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.children/SelectStatus.component';
+import { getDocumentIndicator } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.utils/getDocumentIndicator';
+import { useTherapistSnils } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistSnils';
+import { SnilsForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/SnilsForm/SnilsForm.component';
+import { useTherapistInn } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistInn';
+import { InnForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/InnForm/InnForm.component';
+import { useTherapistDiplomas } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistDiplomas';
+import { DiplomaForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
+import { AddDiplomaButton } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.children/AddDiplomaButton.component';
 
 const { Panel } = Collapse;
 

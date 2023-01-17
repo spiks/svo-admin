@@ -1,9 +1,9 @@
 import React, { FC } from 'react';
 import { Col, Form, Input, Row } from 'antd';
-import { required } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.rules/required.rule';
-import { type } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.rules/type.rule';
-import { armIssuerId } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.rules/armIssuerId.rule';
-import { kgNumber } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.rules/kgNumber.rule';
+import { required } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/required.rule';
+import { type } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/type.rule';
+import { armIssuerId } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/armIssuerId.rule';
+import { kgNumber } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/kgNumber.rule';
 
 export const ArmenianPassportFields: FC = () => {
   return (

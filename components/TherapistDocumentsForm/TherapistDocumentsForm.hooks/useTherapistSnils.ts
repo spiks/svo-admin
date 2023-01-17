@@ -3,7 +3,7 @@ import { SnilsServiceWithToken } from '../../../api/services';
 import { notification } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { SnilsInformation } from '../../../generated';
-import { useQueryInitialLoading } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useQueryInitialLoading';
+import { useQueryInitialLoading } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useQueryInitialLoading';
 
 export function useTherapistSnils(therapistId: string) {
   const query = useQuery(

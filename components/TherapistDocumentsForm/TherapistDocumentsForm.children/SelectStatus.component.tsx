@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Select, SelectProps } from 'antd';
-import { useDocumentStatus } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useDocumentStatus';
-import { DocumentStatusSpelling } from '@components/UserProfileDocumentsForm/TherapistDocumentsForm.const';
+import { useDocumentStatus } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useDocumentStatus';
+import { DocumentStatusSpelling } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.const';
 import { StaticFile } from '../../../generated';
 
 export type SelectStatusProps = {

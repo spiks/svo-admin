@@ -1,14 +1,14 @@
 import React, { ComponentType, FC, useEffect } from 'react';
 import { Passport } from '../../../../generated';
 import { Button, Col, Form, Input, Row, Select, Upload, UploadFile } from 'antd';
-import { RussianPassportFields } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/RussianPassportFields.component';
-import { ArmenianPassportFields } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/ArmenianPassportFields.component';
-import { BelarusianPassportDetails } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/BelarusianPassportFields.component';
-import { KazakhstanPassportFields } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/KazakhstanPassportFields.component';
-import { KyrgyzstanPassportFields } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/KyrgyzstanPassportFields.component';
-import { middleText } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.rules/middleText.rule';
-import { required } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.rules/required.rule';
-import { usePassportConverterFromDto } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.hooks/usePassportConverterFromDto';
+import { RussianPassportFields } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/RussianPassportFields.component';
+import { ArmenianPassportFields } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/ArmenianPassportFields.component';
+import { BelarusianPassportDetails } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/BelarusianPassportFields.component';
+import { KazakhstanPassportFields } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/KazakhstanPassportFields.component';
+import { KyrgyzstanPassportFields } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/KyrgyzstanPassportFields.component';
+import { middleText } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/middleText.rule';
+import { required } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/required.rule';
+import { usePassportConverterFromDto } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/usePassportConverterFromDto';
 
 const countryRelatedFields = new Map<Passport['information']['country'], ComponentType>();
 countryRelatedFields.set('russia', RussianPassportFields);

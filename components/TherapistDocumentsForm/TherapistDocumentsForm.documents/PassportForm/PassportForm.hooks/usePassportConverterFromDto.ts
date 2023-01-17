@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import type {
   PassportDetails,
   PassportFormValues,
-} from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.component';
+} from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.component';
 
 const russianFromDto = (information: RussianPassportInformation): RussianPassportInformation => {
   const number = `${information.serial ?? ''} ${information.number ?? ''}`;

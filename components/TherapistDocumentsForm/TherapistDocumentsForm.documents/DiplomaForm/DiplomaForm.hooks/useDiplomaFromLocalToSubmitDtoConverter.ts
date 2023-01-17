@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { SubmitDiplomaOfHigherEducation } from '../../../../../generated';
-import { DiplomaFormValues } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
+import { DiplomaFormValues } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
 
 export function useDiplomaFromLocalToSubmitDtoConverter() {
   return useCallback((diploma: DiplomaFormValues): SubmitDiplomaOfHigherEducation => {

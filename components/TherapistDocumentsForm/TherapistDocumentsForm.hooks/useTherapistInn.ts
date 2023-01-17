@@ -3,7 +3,7 @@ import { InnServiceWithToken } from '../../../api/services';
 import { notification } from 'antd';
 import { useCallback, useMemo } from 'react';
 import { InnInformation } from '../../../generated';
-import { useQueryInitialLoading } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useQueryInitialLoading';
+import { useQueryInitialLoading } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useQueryInitialLoading';
 
 export function useTherapistInn(therapistId: string) {
   const query = useQuery(

@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { Button, DatePicker, Form, Input, Upload, UploadFile } from 'antd';
 import moment from 'moment';
-import { LocalDiploma } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistDiplomas';
+import { LocalDiploma } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistDiplomas';
 import { RcFile } from 'antd/lib/upload';
 
 export type DiplomaFormProps = {

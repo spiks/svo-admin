@@ -2,12 +2,12 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DiplomaServiceWithToken } from '../../../api/services';
 import { notification } from 'antd';
 import { useCallback, useMemo, useRef } from 'react';
-import { DiplomaFormValues } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
+import { DiplomaFormValues } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
 import { DiplomaOfHigherEducation, StaticFile } from '../../../generated';
-import { useQueryInitialLoading } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useQueryInitialLoading';
+import { useQueryInitialLoading } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useQueryInitialLoading';
 import moment, { Moment } from 'moment';
-import { useDiplomaFromLocalToSubmitDtoConverter } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromLocalToSubmitDtoConverter';
-import { useDiplomaFromDtoConverter } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromDtoConverter';
+import { useDiplomaFromLocalToSubmitDtoConverter } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromLocalToSubmitDtoConverter';
+import { useDiplomaFromDtoConverter } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromDtoConverter';
 
 type RemoteGetFetchResult = Awaited<ReturnType<typeof DiplomaServiceWithToken.getTherapistDiplomasOfHigherEducation>>;
 

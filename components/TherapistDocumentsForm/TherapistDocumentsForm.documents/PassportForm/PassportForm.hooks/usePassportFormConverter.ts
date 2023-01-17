@@ -1,4 +1,4 @@
-import { PassportFormValues } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.component';
+import { PassportFormValues } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.component';
 import { RussianPassportInformation, UpdateTherapistPassport } from '../../../../../generated';
 import { useCallback } from 'react';
 
