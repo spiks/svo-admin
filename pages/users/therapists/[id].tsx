@@ -20,6 +20,7 @@ import { TherapistDocumentsForm } from '@components/UserProfileDocumentsForm/The
 import { TherapistContractSection } from '@components/TherapistContractSection/TherapistContractSection.component';
 import { UserPresentationForm } from '@components/UserPresentationForm/UserPresentationForm.component';
 import { UserBiographyForm } from '@components/UserBiographyForm/UserBiographyForm.component';
+import { UserWorkPrinciplesForm } from '@components/UserWorkPrinciplesForm/UserWorkPrinciplesForm.component';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -173,6 +174,14 @@ const TherapistPage: NextPage = () => {
             <UserBiographyForm />
           </PageWrapper>
         );
+
+      case USER_TAB_KEY.PRINCIPLES:
+        return (
+          <PageWrapper>
+            <UserWorkPrinciplesForm />
+          </PageWrapper>
+        );
+
       default:
         return (
           <PageWrapper>
