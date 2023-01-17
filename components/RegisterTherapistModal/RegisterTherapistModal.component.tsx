@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Form, Input, Modal, ModalProps, Typography } from 'antd';
 import { useRegisterTherapist } from '@components/RegisterTherapistModal/RegisterTherapistModal.hooks/useRegisterTherapist';
 
@@ -26,9 +26,16 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
   const [form] = Form.useForm<RegisterTherapistForm>();
 
   const [registeredId, setRegisteredId] = useState<null | string>(null);
+
+  const handleCancel = useCallback(() => {
+    props.onCancel();
+  }, [props]);
+
   const registerTherapist = useRegisterTherapist({
     onDone: (therapistId) => {
       setRegisteredId(therapistId);
+      handleCancel();
+      form.resetFields();
     },
     onFail: (_, message) => {
       form.setFields([
@@ -51,12 +58,7 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
 
     setCachedPhone(null);
     setRegisteredId(null);
-    registerTherapist.reset();
-  }, [cachedPhone, phone, registerTherapist, registeredId]);
-
-  const handleCancel = () => {
-    props.onCancel && props.onCancel();
-  };
+  }, [cachedPhone, phone, registeredId]);
 
   const submitForm = () => {
     form.submit();
