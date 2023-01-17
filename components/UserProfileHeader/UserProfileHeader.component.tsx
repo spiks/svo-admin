@@ -17,6 +17,7 @@ const therapistStatusName: Record<TherapistProfileStatus, string> = {
   documents_rejected: 'Документы отклонены',
   interview_failed: 'Интервью провалено',
   interview_processing: 'На этапе интервью',
+  created_by_admin: 'Создан администратором',
 };
 
 export const UserProfileHeader: FC = ({ children }) => {
