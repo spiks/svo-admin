@@ -1,14 +1,21 @@
 import React, { ComponentType, FC, useEffect } from 'react';
 import { Passport } from '../../../../generated';
-import { Button, Col, Form, Input, Row, Select, Upload, UploadFile } from 'antd';
-import { RussianPassportFields } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/RussianPassportFields.component';
-import { ArmenianPassportFields } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/ArmenianPassportFields.component';
-import { BelarusianPassportDetails } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/BelarusianPassportFields.component';
-import { KazakhstanPassportFields } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/KazakhstanPassportFields.component';
-import { KyrgyzstanPassportFields } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/KyrgyzstanPassportFields.component';
-import { middleText } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.rules/middleText.rule';
-import { required } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.rules/required.rule';
-import { usePassportConverterFromDto } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.hooks/usePassportConverterFromDto';
+import { Button, Col, DatePicker, Form, Input, Row, Select, Upload, UploadFile } from 'antd';
+import { RussianPassportFields } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/RussianPassportFields.component';
+import { ArmenianPassportFields } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/ArmenianPassportFields.component';
+import { BelarusianPassportDetails } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/BelarusianPassportFields.component';
+import { KazakhstanPassportFields } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/KazakhstanPassportFields.component';
+import { KyrgyzstanPassportFields } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/KyrgyzstanPassportFields.component';
+import { middleText } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/middleText.rule';
+import { required } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/required.rule';
+import { usePassportConverterFromDto } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/usePassportConverterFromDto';
+import {
+  FusSuccessResponse,
+  useFileUpload,
+} from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
+import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
+import { RcFile } from 'antd/lib/upload';
+import { Moment } from 'moment';
 
 const countryRelatedFields = new Map<Passport['information']['country'], ComponentType>();
 countryRelatedFields.set('russia', RussianPassportFields);
@@ -18,36 +25,34 @@ countryRelatedFields.set('kazakhstan', KazakhstanPassportFields);
 countryRelatedFields.set('kyrgyzstan', KyrgyzstanPassportFields);
 
 export type PassportFormProps = {
-  passport: Passport;
+  passport?: Passport | null;
   onSubmit?: (values: PassportFormValues) => void;
   disabled?: boolean;
 };
 
 export type PassportDetails = Passport['information'];
 
-export type PassportFormValues = Omit<PassportDetails, 'fullName'> & {
+export type PassportFormValues = Omit<PassportDetails, 'fullName' | 'birthday' | 'issuedAt'> & {
   name: string;
   lastName: string;
   surName: string;
+  birthday: Moment;
+  issuedAt: Moment;
+  document: UploadFile<FusSuccessResponse | undefined>[];
 };
 
 export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabled = false }) => {
   const [form] = Form.useForm<PassportFormValues>();
-  const information = passport.information;
+  const information = passport?.information;
 
-  const convertedDto = usePassportConverterFromDto(information);
+  const convertedDto = usePassportConverterFromDto(information, passport?.document);
 
   const country = Form.useWatch('country', form);
   const CountryRelated = countryRelatedFields.get(country);
 
-  const document: UploadFile[] = [];
-  passport.document &&
-    document.push({
-      uid: '-1',
-      name: passport.document.originalFileName,
-      status: 'done',
-      url: passport.document.url,
-    });
+  const docFile = Form.useWatch('document', form);
+  const { uploadData } = useFileUpload('personal_document');
+  const validateDocument = useUploadPersonalDocumentConstraints(uploadData?.constraints);
 
   useEffect(() => {
     form.setFieldsValue(convertedDto);
@@ -55,7 +60,7 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabl
   }, [passport]);
 
   return (
-    <Form form={form} layout={'vertical'} onFinish={onSubmit} initialValues={information} disabled={disabled}>
+    <Form form={form} layout={'vertical'} onFinish={onSubmit} initialValues={{ ...convertedDto }} disabled={disabled}>
       <Row gutter={32}>
         <Col xs={8}>
           <Form.Item label={'Имя'} name={'name'} rules={[required, middleText]}>
@@ -72,7 +77,6 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabl
             <Input type={'text'} />
           </Form.Item>
         </Col>
-
         <Col xs={8}>
           <Form.Item label={'Гражданство'} name={'country'} rules={[required]}>
             <Select>
@@ -99,12 +103,12 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabl
         </Col>
         <Col xs={8}>
           <Form.Item label={'Дата рождения'} name={'birthday'} rules={[required]}>
-            <Input type={'date'} />
+            <DatePicker format={'YYYY-MM-DD'} />
           </Form.Item>
         </Col>
         <Col xs={8}>
           <Form.Item label={'Дата выдачи'} name={'issuedAt'} rules={[required]}>
-            <Input type={'date'} />
+            <DatePicker format={'YYYY-MM-DD'} />
           </Form.Item>
         </Col>
       </Row>
@@ -114,7 +118,34 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabl
       </Form.Item>
       <Row justify={'space-between'}>
         <Col>
-          <Upload fileList={document} disabled={true} />
+          <Form.Item
+            name={'document'}
+            getValueFromEvent={(e) => {
+              if (Array.isArray(e)) {
+                return e;
+              }
+              return e && e.fileList;
+            }}
+            valuePropName={'fileList'}
+            rules={[
+              {
+                required: true,
+                message: 'Загрузка документа обязательна',
+              },
+              {
+                async validator(_, value: RcFile[]) {
+                  value.forEach((file) => {
+                    const message = validateDocument(file);
+                    if (typeof message !== 'boolean') {
+                      throw new Error(message);
+                    }
+                  });
+                },
+              },
+            ]}
+          >
+            <Upload action={uploadData?.url}>{!docFile?.length && <Button>Загрузить документ</Button>}</Upload>
+          </Form.Item>
         </Col>
         <Col>
           <Form.Item noStyle={true}>

@@ -2,8 +2,8 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { SnilsServiceWithToken } from '../../../api/services';
 import { notification } from 'antd';
 import { useCallback, useMemo } from 'react';
-import { SnilsInformation } from '../../../generated';
-import { useQueryInitialLoading } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useQueryInitialLoading';
+import { useQueryInitialLoading } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useQueryInitialLoading';
+import { SnilsFormValues } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/SnilsForm/SnilsForm.component';
 
 export function useTherapistSnils(therapistId: string) {
   const query = useQuery(
@@ -31,13 +31,54 @@ export function useTherapistSnils(therapistId: string) {
     await query.refetch();
   }, [query]);
 
+  const submitSnils = useMutation(
+    (values: SnilsFormValues) => {
+      const document = values.document.find(Boolean)?.response;
+      if (!document?.token) {
+        throw new Error('Для создания СНИЛС нужно загрузить документ!');
+      }
+
+      const _values: Omit<SnilsFormValues, 'document'> & { document?: unknown } = { ...values };
+      delete _values.document;
+
+      return SnilsServiceWithToken.submitTherapistSnils({
+        requestBody: {
+          arguments: {
+            therapistId,
+            snilsInformation: {
+              ..._values,
+            },
+            snilsDocument: document.token,
+          },
+        },
+      });
+    },
+    {
+      onSuccess() {
+        notification.success({
+          message: 'СНИЛС',
+          description: 'Документ сохранён',
+        });
+        refetch();
+      },
+      onError(err) {
+        notification.error({
+          message: 'СНИЛС',
+          description: 'Не удалось сохранить документ: ' + err,
+        });
+      },
+    },
+  );
+
   const updateSnils = useMutation(
-    (values: SnilsInformation) => {
+    (values: SnilsFormValues) => {
+      const _values: Omit<SnilsFormValues, 'document'> & { document?: unknown } = { ...values };
+      delete _values.document;
       return SnilsServiceWithToken.updateTherapistSnils({
         requestBody: {
           arguments: {
             therapistId,
-            snilsInformation: values,
+            snilsInformation: _values,
           },
         },
       });
@@ -114,7 +155,9 @@ export function useTherapistSnils(therapistId: string) {
   );
 
   const firstTimeLoading = useQueryInitialLoading(query);
-  const isMutating = [updateSnils.status, approveSnils.status, rejectSnils.status].includes('loading');
+  const isMutating = [submitSnils.status, updateSnils.status, approveSnils.status, rejectSnils.status].includes(
+    'loading',
+  );
 
   return useMemo(() => {
     return {
@@ -123,8 +166,9 @@ export function useTherapistSnils(therapistId: string) {
       approveSnils,
       rejectSnils,
       isMutating,
+      submitSnils,
       isFirstLoading: firstTimeLoading,
       query,
     };
-  }, [approveSnils, firstTimeLoading, isMutating, query, rejectSnils, updateSnils]);
+  }, [approveSnils, firstTimeLoading, isMutating, query, rejectSnils, submitSnils, updateSnils]);
 }

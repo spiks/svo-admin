@@ -16,7 +16,7 @@ import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.com
 import { UserProfileHeader } from '@components/UserProfileHeader/UserProfileHeader.component';
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import { TabList } from '@components/TabList/TabList.component';
-import { TherapistDocumentsForm } from '@components/UserProfileDocumentsForm/TherapistDocumentsForm';
+import { TherapistDocumentsForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm';
 import { TherapistContractSection } from '@components/TherapistContractSection/TherapistContractSection.component';
 import { UserPresentationForm } from '@components/UserPresentationForm/UserPresentationForm.component';
 import { UserBiographyForm } from '@components/UserBiographyForm/UserBiographyForm.component';
@@ -92,6 +92,7 @@ const TherapistPage: NextPage = () => {
       case 'documents_rejected':
       case 'documents_awaiting_review':
       case 'documents_not_submitted_yet':
+      case 'created_by_admin':
         setCurrentStage(STAGE.DOCUMENTS);
         break;
       case 'interview_processing':

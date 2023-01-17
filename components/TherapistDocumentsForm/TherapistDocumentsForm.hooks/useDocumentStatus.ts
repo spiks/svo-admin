@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { DocumentStatus } from '@components/UserProfileDocumentsForm/TherapistDocumentsForm.const';
+import { DocumentStatus } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.const';
 
 export function useDocumentStatus() {
   return useCallback((document?: { isApprovedByModerator?: boolean | null } | null): DocumentStatus => {

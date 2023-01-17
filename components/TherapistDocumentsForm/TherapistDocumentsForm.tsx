@@ -1,17 +1,17 @@
 import React, { FC, useContext } from 'react';
 import { Col, Collapse, Form, Result, Row, Spin } from 'antd';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
-import { PassportForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/PassportForm/PassportForm.component';
-import { useTherapistPassport } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistPassport';
-import { SelectStatus } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.children/SelectStatus.component';
-import { getDocumentIndicator } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.utils/getDocumentIndicator';
-import { useTherapistSnils } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistSnils';
-import { SnilsForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/SnilsForm/SnilsForm.component';
-import { useTherapistInn } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistInn';
-import { InnForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/InnForm/InnForm.component';
-import { useTherapistDiplomas } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistDiplomas';
-import { DiplomaForm } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
-import { AddDiplomaButton } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.children/AddDiplomaButton.component';
+import { PassportForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.component';
+import { useTherapistPassport } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistPassport';
+import { SelectStatus } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.children/SelectStatus.component';
+import { getDocumentIndicator } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.utils/getDocumentIndicator';
+import { useTherapistSnils } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistSnils';
+import { SnilsForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/SnilsForm/SnilsForm.component';
+import { useTherapistInn } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistInn';
+import { InnForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/InnForm/InnForm.component';
+import { useTherapistDiplomas } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistDiplomas';
+import { DiplomaForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
+import { AddDiplomaButton } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.children/AddDiplomaButton.component';
 
 const { Panel } = Collapse;
 
@@ -30,7 +30,9 @@ export const TherapistDocumentsForm: FC = () => {
   const { diplomas, ...diplomasService } = useTherapistDiplomas(therapist.id);
 
   //Индикация возможности редактировать документ терапевта администратором
-  const isModerationNotAllowed = !['active', 'documents_awaiting_review'].includes(therapist.status);
+  const isModerationNotAllowed = !['active', 'documents_awaiting_review', 'created_by_admin'].includes(
+    therapist.status,
+  );
 
   return (
     <section>
@@ -72,14 +74,17 @@ export const TherapistDocumentsForm: FC = () => {
               );
             } else if (passportService.isFirstLoading) {
               return <Spin style={{ width: '100%', height: '100%' }} spinning={true} />;
-            } else if (!passport) {
+            } else if (!passport && therapist.status !== 'created_by_admin') {
               return <Result status={'warning'} subTitle={'Паспорт ещё не загружен клиентом'} />;
             } else {
+              const submitHandler = Boolean(passport?.document)
+                ? passportService.updatePassport
+                : passportService.submitPassport;
               return (
                 <PassportForm
                   disabled={isModerationNotAllowed || passportService.isMutating || passportService.query.isLoading}
                   passport={passport}
-                  onSubmit={passportService.updatePassport.mutate}
+                  onSubmit={!passportService.isFirstLoading && submitHandler.mutate}
                 />
               );
             }
@@ -120,14 +125,24 @@ export const TherapistDocumentsForm: FC = () => {
               );
             } else if (snilsService.isFirstLoading) {
               return <Spin style={{ width: '100%', height: '100%' }} spinning={true} />;
-            } else if (!snils) {
+            } else if (!snils && therapist.status !== 'created_by_admin') {
               return <Result status={'warning'} subTitle={'СНИЛС ещё не загружен клиентом'} />;
             } else {
+              // const submitHandler = Boolean(passport?.document)
+              //   ? passportService.updatePassport
+              //   : passportService.submitPassport;
+              // return (
+              //   <PassportForm
+              //     disabled={isModerationNotAllowed || passportService.isMutating || passportService.query.isLoading}
+              //     passport={passport}
+              //     onSubmit={!passportService.isFirstLoading && submitHandler.mutate}
+              //   />
+              const submitHandler = Boolean(snils?.document) ? snilsService.updateSnils : snilsService.submitSnils;
               return (
                 <SnilsForm
                   disabled={isModerationNotAllowed || snilsService.isMutating || snilsService.query.isLoading}
                   snils={snils}
-                  onSubmit={snilsService.updateSnils.mutate}
+                  onSubmit={!snilsService.isFirstLoading && submitHandler.mutate}
                 />
               );
             }
@@ -210,6 +225,9 @@ export const TherapistDocumentsForm: FC = () => {
               ? diplomasService.createRemoteDiploma.mutate
               : diplomasService.updateDiploma.mutate;
 
+            const statusChangeNotAllowed =
+              isModerationNotAllowed || diplomasService.query.isLoading || diplomasService.isMutating;
+
             return (
               <Panel
                 key={diploma.id}
@@ -219,7 +237,7 @@ export const TherapistDocumentsForm: FC = () => {
                       onApprove={onApprove as () => void}
                       onReject={onReject as () => void}
                       document={diploma}
-                      disabled={isModerationNotAllowed || diplomasService.query.isLoading || diplomasService.isMutating}
+                      disabled={statusChangeNotAllowed}
                     />
                   </Form.Item>
                 }

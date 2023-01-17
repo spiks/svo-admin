@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { DiplomaOfHigherEducation } from '../../../../../generated';
-import { LocalDiploma } from '@components/UserProfileDocumentsForm/UserProfileDocumentsForm.hooks/useTherapistDiplomas';
+import { LocalDiploma } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistDiplomas';
 import moment from 'moment';
 
 export function useDiplomaFromDtoConverter() {
