@@ -7,6 +7,7 @@ import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { PasswordRecoveryModal } from '../PasswordRecoveryModal/PasswordRecoveryModal.component';
 import { IssueTokenByEmailAndPasswordRequest } from '../../generated';
 import { useLogin } from '../../api/hooks/useLogin';
+import { handleFormErrors } from '../../utility/handleFormErrors';
 
 export type ILoginFormProps = {
   email: string;
@@ -17,6 +18,7 @@ export const LoginForm: FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [violations, setViolations] = useState<Record<string, string>>();
   const login = useLogin();
 
   const showModal = () => {
@@ -39,7 +41,10 @@ export const LoginForm: FC = () => {
 
     const result = await login(email, password);
     if (result.error) {
-      setError('Неизвестная ошибка');
+      handleFormErrors(result.error, {
+        validation: (violations) => setError(Object.values(violations)[0]),
+        internalError: () => setError('Непредвиденная ошибка сервера'),
+      });
     }
     setLoading(false);
   };
@@ -78,7 +83,7 @@ export const LoginForm: FC = () => {
           </Form.Item>
           {error && (
             <Row justify="center">
-              <span style={{ color: 'red' }}>Неизвестная ошибка</span>
+              <span style={{ color: 'red' }}>{error}</span>
             </Row>
           )}
           <div className={styles.actions}>

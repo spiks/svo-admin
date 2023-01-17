@@ -1,6 +1,7 @@
 import { Button, Form, FormProps, Input, notification, Typography } from 'antd';
 import TextArea from 'antd/lib/input/TextArea';
 import { updateTherapistVideoPresentation } from 'api/therapist/updateTherapistVideoPresentation';
+import { REGEXP_YOUTUBE } from 'constants/regexp';
 import { VideoPresentation } from 'generated';
 import { useVideoPresengtationQuery, useVideoPresengtationRefresh } from 'hooks/useVideoPresentationQuery';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
@@ -51,6 +52,7 @@ export const UserPresentationForm: FC = () => {
             {
               required: true,
               message: 'Пожалуйста, введите ссылку',
+              pattern: REGEXP_YOUTUBE,
             },
           ]}
         >
