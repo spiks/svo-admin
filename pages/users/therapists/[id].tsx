@@ -199,43 +199,45 @@ const TherapistPage: NextPage = () => {
           <TabList items={tabListItems} defaultActiveKey={USER_TAB_KEY.INFORMATION} onChange={handleTabListChange} />
         </UserProfileHeader>
         <div style={{ overflow: 'auto' }}>
-          <PageWrapper>
-            <div
-              style={{
-                padding: '40px 80px',
-                background: '#FFFFFF',
-              }}
-            >
-              <PageHeader title={`Регистрация психолога`} subTitle={therapistId} style={{ padding: 0 }} />
-              <div style={{ marginTop: '40px' }}>
-                <Steps current={currentStage} labelPlacement={'vertical'}>
-                  <Step title={'Предоставление документов'} />
-                  <Step title={'Обработка интервью'} />
-                  <Step title={'Заключение договора'} />
-                </Steps>
+          {activeTab === USER_TAB_KEY.INFORMATION && (
+            <PageWrapper>
+              <div
+                style={{
+                  padding: '40px 80px',
+                  background: '#FFFFFF',
+                }}
+              >
+                <PageHeader title={`Регистрация психолога`} subTitle={therapistId} style={{ padding: 0 }} />
+                <div style={{ marginTop: '40px' }}>
+                  <Steps current={currentStage} labelPlacement={'vertical'}>
+                    <Step title={'Предоставление документов'} />
+                    <Step title={'Обработка интервью'} />
+                    <Step title={'Заключение договора'} />
+                  </Steps>
+                </div>
+                <Divider />
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  {(() => {
+                    switch (currentStage) {
+                      case STAGE.CONTRACT:
+                        return <TherapistSignupContract />;
+                      case STAGE.DOCUMENTS:
+                        return <TherapistSignupDocuments />;
+                      case STAGE.INTERVIEW:
+                        return <TherapistSignupInterview />;
+                      case STAGE.ACTIVE:
+                        return (
+                          <Result
+                            icon={<SmileOutlined />}
+                            title="Терапевт имеет уже подтверждённый и активированный аккаунт!"
+                          />
+                        );
+                    }
+                  })()}
+                </div>
               </div>
-              <Divider />
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                {(() => {
-                  switch (currentStage) {
-                    case STAGE.CONTRACT:
-                      return <TherapistSignupContract />;
-                    case STAGE.DOCUMENTS:
-                      return <TherapistSignupDocuments />;
-                    case STAGE.INTERVIEW:
-                      return <TherapistSignupInterview />;
-                    case STAGE.ACTIVE:
-                      return (
-                        <Result
-                          icon={<SmileOutlined />}
-                          title="Терапевт имеет уже подтверждённый и активированный аккаунт!"
-                        />
-                      );
-                  }
-                })()}
-              </div>
-            </div>
-          </PageWrapper>
+            </PageWrapper>
+          )}
           {renderTabContents()}
         </div>
       </MainLayout>

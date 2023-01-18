@@ -3,12 +3,13 @@ import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useContext } from 'react';
 import { MailOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
-import { updateTherapist, UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
+import { UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
 import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
+import { TherapistServiceWithToken } from '../../api/services';
 
 export const UserProfileForm: FC = () => {
   const [form] = Form.useForm();
@@ -47,14 +48,15 @@ export const UserProfileForm: FC = () => {
       }
     }
     try {
-      await updateTherapist({
-        ...values,
-        id: therapist.id,
-        workPrinciples: null,
-        biography: null,
-        creed: null,
-        specializations: [],
-        additionalSpecializations: null,
+      await TherapistServiceWithToken.updateTherapistPersonalInformation({
+        requestBody: {
+          arguments: {
+            email: values.email!,
+            fullName: values.fullName!,
+            phone: values.phone,
+            id: therapist.id,
+          },
+        },
       });
       notification.success({
         type: 'success',
@@ -116,6 +118,12 @@ export const UserProfileForm: FC = () => {
             const isMaxSize = file.size < 15728640;
 
             if (!isJpgOrPng) {
+              form.setFields([
+                {
+                  name: 'avatar',
+                  errors: ['Допустимые форматы .jpeg, .jpg, .png!'],
+                },
+              ]);
               notification.error({
                 type: 'error',
                 message: 'Ошибка',
@@ -128,6 +136,16 @@ export const UserProfileForm: FC = () => {
                 message: 'Ошибка',
                 description: `Превышен максимальный размер файла!`,
               });
+            }
+
+            const result = (isJpgOrPng && isMaxSize) || Upload.LIST_IGNORE;
+            if (result) {
+              form.setFields([
+                {
+                  name: 'avatar',
+                  errors: [],
+                },
+              ]);
             }
             return (isJpgOrPng && isMaxSize) || Upload.LIST_IGNORE;
           }}
