@@ -40,17 +40,17 @@ export const TherapistSignupDocuments: FC = () => {
           <div style={{ display: 'flex', flexDirection: 'column', rowGap: '16px', minWidth: '470px' }}>
             <Document
               style={getDocumentStyle(documents.passport?.isApprovedByModerator, therapist.status)}
-              href={'#'}
+              href={`/users/therapists/${therapist.id}?section=documents&target=passport`}
               name={documentName.passport}
             />
             <Document
               style={getDocumentStyle(documents.inn?.isApprovedByModerator, therapist.status)}
-              href={'#'}
+              href={`/users/therapists/${therapist.id}?section=documents&target=inn`}
               name={documentName.inn}
             />
             <Document
               style={getDocumentStyle(documents.snils?.isApprovedByModerator, therapist.status)}
-              href={'#'}
+              href={`/users/therapists/${therapist.id}/section=documents&target=snils`}
               name={documentName.snils}
             />
             {diploma}

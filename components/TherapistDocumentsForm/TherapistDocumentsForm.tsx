@@ -13,6 +13,7 @@ import { useTherapistDiplomas } from '@components/TherapistDocumentsForm/Therapi
 import { DiplomaForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
 import { AddDiplomaButton } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.children/AddDiplomaButton.component';
 import { DeleteOutlined } from '@ant-design/icons';
+import { useRouter } from 'next/router';
 
 const { Panel } = Collapse;
 
@@ -30,6 +31,9 @@ export const TherapistDocumentsForm: FC = () => {
 
   const { diplomas, ...diplomasService } = useTherapistDiplomas(therapist.id);
 
+  const { query } = useRouter();
+  const target = query['target'];
+
   //Индикация возможности редактировать документ терапевта администратором
   const isModerationNotAllowed = !['active', 'documents_awaiting_review', 'created_by_admin'].includes(
     therapist.status,
@@ -38,7 +42,7 @@ export const TherapistDocumentsForm: FC = () => {
   return (
     <section>
       <h2 style={{ marginBottom: '24px' }}>Документы, подтверждающие персональные данные</h2>
-      <Collapse style={{ width: '100%', marginBottom: '24px' }} expandIconPosition={'end'}>
+      <Collapse style={{ width: '100%', marginBottom: '24px' }} defaultActiveKey={target} expandIconPosition={'end'}>
         {/* Паспорт */}
         <Panel
           extra={
