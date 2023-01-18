@@ -4,12 +4,13 @@ import { DiplomaFormValues } from '@components/TherapistDocumentsForm/TherapistD
 
 export function useDiplomaFromLocalToSubmitDtoConverter() {
   return useCallback((diploma: DiplomaFormValues): SubmitDiplomaOfHigherEducation => {
-    if (!diploma.documentToken) {
+    const document = diploma.document.find(Boolean);
+    if (!document?.response) {
       throw new Error('Невозможно преобразовать файл в DTO создания диплом без токена файла документа.');
     }
 
     return {
-      document: diploma.documentToken,
+      document: document.response?.token,
       information: {
         graduationYear: diploma.graduationYear.year(),
         speciality: diploma.speciality,

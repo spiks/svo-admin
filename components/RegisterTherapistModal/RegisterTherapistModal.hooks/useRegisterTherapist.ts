@@ -2,12 +2,12 @@ import { useMutation } from '@tanstack/react-query';
 import { notification } from 'antd';
 import { TherapistServiceWithToken } from '../../../api/services';
 import { RegisterTherapistForm } from '@components/RegisterTherapistModal/RegisterTherapistModal.component';
-import { AxiosResponse } from 'axios';
+import { ApiRegularError } from '../../../api/errorClasses';
 
 export type UseRegisterTherapistParameters = {
   onDone?: (therapistId: string) => void;
   // Аргумент message - сгенерированная описательная строка (semi-user-friendly)
-  onFail?: (response: AxiosResponse, message: string) => void;
+  onFail?: (response: ApiRegularError, message: string) => void;
 };
 
 export function useRegisterTherapist({ onDone, onFail }: UseRegisterTherapistParameters) {
@@ -29,9 +29,9 @@ export function useRegisterTherapist({ onDone, onFail }: UseRegisterTherapistPar
         });
         onDone && onDone(resp.data.therapistId);
       },
-      onError(resp: AxiosResponse) {
-        let message = `Неизвестная ошибка: ` + resp.data.error.type;
-        const type = resp.data.error.type;
+      onError(resp: ApiRegularError) {
+        let message = `Неизвестная ошибка: ` + resp.error.type;
+        const type = resp.error.type;
         switch (type) {
           case 'therapist_with_this_phone_already_exists':
             message = 'Терапевт с таким номером уже существует';

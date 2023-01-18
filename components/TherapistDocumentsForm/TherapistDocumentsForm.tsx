@@ -128,15 +128,6 @@ export const TherapistDocumentsForm: FC = () => {
             } else if (!snils && therapist.status !== 'created_by_admin') {
               return <Result status={'warning'} subTitle={'СНИЛС ещё не загружен клиентом'} />;
             } else {
-              // const submitHandler = Boolean(passport?.document)
-              //   ? passportService.updatePassport
-              //   : passportService.submitPassport;
-              // return (
-              //   <PassportForm
-              //     disabled={isModerationNotAllowed || passportService.isMutating || passportService.query.isLoading}
-              //     passport={passport}
-              //     onSubmit={!passportService.isFirstLoading && submitHandler.mutate}
-              //   />
               const submitHandler = Boolean(snils?.document) ? snilsService.updateSnils : snilsService.submitSnils;
               return (
                 <SnilsForm
@@ -174,19 +165,18 @@ export const TherapistDocumentsForm: FC = () => {
         >
           {(() => {
             if (innService.query.isError) {
-              return (
-                <Result status={'error'} title={'Ошибка при загрузке ИНН'} subTitle={innService.query.error.message} />
-              );
+              return <Result status={'error'} title={'Ошибка при загрузке ИНН'} subTitle={innService.query.error} />;
             } else if (innService.isFirstLoading) {
               return <Spin style={{ width: '100%', height: '100%' }} spinning={true} />;
-            } else if (!inn) {
+            } else if (!inn && therapist.status !== 'created_by_admin') {
               return <Result status={'warning'} subTitle={'ИНН ещё не загружен клиентом'} />;
             } else {
+              const submitHandler = Boolean(inn?.document) ? innService.updateInn : innService.submitInn;
               return (
                 <InnForm
                   disabled={isModerationNotAllowed || innService.isMutating || innService.query.isLoading}
                   inn={inn}
-                  onSubmit={innService.updateInn.mutate}
+                  onSubmit={!innService.isFirstLoading && submitHandler.mutate}
                 />
               );
             }
@@ -226,7 +216,7 @@ export const TherapistDocumentsForm: FC = () => {
               : diplomasService.updateDiploma.mutate;
 
             const statusChangeNotAllowed =
-              isModerationNotAllowed || diplomasService.query.isLoading || diplomasService.isMutating;
+              isModerationNotAllowed || diplomasService.query.isLoading || diplomasService.isMutating || isLocal;
 
             return (
               <Panel

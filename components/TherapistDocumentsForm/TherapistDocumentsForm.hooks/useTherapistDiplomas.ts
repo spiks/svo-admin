@@ -1,13 +1,15 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { DiplomaServiceWithToken } from '../../../api/services';
-import { notification } from 'antd';
+import { notification, UploadFile } from 'antd';
 import { useCallback, useMemo, useRef } from 'react';
 import { DiplomaFormValues } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
-import { DiplomaOfHigherEducation, StaticFile } from '../../../generated';
+import { DiplomaOfHigherEducation } from '../../../generated';
 import { useQueryInitialLoading } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useQueryInitialLoading';
 import moment, { Moment } from 'moment';
 import { useDiplomaFromLocalToSubmitDtoConverter } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromLocalToSubmitDtoConverter';
 import { useDiplomaFromDtoConverter } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromDtoConverter';
+import { ApiRegularError, ApiValidationError } from '../../../api/errorClasses';
+import { FusSuccessResponse } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
 
 type RemoteGetFetchResult = Awaited<ReturnType<typeof DiplomaServiceWithToken.getTherapistDiplomasOfHigherEducation>>;
 
@@ -18,7 +20,7 @@ type LocalGetFetchResult = Omit<
   LocalQueryData;
 
 export type LocalDiploma = Pick<DiplomaOfHigherEducation, 'isApprovedByModerator' | 'id'> & {
-  document?: StaticFile | null;
+  document?: UploadFile<FusSuccessResponse | undefined>[];
   information: Omit<DiplomaOfHigherEducation['information'], 'graduationYear'> & {
     graduationYear: Moment;
   };
@@ -70,11 +72,13 @@ export function useTherapistDiplomas(therapistId: string) {
       return local;
     },
     {
-      onError: (err) => {
-        const error = err as Error;
+      onError: (_err) => {
+        const err = _err as ApiRegularError | ApiValidationError;
+        const isRegular = 'error' in err;
+        const message = isRegular ? err.error.type : err.type;
         notification.error({
-          message: error.name,
-          description: error.message,
+          message: 'Диплом',
+          description: message,
         });
       },
     },
@@ -99,10 +103,12 @@ export function useTherapistDiplomas(therapistId: string) {
           description: 'Данные успешно обновлены',
         });
       },
-      onError: (err: Error) => {
+      onError: (err: ApiRegularError | ApiValidationError) => {
+        const isRegular = 'error' in err;
+        const message = isRegular ? err.error.type : err.type;
         notification.error({
           message: 'Диплом',
-          description: err.message,
+          description: message,
         });
       },
     },
@@ -125,10 +131,12 @@ export function useTherapistDiplomas(therapistId: string) {
           description: 'Данные подтверждён',
         });
       },
-      onError: (err: Error) => {
+      onError: (err: ApiRegularError | ApiValidationError) => {
+        const isRegular = 'error' in err;
+        const message = isRegular ? err.error.type : err.type;
         notification.error({
           message: 'Диплом',
-          description: err.message,
+          description: message,
         });
       },
     },
@@ -151,10 +159,12 @@ export function useTherapistDiplomas(therapistId: string) {
           description: 'Диплом отклонён',
         });
       },
-      onError: (err: Error) => {
+      onError: (err: ApiRegularError | ApiValidationError) => {
+        const isRegular = 'error' in err;
+        const message = isRegular ? err.error.type : err.type;
         notification.error({
           message: 'Диплом',
-          description: err.message,
+          description: message,
         });
       },
     },
@@ -192,9 +202,10 @@ export function useTherapistDiplomas(therapistId: string) {
   const createRemoteDiploma = useMutation(
     (values: DiplomaFormValues) => {
       const isLocal = Number(values.id) < 0;
+      const document = values.document.find(Boolean);
       if (!isLocal) {
         throw new Error('Данный метод предназначен создания заполненного диплома на сервере на основе локального');
-      } else if (!values.documentToken) {
+      } else if (!document?.response) {
         throw new Error('Для создания диплоам на сервере необходимо указать токен документа');
       }
 
@@ -203,10 +214,7 @@ export function useTherapistDiplomas(therapistId: string) {
         requestBody: {
           arguments: {
             therapistId,
-            diplomaOfHigherEducation: {
-              document: values.documentToken,
-              information: dto.information,
-            },
+            diplomaOfHigherEducation: dto,
           },
         },
       });
@@ -228,10 +236,14 @@ export function useTherapistDiplomas(therapistId: string) {
 
         query.refetch();
       },
-      onError: (err: Error) => {
+      onError: (err: ApiRegularError | ApiValidationError | Error) => {
+        const isRegular = 'error' in err;
+        const isValidation = 'type' in err;
+        const isNative = 'message' in err;
+        const message = (isRegular && err.error.type) || (isValidation && err.type) || (isNative && err.message);
         notification.error({
           message: 'Диплом',
-          description: err.message,
+          description: message,
         });
       },
     },
@@ -273,10 +285,12 @@ export function useTherapistDiplomas(therapistId: string) {
         });
         query.refetch();
       },
-      onError: (err: Error) => {
+      onError: (err: ApiRegularError | ApiValidationError) => {
+        const isRegular = 'error' in err;
+        const message = isRegular ? err.error.type : err.type;
         notification.error({
           message: 'Диплом',
-          description: err.message,
+          description: message,
         });
       },
     },

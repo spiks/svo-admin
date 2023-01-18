@@ -2,8 +2,9 @@ import { FileMimeType, FilePurpose } from '../../../generated';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { UploadingFilesServiceWithToken } from '../../../api/services';
 import { useCallback, useMemo, useState } from 'react';
-import { notification, UploadFile } from 'antd';
+import { notification } from 'antd';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { RcFile } from 'antd/lib/upload';
 
 export type FusSuccessResponse = {
   token: string;
@@ -84,24 +85,21 @@ export function useFileUpload(purpose: FilePurpose, options?: UseFileUploadOptio
   );
 
   const uploadFile = useMutation(
-    (file: UploadFile) => {
+    (file: RcFile) => {
       const uploadTo = uploadLinkQuery.data?.data;
 
       if (!uploadTo) {
         throw new Error('Сначала необходимо получить данные для загрузки файла (requestUploadUrl)');
-      } else if (!file.originFileObj) {
-        throw new Error('В перадаваемом параметре отсутствует оригинальный дескриптор файла');
       }
 
       const form = new FormData();
-      form.append('file', file.originFileObj);
+      form.append('file', file);
 
       return axios.post(uploadTo.url, form);
     },
     {
       onError: (err: AxiosError<FusErrorResponse>) => {
-        const errorType = err.response?.data.type;
-        const errorText = String(errorType ?? err);
+        const errorText = String(err);
         notification.error({
           message: 'Загрузка файла',
           description: 'Не удалось загрузить файл: ' + errorText,

@@ -22,9 +22,9 @@ export function useUploadPersonalDocumentConstraints(constraints?: FileUploadCre
 
       if (!typeRules) {
         const allTypes = constraints?.map((rules) => {
-          return rules.fileMimeType.split('/')[1]!;
+          return rules.fileMimeType.split('/')[1];
         });
-        return `Допустимые форматы файла ${allTypes}!`;
+        return `Допустимые форматы файла ${allTypes!.join(', ')}!`;
       }
 
       const maxSize = typeRules.fileSize.max;
