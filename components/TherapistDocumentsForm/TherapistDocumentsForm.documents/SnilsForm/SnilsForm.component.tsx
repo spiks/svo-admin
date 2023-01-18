@@ -25,7 +25,7 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, disabled = fals
 
   const docFile = Form.useWatch('document', form);
   const { uploadData } = useFileUpload('personal_document');
-  const validateDocument = useUploadPersonalDocumentConstraints();
+  const validateDocument = useUploadPersonalDocumentConstraints(uploadData?.constraints);
 
   useEffect(() => {
     if (!snils?.information || !snils.document) {
@@ -47,7 +47,7 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, disabled = fals
       initialValues={{ ...information, document: [] }}
       disabled={disabled}
     >
-      <Row gutter={16} align={'middle'}>
+      <Row gutter={16} align={'top'}>
         <Col xs={8}>
           <Form.Item
             label={'СНИЛС'}
@@ -65,9 +65,10 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, disabled = fals
             <Input type={'text'} />
           </Form.Item>
         </Col>
-        <Col xs={4}>
+        <Col xs={8}>
           <Form.Item
             name={'document'}
+            label={' '}
             getValueFromEvent={(e) => {
               if (Array.isArray(e)) {
                 return e;
@@ -77,11 +78,10 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, disabled = fals
             valuePropName={'fileList'}
             rules={[
               {
-                required: true,
-                message: 'Загрузка документа обязательна',
-              },
-              {
                 async validator(_, value: RcFile[]) {
+                  if (!value.length) {
+                    throw new Error('Загрузка документа обязательна');
+                  }
                   value.forEach((file) => {
                     const message = validateDocument(file);
                     if (typeof message !== 'boolean') {
@@ -95,7 +95,7 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, disabled = fals
             <Upload action={uploadData?.url}>{!docFile?.length && <Button>Загрузить документ</Button>}</Upload>
           </Form.Item>
         </Col>
-        <Col xs={12} style={{ display: 'flex', justifyContent: 'end' }}>
+        <Col xs={8} style={{ display: 'flex', justifyContent: 'end', marginTop: '30px' }}>
           <Button type={'primary'} htmlType={'submit'} disabled={disabled}>
             OK
           </Button>

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { Button, Form, Input, Modal, ModalProps, Typography } from 'antd';
 import { useRegisterTherapist } from '@components/RegisterTherapistModal/RegisterTherapistModal.hooks/useRegisterTherapist';
 
@@ -28,14 +28,14 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
   const [registeredId, setRegisteredId] = useState<null | string>(null);
 
   const handleCancel = useCallback(() => {
+    form.resetFields();
+    setRegisteredId(null);
     props.onCancel();
-  }, [props]);
+  }, [form, props]);
 
   const registerTherapist = useRegisterTherapist({
     onDone: (therapistId) => {
       setRegisteredId(therapistId);
-      handleCancel();
-      form.resetFields();
     },
     onFail: (_, message) => {
       form.setFields([
@@ -48,18 +48,6 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
     },
   });
 
-  const [cachedPhone, setCachedPhone] = useState<null | string>(null);
-  const phone = Form.useWatch('phone', form);
-  useEffect(() => {
-    const attemptToRegisterAnotherPhone = !registeredId || !cachedPhone || cachedPhone === phone;
-    if (!attemptToRegisterAnotherPhone) {
-      return;
-    }
-
-    setCachedPhone(null);
-    setRegisteredId(null);
-  }, [cachedPhone, phone, registeredId]);
-
   const submitForm = () => {
     form.submit();
   };
@@ -67,6 +55,7 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
   return (
     <Modal
       {...props}
+      afterClose={handleCancel}
       footer={[
         <Button key={'back'} htmlType={'button'} onClick={handleCancel} hidden={!!registeredId}>
           Отмена
@@ -87,7 +76,6 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
         form={form}
         layout={'vertical'}
         onFinish={(values) => {
-          setCachedPhone(values.phone);
           registerTherapist.mutate({ phone: normalizePhone(values.phone) });
         }}
         disabled={registerTherapist.isLoading}

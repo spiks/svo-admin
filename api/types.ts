@@ -27,7 +27,8 @@ export type ApiErrorData =
   | InternalServerErrorApiProblem
   | ValidationErrorApiProblem
   | AccessTokenExpiredApiProblem
-  | InvalidAccessTokenApiProblem;
+  | InvalidAccessTokenApiProblem
+  | { type: string; detail: string };
 
 export type ApiViolation =
   | EnumValueIsNotAllowedConstraintViolation

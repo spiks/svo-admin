@@ -1,11 +1,11 @@
 import React, { FC, useEffect, useState } from 'react';
-import { Select, SelectProps } from 'antd';
+import { Select, SelectProps, UploadFile } from 'antd';
 import { useDocumentStatus } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useDocumentStatus';
 import { DocumentStatusSpelling } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.const';
 import { StaticFile } from '../../../generated';
 
 export type SelectStatusProps = {
-  document?: { isApprovedByModerator: boolean | null; document?: StaticFile | null } | null;
+  document?: { isApprovedByModerator: boolean | null; document?: UploadFile[] | StaticFile | null } | null;
   loading?: boolean;
   disabled: boolean;
   onApprove?: () => void;
