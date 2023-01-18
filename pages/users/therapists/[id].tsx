@@ -220,7 +220,7 @@ const TherapistPage: NextPage = () => {
                   {(() => {
                     switch (currentStage) {
                       case STAGE.CONTRACT:
-                        return <TherapistSignupContract />;
+                        return <></>;
                       case STAGE.DOCUMENTS:
                         return <TherapistSignupDocuments />;
                       case STAGE.INTERVIEW:
