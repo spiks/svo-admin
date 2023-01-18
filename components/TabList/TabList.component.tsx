@@ -12,7 +12,7 @@ type TabListItem = {
 
 type TabListProps = {
   items: TabListItem[];
-  defaultActiveKey: string;
+  defaultActiveKey?: string;
   onChange: (key: string) => void;
   activeKey?: string;
 } & TabsProps;

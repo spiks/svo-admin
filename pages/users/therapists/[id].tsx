@@ -196,7 +196,7 @@ const TherapistPage: NextPage = () => {
     <TherapistPageContext.Provider value={contextValue}>
       <MainLayout>
         <UserProfileHeader>
-          <TabList items={tabListItems} defaultActiveKey={USER_TAB_KEY.INFORMATION} onChange={handleTabListChange} />
+          <TabList items={tabListItems} activeKey={activeTab} onChange={handleTabListChange} />
         </UserProfileHeader>
         <div style={{ overflow: 'auto' }}>
           {activeTab === USER_TAB_KEY.INFORMATION && (
