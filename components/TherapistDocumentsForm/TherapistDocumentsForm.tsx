@@ -11,7 +11,7 @@ import { useTherapistInn } from '@components/TherapistDocumentsForm/TherapistDoc
 import { InnForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/InnForm/InnForm.component';
 import { useTherapistDiplomas } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistDiplomas';
 import { DiplomaForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
-import { AddDiplomaButton } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.children/AddDiplomaButton.component';
+import { AddFormButton } from '@components/AddFormButton.component';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { finishTherapistDocumentModeration } from 'api/therapist/finishTherapistDocumentModeration';
@@ -291,7 +291,7 @@ export const TherapistDocumentsForm: FC = () => {
               </Panel>
             );
           })}
-        <AddDiplomaButton onClick={diplomasService.createEmptyLocalDiploma} />
+        <AddFormButton label={'Добавить диплом об образовании'} onClick={diplomasService.createEmptyLocalDiploma} />
       </Collapse>
       <Row align="middle" justify="end">
         <Button
