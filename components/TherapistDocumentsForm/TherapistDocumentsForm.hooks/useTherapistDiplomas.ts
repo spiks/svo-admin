@@ -250,7 +250,7 @@ export function useTherapistDiplomas(therapistId: string) {
   );
 
   const deleteLocalDiploma = useCallback(
-    (values: DiplomaFormValues) => {
+    (values: { id: string }) => {
       const queryData = client.getQueryData<LocalGetFetchResult>(queryKey(therapistId));
       if (!queryData?.data) {
         throw new Error('Диплом ещё не загружен, либо произошла ошибка при получении дипломов');
@@ -268,7 +268,7 @@ export function useTherapistDiplomas(therapistId: string) {
   );
 
   const deleteRemoteDiploma = useMutation(
-    (values: DiplomaFormValues) => {
+    (values: { id: string }) => {
       return DiplomaServiceWithToken.deleteTherapistDiplomaOfHigherEducation({
         requestBody: {
           arguments: {

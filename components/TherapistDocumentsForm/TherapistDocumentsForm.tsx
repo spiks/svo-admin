@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react';
-import { Col, Collapse, Form, Result, Row, Spin } from 'antd';
+import { Button, Col, Collapse, Form, Result, Row, Space, Spin } from 'antd';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { PassportForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.component';
 import { useTherapistPassport } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistPassport';
@@ -12,6 +12,7 @@ import { InnForm } from '@components/TherapistDocumentsForm/TherapistDocumentsFo
 import { useTherapistDiplomas } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistDiplomas';
 import { DiplomaForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.component';
 import { AddDiplomaButton } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.children/AddDiplomaButton.component';
+import { DeleteOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
@@ -215,6 +216,8 @@ export const TherapistDocumentsForm: FC = () => {
               ? diplomasService.createRemoteDiploma.mutate
               : diplomasService.updateDiploma.mutate;
 
+            const onDelete = isLocal ? diplomasService.deleteLocalDiploma : diplomasService.deleteRemoteDiploma.mutate;
+
             const statusChangeNotAllowed =
               isModerationNotAllowed || diplomasService.query.isLoading || diplomasService.isMutating || isLocal;
 
@@ -222,14 +225,24 @@ export const TherapistDocumentsForm: FC = () => {
               <Panel
                 key={diploma.id}
                 extra={
-                  <Form.Item style={{ margin: '0' }} label={'Статус'}>
-                    <SelectStatus
-                      onApprove={onApprove as () => void}
-                      onReject={onReject as () => void}
-                      document={diploma}
-                      disabled={statusChangeNotAllowed}
+                  <Space>
+                    <Form.Item style={{ margin: '0' }} label={'Статус'}>
+                      <SelectStatus
+                        onApprove={onApprove as () => void}
+                        onReject={onReject as () => void}
+                        document={diploma}
+                        disabled={statusChangeNotAllowed}
+                      />
+                    </Form.Item>
+                    <Button
+                      onClick={() => {
+                        onDelete({ id: diploma.id });
+                      }}
+                      loading={diplomasService.isFirstLoading || diplomasService.isMutating}
+                      type={'text'}
+                      icon={<DeleteOutlined style={{ color: '#1890FF' }} />}
                     />
-                  </Form.Item>
+                  </Space>
                 }
                 header={
                   <Row align="middle" gutter={17.5}>
