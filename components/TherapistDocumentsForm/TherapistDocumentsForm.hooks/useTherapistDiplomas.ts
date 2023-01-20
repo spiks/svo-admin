@@ -130,6 +130,7 @@ export function useTherapistDiplomas(therapistId: string) {
           message: 'Диплом',
           description: 'Данные подтверждён',
         });
+        query.refetch();
       },
       onError: (err: ApiRegularError | ApiValidationError) => {
         const isRegular = 'error' in err;
@@ -158,6 +159,7 @@ export function useTherapistDiplomas(therapistId: string) {
           message: 'Диплом',
           description: 'Диплом отклонён',
         });
+        query.refetch();
       },
       onError: (err: ApiRegularError | ApiValidationError) => {
         const isRegular = 'error' in err;
