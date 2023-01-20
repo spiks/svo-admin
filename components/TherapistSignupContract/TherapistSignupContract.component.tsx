@@ -7,12 +7,11 @@ import { submitContract } from '../../api/therapist/submitContract';
 import { TherapistPageContext } from '../../pages/users/therapists/[id]';
 import { Document, DocumentProps } from '../Document/Document.component';
 import { getSignedContractStyle } from './TherapistSignupContract.utils';
-import { useContractsQuery, useContractsQueryRefresh } from '../../hooks/useContractsQuery';
+import { useContractsQuery } from '../../hooks/useContractsQuery';
 
 export const TherapistSignupContract: FC = () => {
   const { therapist, isLoading: contextLoading } = useContext(TherapistPageContext);
   const { contract, isLoading: contractsLoading } = useContractsQuery(therapist.id);
-  const refetchContract = useContractsQueryRefresh(therapist.id);
 
   const isLoading = useMemo(() => {
     return contextLoading || contractsLoading;
@@ -73,9 +72,8 @@ export const TherapistSignupContract: FC = () => {
       });
     } finally {
       // Обновляем данные (возможно изменение статуса пользователя)
-      await refetchContract();
     }
-  }, [contractToken, refetchContract, therapist.id]);
+  }, [contractToken, therapist.id]);
 
   // Стиль отображаемого блока с файлом договора
   const contractStyle = useMemo(() => {

@@ -1,14 +1,12 @@
-import { FC, useCallback, useContext, useMemo } from 'react';
+import { FC, useContext, useMemo } from 'react';
 import { TherapistPageContext } from '../../pages/users/therapists/[id]';
-import { Button, Col, Form, Row, Spin } from 'antd';
+import { Form, Spin } from 'antd';
 import { Document } from '../Document/Document.component';
 import { getDocumentStyle } from '../Document/Document.utils';
 import { documentName } from './TherapistSignupDocuments.utils';
-import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
 export const TherapistSignupDocuments: FC = () => {
   const { documents, therapist, isLoading } = useContext(TherapistPageContext);
-  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
   const diploma = useMemo(() => {
     return documents.diploma.map((it) => {
@@ -22,16 +20,6 @@ export const TherapistSignupDocuments: FC = () => {
       );
     });
   }, [documents.diploma, therapist.status]);
-
-  // Индикация возможности перехода к следующему этапу регистрации терапевта
-  const canContinue = useMemo(() => {
-    const allowedStatuses = ['interview_processing', 'interview_failed'];
-    return allowedStatuses.includes(therapist.status);
-  }, [therapist.status]);
-
-  const forwardToInterview = useCallback(async () => {
-    await refetch('therapist');
-  }, [refetch]);
 
   return (
     <Spin spinning={isLoading}>
@@ -56,14 +44,6 @@ export const TherapistSignupDocuments: FC = () => {
             {diploma}
           </div>
         </Form.Item>
-        <Row>
-          <Col span={7} />
-          <Col>
-            <Button type={'primary'} htmlType={'button'} onClick={forwardToInterview} disabled={!canContinue}>
-              Перейти к интервью
-            </Button>
-          </Col>
-        </Row>
       </Form>
     </Spin>
   );

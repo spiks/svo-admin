@@ -1,99 +1,43 @@
-import { Checkbox, Col, Collapse, Form, notification, Row, Select, Upload } from 'antd';
-import CollapsePanel from 'antd/lib/collapse/CollapsePanel';
+import { Alert, Button, Col, Collapse, Form, notification, Row } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
-import { FC, useCallback, useContext, useMemo, useState } from 'react';
+import { FC, useContext, useEffect, useMemo } from 'react';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { useContractsQuery } from 'hooks/useContractsQuery';
-import { acceptContract } from 'api/therapist/acceptContract';
-import { rejectContract } from 'api/therapist/rejectContract';
-import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
-
-const contractOptions: { value: 'accepted' | 'rejected'; label: string }[] = [
-  { value: 'accepted', label: 'Подтвержден' },
-  {
-    value: 'rejected',
-    label: 'Отклонен',
-  },
-];
+import { ContractForm } from './ContractForm/ContractForm.component';
+import { SignedContractForm } from './SignedContractForm/SignedContractForm.component';
+import { useActivateTherapistProfile } from './TherapistContractSection.hooks/useActivateTherapistProfile';
 
 export const TherapistContractSection: FC = () => {
-  const [accepted, setAccepted] = useState<boolean>(false);
   const { therapist } = useContext(TherapistPageContext);
-  const { signedContract } = useContractsQuery(therapist.id);
-  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
+  const { signedContract, contract, ...contractService } = useContractsQuery(therapist.id);
+  const { activateTherapistProfile, canActivateTherapistProfile } = useActivateTherapistProfile(therapist.id);
 
-  const toggleAccept = useCallback(() => {
-    setAccepted(!accepted);
-  }, [accepted]);
-
-  const canModerateContract = useMemo(() => {
-    if (therapist.status !== 'contract_awaiting_review') {
-      return false;
-    }
-    return true;
-  }, [therapist.status]);
-
-  const handleApproveContract = useCallback(async () => {
-    if (!accepted) {
-      notification.warning({
-        type: 'warning',
-        message: 'Предупреждение',
-        description:
-          'Для изменения статуса контракта пользователя, необходимо подтвердить соответствие договора нормативно-правовым актам, этическим нормам и не нарушает законодательства Российской Федерации',
-      });
-      return;
-    }
-    try {
-      await acceptContract(therapist.id);
-      notification.success({
-        type: 'success',
-        message: 'Успех',
-        description: 'Договор подтвержден',
-      });
-    } catch (err) {
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Не удалось подтвердить договор.',
-      });
-    } finally {
-      await refetch('therapist');
-    }
-  }, [therapist.id, refetch, accepted]);
-
-  const handleRejectContract = useCallback(async () => {
-    try {
-      await rejectContract(therapist.id);
-      notification.success({
-        type: 'success',
-        message: 'Успех',
-        description: 'Договор отклонен',
-      });
-    } catch (err) {
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Не удалось отклонить договор.',
-      });
-    } finally {
-      await refetch('therapist');
-    }
-  }, [therapist.id, refetch]);
-
-  const getContractStatus = () => {
-    if (therapist.status === 'active') {
-      return 'accepted';
-    } else if (therapist.status === 'contract_awaiting_review') {
-      return 'На проверке';
-    }
-    return 'rejected';
-  };
+  const { Panel } = Collapse;
 
   return (
-    <>
+    <section>
       <h2 style={{ marginBottom: '24px' }}>Договор</h2>
-      <Collapse defaultActiveKey={1} style={{ width: '100%', marginBottom: '24px' }} expandIconPosition={'end'}>
-        <CollapsePanel
+      <Collapse
+        defaultActiveKey={['contract', 'signedContract']}
+        style={{ width: '100%', marginBottom: '24px' }}
+        expandIconPosition={'end'}
+      >
+        <Panel
+          collapsible="disabled"
+          showArrow={false}
+          header={
+            <Row align="middle" gutter={17.5}>
+              <Col>
+                <Form.Item style={{ margin: '0' }} label="Договор на отправку" required tooltip />
+              </Col>
+            </Row>
+          }
+          key="contract"
+        >
+          <ContractForm contract={contract} onSubmit={contractService.submitTherapistContract.mutate} />
+        </Panel>
+
+        <Panel
           collapsible="disabled"
           showArrow={false}
           header={
@@ -105,58 +49,40 @@ export const TherapistContractSection: FC = () => {
                   <CloseCircleFilled style={{ color: '#F5222D', fontSize: '21px' }} />
                 )}
               </Col>
+
               <Col>
                 <Form.Item style={{ margin: '0' }} label="Подписанный пользователем договор" required tooltip />
               </Col>
             </Row>
           }
-          key="1"
+          key="signedContract"
         >
-          <Form layout="vertical">
-            <Row justify={'space-between'} align="middle">
-              <Col flex={'inherit'} span={8}>
-                <Form.Item label={'Подписанный договор'}>
-                  {signedContract ? (
-                    <Upload
-                      showUploadList={{ showRemoveIcon: false }}
-                      defaultFileList={[
-                        {
-                          uid: signedContract?.originalFileName,
-                          name: signedContract?.originalFileName,
-                          url: signedContract?.url,
-                        },
-                      ]}
-                    />
-                  ) : (
-                    'Договор ещё не был отправлен терапевтом'
-                  )}
-                </Form.Item>
-              </Col>
-              <Col flex={'inherit'} span={8}>
-                <Form.Item label={'Статус договора'}>
-                  <Select
-                    value={getContractStatus()}
-                    disabled={!canModerateContract}
-                    options={contractOptions}
-                    onChange={(value) => {
-                      value === 'accepted' ? handleApproveContract() : handleRejectContract();
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    style={{ width: '133px' }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col flex={'inherit'} span={8}>
-                <Checkbox disabled={!canModerateContract} checked={accepted} onChange={toggleAccept}>
-                  Я подтверждаю!
-                </Checkbox>
-              </Col>
-            </Row>
-          </Form>
-        </CollapsePanel>
+          <SignedContractForm
+            signedContract={signedContract}
+            onSubmit={contractService.updateTherapistSignedContract.mutate}
+            onReject={contractService.therapistRejectContract.mutate}
+            onAccept={contractService.therapistAcceptContract.mutate}
+          />
+        </Panel>
       </Collapse>
-    </>
+
+      {therapist.status === 'created_by_admin' && (
+        <Row align="middle" justify="end">
+          {!canActivateTherapistProfile ? (
+            <Alert
+              description={
+                'Вы не можете активировать данный профиль пока не загрузите необходимые документы: Паспорт, Снилс, ИНН, Диплом, Контракт'
+              }
+              type="info"
+              showIcon
+            />
+          ) : (
+            <Button size={'large'} type={'primary'} onClick={activateTherapistProfile}>
+              Активировать профиль терапевта
+            </Button>
+          )}
+        </Row>
+      )}
+    </section>
   );
 };
