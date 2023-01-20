@@ -92,7 +92,10 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, disabled = fals
               },
             ]}
           >
-            <Upload action={uploadData?.url}>{!docFile?.length && <Button>Загрузить документ</Button>}</Upload>
+            {/* @ts-ignore */}
+            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url}>
+              {!docFile?.length && <Button>Загрузить документ</Button>}
+            </Upload>
           </Form.Item>
         </Col>
         <Col xs={8} style={{ display: 'flex', justifyContent: 'end', marginTop: '30px' }}>
