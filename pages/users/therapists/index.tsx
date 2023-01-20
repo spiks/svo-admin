@@ -88,15 +88,18 @@ const TherapistsPage: NextPage = () => {
           activeKey={activeTab}
           onChange={handleTabListChange}
           tabBarExtraContent={
-            optionsSelectBox ? (
-              <Select
-                style={{ width: activeTab === TAB_KEY.REGISTERING ? '330px' : '240px' }}
-                size="middle"
-                onChange={setProfileStatus}
-                value={profileStatus || null}
-                options={optionsSelectBox}
-              />
-            ) : undefined
+            <>
+              {optionsSelectBox ? (
+                <Select
+                  defaultValue={'all'}
+                  style={{ width: activeTab === TAB_KEY.REGISTERING ? '330px' : '240px' }}
+                  size="middle"
+                  onChange={setProfileStatus}
+                  value={profileStatus || 'all'}
+                  options={optionsSelectBox}
+                />
+              ) : undefined}
+            </>
           }
         />
       </UsersHeader>
