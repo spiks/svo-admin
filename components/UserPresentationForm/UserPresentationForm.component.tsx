@@ -3,14 +3,14 @@ import TextArea from 'antd/lib/input/TextArea';
 import { updateTherapistVideoPresentation } from 'api/therapist/updateTherapistVideoPresentation';
 import { REGEXP_YOUTUBE } from 'constants/regexp';
 import { VideoPresentation } from 'generated';
-import { useVideoPresengtationQuery, useVideoPresengtationRefresh } from 'hooks/useVideoPresentationQuery';
+import { useVideoPresengtationQuery, useVideoPresentationRefresh } from 'hooks/useVideoPresentationQuery';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { FC, useContext } from 'react';
 
 export const UserPresentationForm: FC = () => {
   const { therapist } = useContext(TherapistPageContext);
   const videoPresentation = useVideoPresengtationQuery(therapist.id);
-  const refresh = useVideoPresengtationRefresh(therapist.id);
+  const refresh = useVideoPresentationRefresh(therapist.id);
   const [form] = Form.useForm();
 
   const onFinish: FormProps<VideoPresentation>['onFinish'] = async (values) => {

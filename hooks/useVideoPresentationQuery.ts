@@ -18,7 +18,7 @@ export function useVideoPresengtationQuery(therapistId: Uuid) {
   }, [isLoading, isError, data]);
 }
 
-export function useVideoPresengtationRefresh(therapistId: string) {
+export function useVideoPresentationRefresh(therapistId: string) {
   const client = useQueryClient();
 
   return useCallback(() => {
