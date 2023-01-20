@@ -150,7 +150,10 @@ export const DiplomaForm: FC<DiplomaFormProps> = ({ diploma, onSubmit, disabled 
               },
             ]}
           >
-            <Upload action={uploadData?.url}>{!docFile?.length && <Button>Загрузить документ</Button>}</Upload>
+            {/* @ts-ignore */}
+            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url}>
+              {!docFile?.length && <Button>Загрузить документ</Button>}
+            </Upload>
           </Form.Item>
         </Col>
         <Col xs={12} style={{ display: 'flex', justifyContent: 'end', marginTop: '30px' }}>

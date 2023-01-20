@@ -144,7 +144,10 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabl
               },
             ]}
           >
-            <Upload action={uploadData?.url}>{!docFile?.length && <Button>Загрузить документ</Button>}</Upload>
+            {/* @ts-ignore */}
+            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url}>
+              {!docFile?.length && <Button>Загрузить документ</Button>}
+            </Upload>
           </Form.Item>
         </Col>
         <Col>
