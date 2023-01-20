@@ -65,7 +65,7 @@ const queryStatusLists: Record<TAB_KEY, TherapistProfileStatus[]> = {
   [TAB_KEY.BLOCKED]: ['interview_failed', 'contract_rejected'],
 };
 
-type Props = { activeTab: TAB_KEY; profileStatus?: TherapistProfileStatus };
+type Props = { activeTab: TAB_KEY; profileStatus?: TherapistProfileStatus | 'all' };
 
 const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
   const { push } = useRouter();
@@ -96,6 +96,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
 
   const fetchTherapists = useCallback(
     (page) => {
+      const fixedProfileStatus = profileStatus === 'all' ? null : profileStatus;
       return getTherapistList({
         search: {
           fullName: search,
@@ -109,7 +110,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
           field: 'createdAt',
           orderDirection: sortOrderCuts[sortOrder],
         },
-        statuses: profileStatus ? [profileStatus] : queryStatusLists[activeTab],
+        statuses: fixedProfileStatus ? [fixedProfileStatus] : queryStatusLists[activeTab],
       });
     },
     [activeTab, pageSize, phone, profileStatus, search, sortOrder],
