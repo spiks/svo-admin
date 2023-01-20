@@ -25,10 +25,7 @@ export const TabList: FC<TabListProps> = ({ items, tabBarExtraContent, defaultAc
       defaultActiveKey={defaultActiveKey}
       onChange={onChange}
       className={styles['tab-list']}
-    >
-      {items.map((it) => {
-        return <TabPane key={it.key} tab={it.label} />;
-      })}
-    </Tabs>
+      items={items}
+    ></Tabs>
   );
 };

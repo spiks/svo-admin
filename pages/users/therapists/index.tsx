@@ -35,7 +35,7 @@ const getOptions = (activeTab: TAB_KEY): DefaultOptionType[] | undefined => {
   switch (activeTab) {
     case TAB_KEY.REGISTERING: {
       return [
-        { label: 'Все', value: null },
+        { label: 'Все', value: 'all' },
         { label: 'Терапевт отправил подписанный договор', value: 'contract_awaiting_review' },
         { label: 'Терапевт не отправил подписанный договор', value: 'contract_not_submitted_yet' },
         { label: 'Документы ожидают модерацию', value: 'documents_awaiting_review' },
@@ -46,7 +46,7 @@ const getOptions = (activeTab: TAB_KEY): DefaultOptionType[] | undefined => {
     }
     case TAB_KEY.BLOCKED: {
       return [
-        { label: 'Все', value: null },
+        { label: 'Все', value: 'all' },
         { label: 'Интервью провалено', value: 'interview_failed' },
         { label: 'Договор отклонен', value: 'contract_rejected' },
       ];
@@ -59,7 +59,7 @@ const getOptions = (activeTab: TAB_KEY): DefaultOptionType[] | undefined => {
 
 const TherapistsPage: NextPage = () => {
   const [form] = Form.useForm<UsersQueryParams>();
-  const [profileStatus, setProfileStatus] = useState<TherapistProfileStatus>();
+  const [profileStatus, setProfileStatus] = useState<TherapistProfileStatus | 'all'>();
   const router = useRouter();
 
   const handleTabListChange = useCallback(
@@ -73,6 +73,7 @@ const TherapistsPage: NextPage = () => {
   const queryActiveTab = router.query.activeTab as TAB_KEY;
   const activeTab = Object.values(TAB_KEY).includes(queryActiveTab) ? queryActiveTab : TAB_KEY.ACTIVE;
 
+  const optionsSelectBox = getOptions(activeTab);
   return (
     <MainLayout>
       <UsersHeader
@@ -87,14 +88,13 @@ const TherapistsPage: NextPage = () => {
           activeKey={activeTab}
           onChange={handleTabListChange}
           tabBarExtraContent={
-            getOptions(activeTab) ? (
+            optionsSelectBox ? (
               <Select
-                defaultValue={null}
                 style={{ width: activeTab === TAB_KEY.REGISTERING ? '330px' : '240px' }}
                 size="middle"
                 onChange={setProfileStatus}
                 value={profileStatus || null}
-                options={getOptions(activeTab)}
+                options={optionsSelectBox}
               />
             ) : undefined
           }
