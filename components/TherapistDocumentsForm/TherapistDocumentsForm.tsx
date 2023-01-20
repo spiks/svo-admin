@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react';
+import React, { FC, useCallback, useContext, useMemo } from 'react';
 import { Button, Col, Collapse, Form, Result, Row, Space, Spin } from 'antd';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { PassportForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.component';
@@ -14,11 +14,14 @@ import { DiplomaForm } from '@components/TherapistDocumentsForm/TherapistDocumen
 import { AddDiplomaButton } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.children/AddDiplomaButton.component';
 import { DeleteOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
+import { finishTherapistDocumentModeration } from 'api/therapist/finishTherapistDocumentModeration';
+import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
 
 const { Panel } = Collapse;
 
 export const TherapistDocumentsForm: FC = () => {
   const { therapist } = useContext(TherapistPageContext);
+  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
   const { passport, ...passportService } = useTherapistPassport(therapist.id);
   const PassportIndicator = getDocumentIndicator(passportService.query, passport);
@@ -38,6 +41,31 @@ export const TherapistDocumentsForm: FC = () => {
   const isModerationNotAllowed = !['active', 'documents_awaiting_review', 'created_by_admin'].includes(
     therapist.status,
   );
+
+  const canEndModeration = useMemo(() => {
+    const documentsModeration = Object.values({
+      passport: passport,
+      snils: snils,
+      inn: inn,
+    })
+      .flat()
+      .every((doc) => {
+        if (doc) {
+          return doc?.isApprovedByModerator !== null;
+        }
+      });
+    const diplomaModeration = diplomas?.some((it) => {
+      return it.isApprovedByModerator;
+    });
+
+    return documentsModeration && diplomaModeration;
+  }, [diplomas, snils, passport, inn]);
+
+  const finishModeration = useCallback(async () => {
+    await finishTherapistDocumentModeration(therapist.id);
+    await refetch('therapist');
+    await refetch('documents');
+  }, [refetch, therapist.id]);
 
   return (
     <section>
@@ -265,6 +293,22 @@ export const TherapistDocumentsForm: FC = () => {
           })}
         <AddDiplomaButton onClick={diplomasService.createEmptyLocalDiploma} />
       </Collapse>
+      <Row align="middle" justify="end">
+        <Button
+          disabled={
+            !canEndModeration ||
+            therapist.status === 'documents_rejected' ||
+            therapist.status === 'created_by_admin' ||
+            therapist.status === 'active'
+          }
+          onClick={finishModeration}
+          size={'large'}
+          style={{ marginTop: '24px' }}
+          type={'primary'}
+        >
+          {'Завершить модерацию документов'}
+        </Button>
+      </Row>
     </section>
   );
 };
