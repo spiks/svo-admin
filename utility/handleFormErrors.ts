@@ -75,7 +75,6 @@ const getErrorMessage = (error: SupportedConstraintViolation): string => {
 };
 
 export const handleFormErrors = (error: unknown, handlers: Handlers): void => {
-  console.error(error instanceof ApiRegularError, error instanceof ApiValidationError);
   if (error instanceof ApiRegularError) {
     handlers.internalError();
   } else if (error instanceof ApiValidationError) {
