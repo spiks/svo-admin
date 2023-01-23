@@ -294,20 +294,17 @@ export const TherapistDocumentsForm: FC = () => {
         <AddFormButton label={'Добавить диплом об образовании'} onClick={diplomasService.createEmptyLocalDiploma} />
       </Collapse>
       <Row align="middle" justify="end">
-        <Button
-          disabled={
-            !canEndModeration ||
-            therapist.status === 'documents_rejected' ||
-            therapist.status === 'created_by_admin' ||
-            therapist.status === 'active'
-          }
-          onClick={finishModeration}
-          size={'large'}
-          style={{ marginTop: '24px' }}
-          type={'primary'}
-        >
-          {'Завершить модерацию документов'}
-        </Button>
+        {therapist.status === 'documents_awaiting_review' && (
+          <Button
+            disabled={!canEndModeration}
+            onClick={finishModeration}
+            size={'large'}
+            style={{ marginTop: '24px' }}
+            type={'primary'}
+          >
+            {'Завершить модерацию документов'}
+          </Button>
+        )}
       </Row>
     </section>
   );
