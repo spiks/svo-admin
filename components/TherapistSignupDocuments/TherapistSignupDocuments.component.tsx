@@ -38,7 +38,7 @@ export const TherapistSignupDocuments: FC = () => {
             />
             <Document
               style={getDocumentStyle(documents.snils?.isApprovedByModerator, therapist.status)}
-              href={`/users/therapists/${therapist.id}/section=documents&target=snils`}
+              href={`/users/therapists/${therapist.id}?section=documents&target=snils`}
               name={documentName.snils}
             />
             {diploma}
