@@ -26,6 +26,16 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
 
   const { search, tags, publishDate } = useBlogHeaderQueryParams();
 
+  useEffect(() => {
+    if (tags || search || publishDate) {
+      setPage(1);
+    }
+  }, [tags, search, publishDate]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab]);
+
   const dateWithTimeZone = useMemo((): DateWithTimezone | null => {
     if (publishDate) {
       return {
