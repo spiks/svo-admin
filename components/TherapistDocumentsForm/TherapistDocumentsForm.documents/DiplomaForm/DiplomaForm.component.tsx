@@ -137,7 +137,7 @@ export const DiplomaForm: FC<DiplomaFormProps> = ({ diploma, onSubmit, disabled 
             rules={[
               {
                 async validator(_, value: RcFile[]) {
-                  if (!value.length) {
+                  if (!value?.length) {
                     throw new Error('Загрузка документа обязательна');
                   }
                   value.forEach((file) => {
