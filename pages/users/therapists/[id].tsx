@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { MainLayout } from '@components/MainLayout/MainLayout.component';
-import { Divider, PageHeader, Result, Steps, Typography } from 'antd';
+import { Divider, PageHeader, Result, Spin, Steps, Typography } from 'antd';
 import { NotFoundLayout } from '@components/NotFoundLayout/NotFoundLayout.component';
 import { Step } from 'rc-steps';
 import { TherapistProfile } from '../../../generated';
@@ -10,7 +10,6 @@ import { getTherapistDocuments } from '../../../api/therapist/getTherapistDocume
 import { useTherapistSignupQueries } from '../../../hooks/useTherapistSignupQueries';
 import { TherapistSignupDocuments } from '@components/TherapistSignupDocuments/TherapistSignupDocuments.component';
 import { TherapistSignupInterview } from '@components/TherapistSignupInterview/TherapistSignupInterview.component';
-import { TherapistSignupContract } from '@components/TherapistSignupContract/TherapistSignupContract.component';
 import { SmileOutlined } from '@ant-design/icons';
 import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.component';
 import { UserProfileHeader } from '@components/UserProfileHeader/UserProfileHeader.component';
@@ -63,7 +62,22 @@ type TherapistPageContextValue = {
 export const TherapistPageContext = createContext({} as TherapistPageContextValue);
 
 const TherapistPage: NextPage = () => {
-  const { query, replace } = useRouter();
+  const { query, replace, events } = useRouter();
+
+  const [routeChanging, setRouteChanging] = useState(false);
+
+  useEffect(() => {
+    const startChange = setRouteChanging.bind(null, true);
+    const endChange = setRouteChanging.bind(null, false);
+
+    events.on('routeChangeStart', startChange);
+    events.on('routeChangeComplete', endChange);
+
+    return () => {
+      events.off('routeChangeStart', startChange);
+      events.off('routeChangeComplete', endChange);
+    };
+  }, [events]);
 
   const therapistId = useMemo(() => {
     return query['id'] as string;
@@ -246,7 +260,12 @@ const TherapistPage: NextPage = () => {
               </div>
             </PageWrapper>
           )}
-          {renderTabContents()}
+          {!routeChanging && renderTabContents()}
+          {routeChanging && (
+            <PageWrapper>
+              <Result icon={<Spin />} />
+            </PageWrapper>
+          )}
         </div>
       </MainLayout>
     </TherapistPageContext.Provider>
