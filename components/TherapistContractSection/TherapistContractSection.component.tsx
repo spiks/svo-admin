@@ -1,6 +1,6 @@
-import { Alert, Button, Col, Collapse, Form, notification, Row } from 'antd';
+import { Alert, Button, Col, Collapse, Form, Row } from 'antd';
 import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
-import { FC, useContext, useEffect, useMemo } from 'react';
+import { FC, useContext } from 'react';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { useContractsQuery } from 'hooks/useContractsQuery';
 import { ContractForm } from './ContractForm/ContractForm.component';
@@ -28,7 +28,7 @@ export const TherapistContractSection: FC = () => {
           header={
             <Row align="middle" gutter={17.5}>
               <Col>
-                <Form.Item style={{ margin: '0' }} label="Договор на отправку" required tooltip />
+                <Form.Item style={{ margin: '0' }} label="Договор на отправку" required />
               </Col>
             </Row>
           }
@@ -51,7 +51,7 @@ export const TherapistContractSection: FC = () => {
               </Col>
 
               <Col>
-                <Form.Item style={{ margin: '0' }} label="Подписанный пользователем договор" required tooltip />
+                <Form.Item style={{ margin: '0' }} label="Подписанный пользователем договор" required />
               </Col>
             </Row>
           }

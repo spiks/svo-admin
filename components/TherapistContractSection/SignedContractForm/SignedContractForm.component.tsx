@@ -4,7 +4,7 @@ import {
 } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
 import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
 import { getUploadFileFromStaticFile } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.utils/getUploadFileFromStaticFile';
-import { Button, Col, Form, Row, Select, Upload, UploadFile } from 'antd';
+import { Button, Col, Form, Row, Select, Typography, Upload, UploadFile } from 'antd';
 import { RcFile } from 'antd/lib/upload';
 import { StaticFile } from 'generated';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
@@ -95,7 +95,7 @@ export const SignedContractForm: FC<SignedContractFormProps> = ({ signedContract
               },
               {
                 async validator(_, value: RcFile[]) {
-                  value.forEach((file) => {
+                  value?.forEach((file) => {
                     const message = validateDocument(file);
                     if (typeof message !== 'boolean') {
                       throw new Error(message);
@@ -113,23 +113,29 @@ export const SignedContractForm: FC<SignedContractFormProps> = ({ signedContract
         </Col>
         <Col span={12}>
           <Form.Item label={'Статус договора'}>
-            <Select
-              value={getContractStatus()}
-              disabled={!canModerateContract}
-              onChange={handleChange}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              <Select.Option value={'approved'}>{'Подтверждён'}</Select.Option>
-              <Select.Option value={'rejected'}>{'Отклонен'}</Select.Option>
-              <Select.Option value={'pending'} disabled={true}>
-                {'Ожидает проверки'}
-              </Select.Option>
-              <Select.Option value={'not_arrived'} disabled={true}>
-                {'Не получен'}
-              </Select.Option>
-            </Select>
+            {therapist.status === 'created_by_admin' ? (
+              <Typography.Text type={'secondary'}>
+                После загрузки документа необходимо активировать аккаунт терапевта.
+              </Typography.Text>
+            ) : (
+              <Select
+                value={getContractStatus()}
+                disabled={!canModerateContract}
+                onChange={handleChange}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                <Select.Option value={'approved'}>{'Подтверждён'}</Select.Option>
+                <Select.Option value={'rejected'}>{'Отклонен'}</Select.Option>
+                <Select.Option value={'pending'} disabled={true}>
+                  {'Ожидает проверки'}
+                </Select.Option>
+                <Select.Option value={'not_arrived'} disabled={true}>
+                  {'Не получен'}
+                </Select.Option>
+              </Select>
+            )}
           </Form.Item>
         </Col>
       </Row>

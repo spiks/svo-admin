@@ -38,7 +38,7 @@ export function useContractsQuery(therapistId: string) {
         });
         refetch();
       },
-      onError: (err: Error) => {
+      onError: () => {
         notification.error({
           type: 'error',
           message: 'Ошибка',
@@ -65,7 +65,7 @@ export function useContractsQuery(therapistId: string) {
         });
         refetch();
       },
-      onError: (err: Error) => {
+      onError: () => {
         notification.error({
           type: 'error',
           message: 'Ошибка',
@@ -88,7 +88,7 @@ export function useContractsQuery(therapistId: string) {
         });
         refetch();
       },
-      onError: (err: Error) => {
+      onError: () => {
         notification.error({
           type: 'error',
           message: 'Ошибка',
@@ -106,15 +106,15 @@ export function useContractsQuery(therapistId: string) {
       onSuccess: () => {
         notification.success({
           type: 'success',
-          message: 'Успех',
-          description: 'Контракт подтвержден!',
+          message: 'Контракт',
+          description: 'Договор подтверждён!',
         });
         refetch();
       },
       onError: (err: Error) => {
         notification.error({
           type: 'error',
-          message: 'Не удалось отклонить контракт',
+          message: 'Не удалось верифицировать контракт',
           description: err.message,
         });
       },

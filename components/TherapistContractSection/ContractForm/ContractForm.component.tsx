@@ -54,7 +54,7 @@ export const ContractForm: FC<ContractFormProps> = ({ contract, onSubmit }) => {
             },
             {
               async validator(_, value: RcFile[]) {
-                value.forEach((file) => {
+                value?.forEach((file) => {
                   const message = validateDocument(file);
                   if (typeof message !== 'boolean') {
                     throw new Error(message);
