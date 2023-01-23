@@ -95,14 +95,43 @@ export const UsersHeader: FC<UserHeaderProps> = ({
                   rules={[
                     {
                       pattern: REGEXP_PHONE,
-                      message: 'Неверный формат',
+                      message: 'Неверный формат (+7 321 000 00 00)',
                     },
                   ]}
                   name={'phone'}
                   label={'Номер телефона'}
                   tooltip={'Номер телефона'}
                 >
-                  <Input prefix={'+7'} placeholder={'0000000000'} maxLength={10} type={'tel'} size={'large'} />
+                  <Input
+                    onPaste={(e) => {
+                      e.preventDefault();
+
+                      const text = e.clipboardData.getData('text');
+                      if (!text) {
+                        return;
+                      }
+
+                      const numericParts = text.match(/[0-9]+/gi);
+                      if (!numericParts?.length) {
+                        return;
+                      }
+
+                      const numericText = numericParts.join('');
+                      const isFullPhone = /^[78][0-9]{10}$/.test(numericText);
+
+                      let value: string = numericText;
+                      if (isFullPhone) {
+                        value = value.substring(1);
+                      }
+
+                      form.setFieldValue('phone', value);
+                    }}
+                    prefix={'+7'}
+                    placeholder={'0000000000'}
+                    maxLength={10}
+                    type={'tel'}
+                    size={'large'}
+                  />
                 </Form.Item>
               </Col>
               <Col flex={1}>
