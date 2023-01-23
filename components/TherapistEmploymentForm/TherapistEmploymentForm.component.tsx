@@ -5,6 +5,7 @@ import { Employment } from '../../generated';
 import { useMutation } from '@tanstack/react-query';
 import { updateTherapistEmployments } from '../../api/therapist/updateTherapistEmployments';
 import { TherapistEmploymentFormField } from '@components/TherapistEmploymentForm/TherapistEmploymentFormField.component';
+import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
 const emptyEmployment = { companyName: '', years: 0 };
 
@@ -15,6 +16,8 @@ type Props = {
 
 export const TherapistEmploymentForm: FC<Props> = ({ fetchedEmployments, id }) => {
   const [form] = Form.useForm<{ employments: Employment[] }>();
+
+  const refetch = useTherapistSignupQueriesRefresh(id);
 
   useEffect(() => {
     form.setFieldsValue({ employments: fetchedEmployments.length ? fetchedEmployments : [emptyEmployment] });
@@ -40,6 +43,7 @@ export const TherapistEmploymentForm: FC<Props> = ({ fetchedEmployments, id }) =
           message: 'Успех',
           description: 'Практический опыт и место работы сохранены',
         });
+        refetch('therapist');
       },
       onError: () => {
         notification.error({
