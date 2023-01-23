@@ -2,12 +2,12 @@ import { Col, notification, Row, Space, Tag } from 'antd';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { updateTherapistTags } from '../../api/therapist/updateTherapistTags';
-import { ListSpecializationTagsWithGroups } from '../../generated';
+import { ListSelectableSpecializationTagsWithGroups } from '../../generated';
 
 const { CheckableTag } = Tag;
 
 type Props = {
-  fetchedSpecializationTags: ListSpecializationTagsWithGroups;
+  fetchedSpecializationTags: ListSelectableSpecializationTagsWithGroups;
   id: string;
 };
 
