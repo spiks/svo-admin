@@ -4,10 +4,12 @@ import { updateTherapistWorkPrinciples } from 'api/therapist/updateTherapistWork
 import { LongDescription } from 'generated';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { FC, useContext } from 'react';
+import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
 export const UserWorkPrinciplesForm: FC = () => {
   const [form] = Form.useForm();
   const { therapist } = useContext(TherapistPageContext);
+  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
   const onFinish: FormProps<{ workPrinciples: LongDescription }>['onFinish'] = async (values) => {
     try {
@@ -17,6 +19,7 @@ export const UserWorkPrinciplesForm: FC = () => {
         message: 'Успех',
         description: 'Информация сохранена',
       });
+      refetch('therapist');
     } catch (e) {
       notification.error({
         type: 'error',

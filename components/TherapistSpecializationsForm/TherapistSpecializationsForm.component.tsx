@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { updateTherapistSpecializations } from '../../api/therapist/updateTherapistSpecializations';
 import { TherapistPageContext } from '../../pages/users/therapists/[id]';
 import { Employment } from '../../generated';
+import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
 const { CheckableTag } = Tag;
 
@@ -14,6 +15,8 @@ export const TherapistSpecializationsForm = () => {
   const [selectedSpecializations, setSelectedSpecializations] = useState<string[]>([]);
   const [form] = Form.useForm<{ employments: Employment[] }>();
 
+  const refetch = useTherapistSignupQueriesRefresh(id);
+
   const { mutate } = useMutation(
     (tagIds: string[]) => updateTherapistSpecializations(id, tagIds, additionalSpecializations),
     {
@@ -23,6 +26,7 @@ export const TherapistSpecializationsForm = () => {
           message: 'Ошибка',
           description: 'Не удалось сохранить информацию',
         });
+        refetch('therapist');
       },
     },
   );
@@ -56,6 +60,7 @@ export const TherapistSpecializationsForm = () => {
           message: 'Успех',
           description: 'Дополнительные специализации сохранены',
         });
+        refetch('therapist');
       },
       onError: () => {
         notification.error({

@@ -3,6 +3,7 @@ import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { updateTherapistTags } from '../../api/therapist/updateTherapistTags';
 import { ListSelectableSpecializationTagsWithGroups } from '../../generated';
+import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
 const { CheckableTag } = Tag;
 
@@ -14,7 +15,12 @@ type Props = {
 export const TherapistSpecializationTagsForm: FC<Props> = ({ fetchedSpecializationTags, id }) => {
   const [selectedSpecializationsTags, setSelectedSpecializationsTags] = useState<string[]>([]);
 
+  const refetch = useTherapistSignupQueriesRefresh(id);
+
   const { mutate } = useMutation((tagIds: string[]) => updateTherapistTags(id, tagIds), {
+    onSuccess: () => {
+      refetch('therapist');
+    },
     onError: () => {
       notification.error({
         type: 'error',
