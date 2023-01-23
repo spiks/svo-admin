@@ -152,6 +152,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
   return (
     <Table
       loading={isFetching}
+      sortDirections={['ascend', 'descend', 'ascend']}
       onChange={(pagination, filters, sorter) => {
         if (sorter && !Array.isArray(sorter) && sorter.order) {
           setSortOrder(sorter.order);
