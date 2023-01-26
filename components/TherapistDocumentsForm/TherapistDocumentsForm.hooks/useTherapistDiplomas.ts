@@ -6,10 +6,10 @@ import { DiplomaFormValues } from '@components/TherapistDocumentsForm/TherapistD
 import { DiplomaOfHigherEducation } from '../../../generated';
 import { useQueryInitialLoading } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useQueryInitialLoading';
 import moment, { Moment } from 'moment';
-import { useDiplomaFromLocalToSubmitDtoConverter } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromLocalToSubmitDtoConverter';
 import { useDiplomaFromDtoConverter } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromDtoConverter';
 import { ApiRegularError, ApiValidationError } from '../../../api/errorClasses';
 import { FusSuccessResponse } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
+import { useDiplomaFormConverter } from '../TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFormConverter';
 
 type RemoteGetFetchResult = Awaited<ReturnType<typeof DiplomaServiceWithToken.getTherapistDiplomasOfHigherEducation>>;
 
@@ -35,8 +35,8 @@ const queryKey = (therapistId: string) => {
 };
 
 export function useTherapistDiplomas(therapistId: string) {
+  const formToDto = useDiplomaFormConverter();
   const dtoToLocal = useDiplomaFromDtoConverter();
-  const localToSubmit = useDiplomaFromLocalToSubmitDtoConverter();
 
   const client = useQueryClient();
 
@@ -86,12 +86,12 @@ export function useTherapistDiplomas(therapistId: string) {
 
   const updateDiploma = useMutation(
     (values: DiplomaFormValues) => {
-      const dto = localToSubmit(values);
+      const dto = formToDto(values);
       return DiplomaServiceWithToken.updateTherapistDiplomaOfHigherEducation({
         requestBody: {
           arguments: {
             diplomaId: values.id,
-            diplomaInformation: dto.information,
+            diplomaInformation: dto,
           },
         },
       });
@@ -102,6 +102,7 @@ export function useTherapistDiplomas(therapistId: string) {
           message: 'Диплом',
           description: 'Данные успешно обновлены',
         });
+        query.refetch();
       },
       onError: (err: ApiRegularError | ApiValidationError) => {
         const isRegular = 'error' in err;
@@ -211,12 +212,12 @@ export function useTherapistDiplomas(therapistId: string) {
         throw new Error('Для создания диплоам на сервере необходимо указать токен документа');
       }
 
-      const dto = localToSubmit(values);
+      const dto = formToDto(values);
       return DiplomaServiceWithToken.submitTherapistDiplomaOfHigherEducation({
         requestBody: {
           arguments: {
             therapistId,
-            diplomaOfHigherEducation: dto,
+            diplomaOfHigherEducation: { document: document.response.token, information: dto },
           },
         },
       });
