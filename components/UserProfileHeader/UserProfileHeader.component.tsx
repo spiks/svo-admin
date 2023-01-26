@@ -59,8 +59,7 @@ export const UserProfileHeader: FC = ({ children }) => {
           <span style={{ marginRight: '12px' }}>{`Просмотр профиля пользователя ${therapist.fullName ?? 'Аноним'} (${
             therapistStatusName[therapist.status]
           })`}</span>
-          {/* https://github.com/spiks/most-frontend-admin/issues/205#issuecomment-1312594745 */}
-          {/*<Button size="large">Заблокировать</Button>*/}
+          <Button size="large">Заблокировать</Button>
         </div>
       }
       onBack={back}
