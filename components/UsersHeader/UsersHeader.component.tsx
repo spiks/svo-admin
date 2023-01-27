@@ -125,6 +125,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
                       }
 
                       form.setFieldValue('phone', value);
+                      handleFiltersApply();
                     }}
                     prefix={'+7'}
                     placeholder={'0000000000'}
