@@ -227,7 +227,7 @@ const TherapistPage: NextPage = () => {
         <UserProfileHeader>
           <TabList items={tabListItems} activeKey={activeTab} onChange={handleTabListChange} />
         </UserProfileHeader>
-        <div style={{ overflow: 'auto' }}>
+        <div style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           {activeTab === USER_TAB_KEY.INFORMATION && (
             <PageWrapper>
               <div

@@ -13,7 +13,7 @@ export function useActivateTherapistProfile(therapistId: string) {
   const { snils } = useTherapistSnils(therapistId);
   const { inn } = useTherapistInn(therapistId);
   const { diplomas } = useTherapistDiplomas(therapistId);
-  const { signedContract, contract, ...contractService } = useContractsQuery(therapistId);
+  const { signedContract } = useContractsQuery(therapistId);
   const refetch = useTherapistSignupQueriesRefresh(therapistId);
 
   const isDocumentsApproved = useMemo(() => {
