@@ -1,10 +1,10 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getTherapistVideoPresentation } from 'api/therapist/getTherapistVideoPresentation';
 import { Uuid } from 'generated';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
-export function useVideoPresengtationQuery(therapistId: Uuid) {
-  const { data, isLoading, isError } = useQuery(
+export function useVideoPresentationQuery(therapistId: Uuid) {
+  const { data, isLoading, isError, refetch } = useQuery(
     ['videoPresentation', therapistId],
     getTherapistVideoPresentation.bind(null, therapistId),
   );
@@ -13,15 +13,8 @@ export function useVideoPresengtationQuery(therapistId: Uuid) {
     return {
       isLoading,
       isError,
+      refetch,
       videoPresentation: data?.data,
     };
-  }, [isLoading, isError, data]);
-}
-
-export function useVideoPresentationRefresh(therapistId: string) {
-  const client = useQueryClient();
-
-  return useCallback(() => {
-    return client.invalidateQueries(['videoPresentation', therapistId]);
-  }, [client, therapistId]);
+  }, [isLoading, isError, refetch, data?.data]);
 }

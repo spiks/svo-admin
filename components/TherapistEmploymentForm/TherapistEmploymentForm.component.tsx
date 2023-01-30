@@ -1,5 +1,5 @@
 import { Button, Form, notification } from 'antd';
-import React, { FC, useCallback, useEffect } from 'react';
+import React, { FC, useCallback } from 'react';
 import { AddFormButton } from '@components/AddFormButton.component';
 import { Employment } from '../../generated';
 import { useMutation } from '@tanstack/react-query';
@@ -18,10 +18,6 @@ export const TherapistEmploymentForm: FC<Props> = ({ fetchedEmployments, id }) =
   const [form] = Form.useForm<{ employments: Employment[] }>();
 
   const refetch = useTherapistSignupQueriesRefresh(id);
-
-  useEffect(() => {
-    form.setFieldsValue({ employments: fetchedEmployments.length ? fetchedEmployments : [emptyEmployment] });
-  }, [fetchedEmployments, form]);
 
   const addEmptyEmployment = useCallback(async () => {
     const fieldsValue = Object.values(form.getFieldsValue(true).employments) as Employment[];
@@ -62,7 +58,12 @@ export const TherapistEmploymentForm: FC<Props> = ({ fetchedEmployments, id }) =
   };
 
   return (
-    <Form form={form} onFinish={mutate} initialValues={{ employments: fetchedEmployments }} layout={'vertical'}>
+    <Form
+      form={form}
+      onFinish={mutate}
+      initialValues={{ employments: fetchedEmployments.length ? fetchedEmployments : [emptyEmployment] }}
+      layout={'vertical'}
+    >
       <Form.List name="employments">
         {(fields) => {
           return (

@@ -3,15 +3,18 @@ import TextArea from 'antd/lib/input/TextArea';
 import { updateTherapistVideoPresentation } from 'api/therapist/updateTherapistVideoPresentation';
 import { REGEXP_YOUTUBE } from 'constants/regexp';
 import { VideoPresentation } from 'generated';
-import { useVideoPresengtationQuery, useVideoPresentationRefresh } from 'hooks/useVideoPresentationQuery';
+import { useVideoPresentationQuery } from 'hooks/useVideoPresentationQuery';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
-import { FC, useContext } from 'react';
+import { FC, useContext, useEffect } from 'react';
 
 export const UserPresentationForm: FC = () => {
   const { therapist } = useContext(TherapistPageContext);
-  const videoPresentation = useVideoPresengtationQuery(therapist.id);
-  const refresh = useVideoPresentationRefresh(therapist.id);
+  const { videoPresentation, refetch } = useVideoPresentationQuery(therapist.id);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    form.setFieldsValue({ url: videoPresentation?.url, description: videoPresentation?.description });
+  }, [form, videoPresentation?.description, videoPresentation?.url]);
 
   const onFinish: FormProps<VideoPresentation>['onFinish'] = async (values) => {
     try {
@@ -28,7 +31,7 @@ export const UserPresentationForm: FC = () => {
         description: 'Не удалось сохранить информацию',
       });
     } finally {
-      refresh();
+      refetch();
     }
   };
   return (
@@ -40,8 +43,8 @@ export const UserPresentationForm: FC = () => {
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 16 }}
         initialValues={{
-          url: videoPresentation.videoPresentation?.url,
-          description: videoPresentation.videoPresentation?.description,
+          url: videoPresentation?.url,
+          description: videoPresentation?.description,
         }}
       >
         <Form.Item
