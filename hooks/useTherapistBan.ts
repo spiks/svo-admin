@@ -6,7 +6,7 @@ import { notification } from 'antd';
 
 const getErrorDescription = (err: unknown) => {
   if (err instanceof ApiRegularError) {
-    return err.status;
+    return err.error.detail;
   } else if (err instanceof ApiValidationError) {
     return err.detail;
   } else if (err instanceof Error) {
@@ -18,7 +18,7 @@ const getErrorDescription = (err: unknown) => {
 /**
  * Мутации для блокировки/разблокировки терапевта
  */
-export function useTherapistBan() {
+export function useTherapistBan({ onSuccess }: { onSuccess?: () => void }) {
   const banTherapist = useMutation(
     (therapistId: string) => {
       return TherapistServiceWithToken.blockTherapist({
@@ -35,6 +35,7 @@ export function useTherapistBan() {
           message: 'Блокировка',
           description: 'Терапевт заблокирован!',
         });
+        onSuccess && onSuccess();
       },
       onError: (err) => {
         let message = getErrorDescription(err);
@@ -62,6 +63,7 @@ export function useTherapistBan() {
           message: 'Разблокировка',
           description: 'Терапевт разблокирован!',
         });
+        onSuccess && onSuccess();
       },
       onError: (err) => {
         let message = getErrorDescription(err);
