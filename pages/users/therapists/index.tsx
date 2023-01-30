@@ -42,6 +42,7 @@ const getOptions = (activeTab: TAB_KEY): DefaultOptionType[] | undefined => {
         { label: 'Документы не отправлены терапевтом', value: 'documents_not_submitted_yet' },
         { label: 'Документы отклонены', value: 'documents_rejected' },
         { label: 'Интервью в процессе', value: 'interview_processing' },
+        { label: 'Cоздан администратором', value: 'created_by_admin' },
       ];
     }
     case TAB_KEY.BLOCKED: {

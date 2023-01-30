@@ -61,6 +61,7 @@ const queryStatusLists: Record<TAB_KEY, TherapistProfileStatus[]> = {
     'documents_not_submitted_yet',
     'documents_rejected',
     'interview_processing',
+    'created_by_admin',
   ],
   [TAB_KEY.BLOCKED]: ['interview_failed', 'contract_rejected'],
 };
