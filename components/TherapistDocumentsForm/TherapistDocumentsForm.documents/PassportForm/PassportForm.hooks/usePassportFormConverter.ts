@@ -13,22 +13,24 @@ export function usePassportFormConverter() {
     const values: Partial<UpdateTherapistPassport['information']> = {};
     values.fullName = [formValues.name, formValues.lastName, formValues.surName].filter(Boolean).join(' ');
 
+    const passport = {
+      ...formValues,
+      ...values,
+      issuedAt: moment(formValues.issuedAt).format('YYYY-MM-DD'),
+      birthday: moment(formValues.birthday).format('YYYY-MM-DD'),
+    };
+
     switch (formValues.country) {
       case 'russia': {
-        const passport = {
-          ...formValues,
-          ...values,
-          issuedAt: moment(formValues.issuedAt).format('YYYY-MM-DD'),
-          birthday: moment(formValues.birthday).format('YYYY-MM-DD'),
-        } as RussianPassportInformation;
-
+        const pass = passport as RussianPassportInformation;
         const [serial, number] = formValues.number.split(' ');
-        passport.serial = serial;
-        passport.number = number;
-        return passport;
+        pass.serial = serial;
+        pass.number = number;
+        return pass;
+      }
+      default: {
+        return passport as UpdateTherapistPassport['information'];
       }
     }
-
-    return values as UpdateTherapistPassport['information'];
   }, []);
 }
