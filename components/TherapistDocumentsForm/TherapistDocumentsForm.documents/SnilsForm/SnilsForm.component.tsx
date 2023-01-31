@@ -13,13 +13,14 @@ export type SnilsFormProps = {
   snils?: Snils | null;
   onSubmit?: (values: SnilsFormValues) => void;
   disabled?: boolean;
+  onDelete?: () => void;
 };
 
 export type SnilsFormValues = SnilsInformation & {
   document: UploadFile<FusSuccessResponse | undefined>[];
 };
 
-export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, disabled = false }) => {
+export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, onDelete, disabled = false }) => {
   const [form] = Form.useForm<SnilsFormValues>();
   const information = snils?.information;
 
@@ -93,7 +94,7 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, disabled = fals
             ]}
           >
             {/* @ts-ignore */}
-            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url}>
+            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url} onRemove={onDelete}>
               {!docFile?.length && <Button>Загрузить документ</Button>}
             </Upload>
           </Form.Item>

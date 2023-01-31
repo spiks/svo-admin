@@ -13,13 +13,14 @@ export type InnFormProps = {
   inn?: Inn | null;
   onSubmit?: (values: InnFormValues) => void;
   disabled?: boolean;
+  onDelete?: () => void;
 };
 
 export type InnFormValues = InnInformation & {
   document: UploadFile<FusSuccessResponse | undefined>[];
 };
 
-export const InnForm: FC<InnFormProps> = ({ inn, onSubmit, disabled = false }) => {
+export const InnForm: FC<InnFormProps> = ({ inn, onSubmit, onDelete, disabled = false }) => {
   const [form] = Form.useForm<InnFormValues>();
   const information = inn?.information;
 
@@ -88,7 +89,7 @@ export const InnForm: FC<InnFormProps> = ({ inn, onSubmit, disabled = false }) =
             ]}
           >
             {/* @ts-ignore */}
-            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url}>
+            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url} onRemove={onDelete}>
               {!docFile?.length && <Button>Загрузить документ</Button>}
             </Upload>
           </Form.Item>

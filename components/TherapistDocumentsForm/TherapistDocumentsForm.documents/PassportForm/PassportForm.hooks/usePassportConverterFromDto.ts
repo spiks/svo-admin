@@ -21,7 +21,6 @@ const cleanValues: PassportFormValues = {
   issuedAt: moment(),
   issuerName: '',
   number: '',
-  placeOfBirth: '',
   name: '',
   country: 'russia',
   gender: 'male',

@@ -107,16 +107,20 @@ export const TherapistDocumentsForm: FC = () => {
               );
             } else if (passportService.isFirstLoading) {
               return <Spin style={{ width: '100%', height: '100%' }} spinning={true} />;
-            } else if (!passport && therapist.status !== 'created_by_admin') {
+            } else if (!passport && therapist.status !== 'created_by_admin' && therapist.status !== 'active') {
               return <Result status={'warning'} subTitle={'Паспорт ещё не загружен клиентом'} />;
             } else {
               const submitHandler = Boolean(passport?.document)
                 ? passportService.updatePassport
                 : passportService.submitPassport;
+
+              const onDelete = Boolean(passport?.document) ? passportService.deletePassport.mutate : undefined;
+
               return (
                 <PassportForm
                   disabled={isModerationNotAllowed || passportService.isMutating || passportService.query.isLoading}
                   passport={passport}
+                  onDelete={onDelete}
                   onSubmit={!passportService.isFirstLoading && submitHandler.mutate}
                 />
               );
@@ -158,15 +162,17 @@ export const TherapistDocumentsForm: FC = () => {
               );
             } else if (snilsService.isFirstLoading) {
               return <Spin style={{ width: '100%', height: '100%' }} spinning={true} />;
-            } else if (!snils && therapist.status !== 'created_by_admin') {
+            } else if (!snils && therapist.status !== 'created_by_admin' && therapist.status !== 'active') {
               return <Result status={'warning'} subTitle={'СНИЛС ещё не загружен клиентом'} />;
             } else {
               const submitHandler = Boolean(snils?.document) ? snilsService.updateSnils : snilsService.submitSnils;
+              const onDelete = Boolean(snils?.document) ? snilsService.deleteSnils.mutate : undefined;
               return (
                 <SnilsForm
                   disabled={isModerationNotAllowed || snilsService.isMutating || snilsService.query.isLoading}
                   snils={snils}
                   onSubmit={!snilsService.isFirstLoading && submitHandler.mutate}
+                  onDelete={onDelete}
                 />
               );
             }
@@ -201,7 +207,7 @@ export const TherapistDocumentsForm: FC = () => {
               return <Result status={'error'} title={'Ошибка при загрузке ИНН'} subTitle={innService.query.error} />;
             } else if (innService.isFirstLoading) {
               return <Spin style={{ width: '100%', height: '100%' }} spinning={true} />;
-            } else if (!inn && therapist.status !== 'created_by_admin') {
+            } else if (!inn && therapist.status !== 'created_by_admin' && therapist.status !== 'active') {
               return <Result status={'warning'} subTitle={'ИНН ещё не загружен клиентом'} />;
             } else {
               const submitHandler = Boolean(inn?.document) ? innService.updateInn : innService.submitInn;
