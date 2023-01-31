@@ -66,6 +66,11 @@ export function useTherapistPassport(therapistId: string) {
 
   const updatePassport = useMutation(
     (values: PassportFormValues) => {
+      const document = values.document.find(Boolean);
+      if (document && !Boolean(query.data?.data?.document)) {
+        return submitPassport.mutateAsync(values);
+      }
+
       return PassportServiceWithToken.updateTherapistPassport({
         requestBody: {
           arguments: {
@@ -84,6 +89,34 @@ export function useTherapistPassport(therapistId: string) {
         refetch();
       },
       onError: (err: Error) => {
+        notification.error({
+          message: 'Паспорт',
+          description: err.message,
+        });
+      },
+    },
+  );
+
+  const deletePassport = useMutation(
+    () => {
+      return PassportServiceWithToken.deleteTherapistPassport({
+        requestBody: {
+          arguments: {
+            therapistId,
+          },
+        },
+      });
+    },
+    {
+      onSuccess() {
+        notification.success({
+          message: 'Паспорт',
+          description: 'Документ удалён',
+        });
+        refetch();
+      },
+
+      onError(err: Error) {
         notification.error({
           message: 'Паспорт',
           description: err.message,
@@ -152,6 +185,7 @@ export function useTherapistPassport(therapistId: string) {
     approvePassport.status,
     rejectPassport.status,
     submitPassport.status,
+    deletePassport.status,
   ].includes('loading');
 
   return useMemo(() => {
@@ -162,8 +196,18 @@ export function useTherapistPassport(therapistId: string) {
       rejectPassport,
       isMutating,
       submitPassport,
+      deletePassport,
       isFirstLoading: firstTimeLoading,
       query,
     };
-  }, [approvePassport, firstTimeLoading, isMutating, query, rejectPassport, submitPassport, updatePassport]);
+  }, [
+    approvePassport,
+    deletePassport,
+    firstTimeLoading,
+    isMutating,
+    query,
+    rejectPassport,
+    submitPassport,
+    updatePassport,
+  ]);
 }

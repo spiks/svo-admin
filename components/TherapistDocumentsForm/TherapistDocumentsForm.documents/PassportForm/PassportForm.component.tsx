@@ -28,6 +28,7 @@ export type PassportFormProps = {
   passport?: Passport | null;
   onSubmit?: (values: PassportFormValues) => void;
   disabled?: boolean;
+  onDelete?: () => void;
 };
 
 export type PassportDetails = Passport['information'];
@@ -41,7 +42,7 @@ export type PassportFormValues = Omit<PassportDetails, 'fullName' | 'birthday' |
   document: UploadFile<FusSuccessResponse | undefined>[];
 };
 
-export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabled = false }) => {
+export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDelete, disabled = false }) => {
   const [form] = Form.useForm<PassportFormValues>();
   const information = passport?.information;
 
@@ -94,11 +95,6 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabl
               <Select.Option value={'male'}>Мужской</Select.Option>
               <Select.Option value={'female'}>Женский</Select.Option>
             </Select>
-          </Form.Item>
-        </Col>
-        <Col xs={8}>
-          <Form.Item label={'Место рождения'} name={'placeOfBirth'} rules={[required, middleText]}>
-            <Input type={'text'} />
           </Form.Item>
         </Col>
         <Col xs={8}>
@@ -159,7 +155,7 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabl
             ]}
           >
             {/* @ts-ignore */}
-            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url}>
+            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url} onRemove={onDelete}>
               {!docFile?.length && <Button>Загрузить документ</Button>}
             </Upload>
           </Form.Item>

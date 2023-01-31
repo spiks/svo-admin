@@ -34,6 +34,35 @@ export function useTherapistInn(therapistId: string) {
     await query.refetch();
   }, [query]);
 
+  const deleteInn = useMutation(
+    () => {
+      return InnServiceWithToken.deleteTherapistInn({
+        requestBody: {
+          arguments: {
+            therapistId,
+          },
+        },
+      });
+    },
+    {
+      onSuccess: () => {
+        notification.success({
+          message: 'ИНН',
+          description: 'Документ удалён',
+        });
+        refetch();
+      },
+      onError: (err: ApiRegularError | ApiValidationError) => {
+        const isRegular = 'error' in err;
+        const message = isRegular ? err.error.type : err.type;
+        notification.error({
+          message: 'ИНН',
+          description: message,
+        });
+      },
+    },
+  );
+
   const submitInn = useMutation(
     (values: InnFormValues) => {
       const document = values.document.find(Boolean);
@@ -164,10 +193,17 @@ export function useTherapistInn(therapistId: string) {
   );
 
   const firstTimeLoading = useQueryInitialLoading(query);
-  const isMutating = [updateInn.status, approveInn.status, rejectInn.status, submitInn.status].includes('loading');
+  const isMutating = [
+    deleteInn.status,
+    updateInn.status,
+    approveInn.status,
+    rejectInn.status,
+    submitInn.status,
+  ].includes('loading');
 
   return useMemo(() => {
     return {
+      deleteInn,
       inn: query.data?.data,
       updateInn,
       approveInn,
@@ -177,5 +213,5 @@ export function useTherapistInn(therapistId: string) {
       isFirstLoading: firstTimeLoading,
       query,
     };
-  }, [approveInn, firstTimeLoading, isMutating, query, rejectInn, submitInn, updateInn]);
+  }, [approveInn, deleteInn, firstTimeLoading, isMutating, query, rejectInn, submitInn, updateInn]);
 }

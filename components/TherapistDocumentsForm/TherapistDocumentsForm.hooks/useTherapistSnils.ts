@@ -100,6 +100,33 @@ export function useTherapistSnils(therapistId: string) {
     },
   );
 
+  const deleteSnils = useMutation(
+    () => {
+      return SnilsServiceWithToken.deleteTherapistSnils({
+        requestBody: {
+          arguments: {
+            therapistId,
+          },
+        },
+      });
+    },
+    {
+      onSuccess: () => {
+        notification.success({
+          message: 'СНИЛС',
+          description: 'Документ удалён',
+        });
+        refetch();
+      },
+      onError: (err: Error) => {
+        notification.error({
+          message: 'СНИЛС',
+          description: err.message,
+        });
+      },
+    },
+  );
+
   const approveSnils = useMutation(
     () => {
       return SnilsServiceWithToken.acceptTherapistSnils({
@@ -155,9 +182,13 @@ export function useTherapistSnils(therapistId: string) {
   );
 
   const firstTimeLoading = useQueryInitialLoading(query);
-  const isMutating = [submitSnils.status, updateSnils.status, approveSnils.status, rejectSnils.status].includes(
-    'loading',
-  );
+  const isMutating = [
+    submitSnils.status,
+    deleteSnils.status,
+    updateSnils.status,
+    approveSnils.status,
+    rejectSnils.status,
+  ].includes('loading');
 
   return useMemo(() => {
     return {
@@ -166,9 +197,10 @@ export function useTherapistSnils(therapistId: string) {
       approveSnils,
       rejectSnils,
       isMutating,
+      deleteSnils,
       submitSnils,
       isFirstLoading: firstTimeLoading,
       query,
     };
-  }, [approveSnils, firstTimeLoading, isMutating, query, rejectSnils, submitSnils, updateSnils]);
+  }, [approveSnils, deleteSnils, firstTimeLoading, isMutating, query, rejectSnils, submitSnils, updateSnils]);
 }
