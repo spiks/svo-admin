@@ -113,6 +113,20 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, disabl
         </Col>
       </Row>
       {CountryRelated && <CountryRelated />}
+      <Form.Item
+        label={'Место жительства'}
+        name={'residence'}
+        rules={[
+          {
+            required: true,
+            type: 'string',
+            max: 400,
+            message: 'Обязательно для заполнения (до 400 символов)',
+          },
+        ]}
+      >
+        <Input type={'text'} />
+      </Form.Item>
       <Form.Item label={'Кем выдан'} name={'issuerName'} rules={[required, middleText]}>
         <Input type={'text'} />
       </Form.Item>
