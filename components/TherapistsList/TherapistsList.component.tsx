@@ -63,7 +63,7 @@ const queryStatusLists: Record<TAB_KEY, TherapistProfileStatus[]> = {
     'interview_processing',
     'created_by_admin',
   ],
-  [TAB_KEY.BLOCKED]: ['interview_failed', 'contract_rejected'],
+  [TAB_KEY.BLOCKED]: ['interview_failed', 'contract_rejected', 'blocked', 'pre_blocked'],
 };
 
 type Props = { activeTab: TAB_KEY; profileStatus?: TherapistProfileStatus | 'all' };
