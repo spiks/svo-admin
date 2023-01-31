@@ -13,7 +13,7 @@ export function toGridView(it: PatientListingPreview) {
     key: it.id,
     profiles: it.profiles
       .map((it) => {
-        return profileTypeTranslations[it];
+        return profileTypeTranslations[it.profile];
       })
       .join(' '),
   };
