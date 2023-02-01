@@ -22,21 +22,22 @@ export const TherapistContractSection: FC = () => {
         style={{ width: '100%', marginBottom: '24px' }}
         expandIconPosition={'end'}
       >
-        <Panel
-          collapsible="disabled"
-          showArrow={false}
-          header={
-            <Row align="middle" gutter={17.5}>
-              <Col>
-                <Form.Item style={{ margin: '0' }} label="Договор на отправку" required />
-              </Col>
-            </Row>
-          }
-          key="contract"
-        >
-          <ContractForm contract={contract} onSubmit={contractService.submitTherapistContract.mutate} />
-        </Panel>
-
+        {therapist.status !== 'created_by_admin' && (
+          <Panel
+            collapsible="disabled"
+            showArrow={false}
+            header={
+              <Row align="middle" gutter={17.5}>
+                <Col>
+                  <Form.Item style={{ margin: '0' }} label="Договор на отправку" required />
+                </Col>
+              </Row>
+            }
+            key="contract"
+          >
+            <ContractForm contract={contract} onSubmit={contractService.submitTherapistContract.mutate} />
+          </Panel>
+        )}
         <Panel
           collapsible="disabled"
           showArrow={false}
