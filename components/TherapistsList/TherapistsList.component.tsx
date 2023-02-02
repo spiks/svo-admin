@@ -93,7 +93,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
 
   useEffect(() => {
     setPage(1);
-  }, [activeTab]);
+  }, [activeTab, profileStatus]);
 
   const fetchTherapists = useCallback(
     (page) => {

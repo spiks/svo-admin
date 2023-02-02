@@ -7,7 +7,7 @@ import { UsersQueryParams } from '../UsersHeader.typedef';
  * Выплёвывает параметры для view'шки управления шапкой листинга пользователей (UsersHeader);
  */
 export function useUsersHeaderForm(form: FormInstance<UsersQueryParams>) {
-  const { replace } = useRouter();
+  const { replace, query } = useRouter();
 
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const toggleShowFilters = useCallback(() => {
@@ -16,18 +16,21 @@ export function useUsersHeaderForm(form: FormInstance<UsersQueryParams>) {
 
   const handleFiltersApply = useCallback(async () => {
     const values = form.getFieldsValue();
-
     const { search, phone } = values;
+    const prev = { ...query };
+    delete prev.search;
+    delete prev.phone;
+
     await replace({
       query: {
+        ...prev,
         ...(search && { search }),
         ...(phone && { phone }),
       },
     });
-  }, [form, replace]);
+  }, [form, query, replace]);
 
   const handleResetFilters = useCallback(() => {
-    form.resetFields();
     form.setFieldsValue({
       search: undefined,
       phone: undefined,
