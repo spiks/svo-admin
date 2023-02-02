@@ -211,11 +211,13 @@ export const TherapistDocumentsForm: FC = () => {
               return <Result status={'warning'} subTitle={'ИНН ещё не загружен клиентом'} />;
             } else {
               const submitHandler = Boolean(inn?.document) ? innService.updateInn : innService.submitInn;
+              const onDelete = Boolean(inn?.document) ? innService.deleteInn.mutate : undefined;
               return (
                 <InnForm
                   disabled={isModerationNotAllowed || innService.isMutating || innService.query.isLoading}
                   inn={inn}
                   onSubmit={!innService.isFirstLoading && submitHandler.mutate}
+                  onDelete={onDelete}
                 />
               );
             }

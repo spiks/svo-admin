@@ -191,8 +191,7 @@ export const UserProfileForm: FC = () => {
         hasFeedback
         label="Email"
         name="email"
-        rules={[{ required: true, type: 'email', message: 'Пожалуйста, введите электронную почту' }]}
-        required={true}
+        rules={[{ type: 'email', message: 'Пожалуйста, введите электронную почту' }]}
       >
         <Input prefix={<MailOutlined style={{ color: '#52C41A' }} />} type={'email'} />
       </Form.Item>
