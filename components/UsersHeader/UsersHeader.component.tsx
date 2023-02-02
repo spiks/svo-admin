@@ -48,9 +48,6 @@ export const UsersHeader: FC<UserHeaderProps> = ({
         title={title}
         onBack={title ? back : undefined}
         extra={[
-          <Button type={'link'} size={'large'} key={0}>
-            Обратиться к FAQ
-          </Button>,
           <RegisterTherapistButton key={1} />,
           <Button type={'default'} size={'large'} icon={<FilterFilled />} onClick={toggleShowFilters} key={2}>
             Параметры поиска
