@@ -99,33 +99,36 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
         </Col>
         <Col xs={8}>
           <Form.Item label={'Дата рождения'} name={'birthday'} rules={[required]}>
-            <DatePicker format={'YYYY-MM-DD'} />
+            <DatePicker style={{ width: '100%' }} format={'YYYY-MM-DD'} />
           </Form.Item>
         </Col>
         <Col xs={8}>
           <Form.Item label={'Дата выдачи'} name={'issuedAt'} rules={[required]}>
-            <DatePicker format={'YYYY-MM-DD'} />
+            <DatePicker style={{ width: '100%' }} format={'YYYY-MM-DD'} />
           </Form.Item>
         </Col>
       </Row>
       {CountryRelated && <CountryRelated />}
-      <Form.Item
-        label={'Место жительства'}
-        name={'residence'}
-        rules={[
-          {
-            required: true,
-            type: 'string',
-            max: 400,
-            message: 'Обязательно для заполнения (до 400 символов)',
-          },
-        ]}
-      >
-        <Input type={'text'} />
-      </Form.Item>
       <Form.Item label={'Кем выдан'} name={'issuerName'} rules={[required, middleText]}>
         <Input type={'text'} />
       </Form.Item>
+      {/* TODO: Для исключений из общей формы пасспорта можно добавить HOC, который принимал бы в себя список стран-исключений и скрывал Input при наличии в этом списке значения соответствующего country, на мой взгляд слишком императивно */}
+      {country !== 'kazakhstan' && (
+        <Form.Item
+          label={'Адрес регистрации'}
+          name={'residence'}
+          rules={[
+            {
+              required: true,
+              type: 'string',
+              max: 400,
+              message: 'Обязательно для заполнения (до 400 символов)',
+            },
+          ]}
+        >
+          <Input type={'text'} />
+        </Form.Item>
+      )}
       <Row justify={'space-between'}>
         <Col>
           <Form.Item
