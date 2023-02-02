@@ -3,7 +3,8 @@ import TextArea from 'antd/lib/input/TextArea';
 import { updateTherapistBiographyAndCreed } from 'api/therapist/updateTherapistBiographyAndCreed';
 import { CreedLongDescription, LongDescription } from 'generated';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
-import { FC, useContext } from 'react';
+import { FC, useContext, useEffect } from 'react';
+import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
 type BiographyForm = {
   biography: LongDescription;
@@ -13,6 +14,12 @@ type BiographyForm = {
 export const UserBiographyForm: FC = () => {
   const [form] = Form.useForm();
   const { therapist } = useContext(TherapistPageContext);
+  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
+
+  useEffect(() => {
+    form.resetFields();
+    // eslint-disable-next-line
+  }, [therapist.biography, therapist.creed]);
 
   const onFinish: FormProps<BiographyForm>['onFinish'] = async (values) => {
     try {
@@ -22,6 +29,7 @@ export const UserBiographyForm: FC = () => {
         message: 'Успех',
         description: 'Информация сохранена',
       });
+      refetch('therapist');
     } catch (e) {
       notification.error({
         type: 'error',
