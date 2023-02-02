@@ -1,13 +1,13 @@
 import React, { FC, useEffect } from 'react';
 import { Snils, SnilsInformation } from '../../../../generated';
 import { Button, Col, Form, Input, Row, Upload, UploadFile } from 'antd';
-import { RcFile } from 'antd/lib/upload';
 import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
 import { getUploadFileFromStaticFile } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.utils/getUploadFileFromStaticFile';
 import {
   FusSuccessResponse,
   useFileUpload,
 } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
+import { useRequiredUploadFormItem } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/useRequiredUploadFormItem';
 
 export type SnilsFormProps = {
   snils?: Snils | null;
@@ -27,16 +27,19 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, onDelete, disab
   const docFile = Form.useWatch('document', form);
   const { uploadData } = useFileUpload('personal_document');
   const validateDocument = useUploadPersonalDocumentConstraints(uploadData?.constraints);
+  const { reset, isUploadFinished, formItemProps, uploadProps } = useRequiredUploadFormItem(
+    form,
+    'document',
+    validateDocument,
+  );
 
   useEffect(() => {
     if (!snils?.information || !snils.document) {
       return;
     }
 
-    form.setFieldsValue({
-      ...snils.information,
-      document: [getUploadFileFromStaticFile(snils.document)],
-    });
+    form.resetFields();
+    reset();
     // eslint-disable-next-line
   }, [snils]);
 
@@ -45,7 +48,7 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, onDelete, disab
       form={form}
       layout={'vertical'}
       onFinish={onSubmit}
-      initialValues={{ ...information, document: [] }}
+      initialValues={{ ...information, document: snils?.document ? [getUploadFileFromStaticFile(snils.document)] : [] }}
       disabled={disabled}
     >
       <Row gutter={16} align={'top'}>
@@ -70,37 +73,35 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, onDelete, disab
           <Form.Item
             name={'document'}
             label={' '}
-            getValueFromEvent={(e) => {
-              if (Array.isArray(e)) {
-                return e;
-              }
-              return e && e.fileList;
-            }}
-            valuePropName={'fileList'}
+            getValueFromEvent={formItemProps.getValueFromEvent}
+            valuePropName={formItemProps.valuePropName}
             rules={[
               {
-                async validator(_, value: RcFile[]) {
-                  if (!value.length) {
-                    throw new Error('Загрузка документа обязательна');
-                  }
-                  value.forEach((file) => {
-                    const message = validateDocument(file);
-                    if (typeof message !== 'boolean') {
-                      throw new Error(message);
-                    }
-                  });
-                },
+                required: true,
+                message: 'Загрузка документа обязательна',
               },
+              ...formItemProps.rules,
             ]}
           >
-            {/* @ts-ignore */}
-            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url} onRemove={onDelete}>
+            <Upload
+              {...uploadProps}
+              action={uploadData?.url}
+              onRemove={() => {
+                reset();
+                onDelete && onDelete();
+              }}
+            >
               {!docFile?.length && <Button>Загрузить документ</Button>}
             </Upload>
           </Form.Item>
         </Col>
         <Col xs={8} style={{ display: 'flex', justifyContent: 'end', marginTop: '30px' }}>
-          <Button type={'primary'} htmlType={'submit'} disabled={disabled}>
+          <Button
+            type={'primary'}
+            htmlType={'submit'}
+            disabled={disabled || isUploadFinished === false}
+            loading={isUploadFinished === false}
+          >
             OK
           </Button>
         </Col>

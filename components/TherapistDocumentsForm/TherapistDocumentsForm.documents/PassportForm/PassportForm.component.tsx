@@ -14,8 +14,8 @@ import {
   useFileUpload,
 } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
 import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
-import { RcFile } from 'antd/lib/upload';
 import { Moment } from 'moment';
+import { useRequiredUploadFormItem } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/useRequiredUploadFormItem';
 
 const countryRelatedFields = new Map<Passport['information']['country'], ComponentType>();
 countryRelatedFields.set('russia', RussianPassportFields);
@@ -54,9 +54,19 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
   const docFile = Form.useWatch('document', form);
   const { uploadData } = useFileUpload('personal_document');
   const validateDocument = useUploadPersonalDocumentConstraints(uploadData?.constraints);
+  const { reset, isUploadFinished, formItemProps, uploadProps } = useRequiredUploadFormItem(
+    form,
+    'document',
+    validateDocument,
+  );
 
   useEffect(() => {
-    form.setFieldsValue(convertedDto);
+    if (!passport?.information || !passport.document) {
+      return;
+    }
+
+    form.resetFields();
+    reset();
     // eslint-disable-next-line
   }, [passport]);
 
@@ -130,42 +140,40 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
         </Form.Item>
       )}
       <Row justify={'space-between'}>
-        <Col>
+        <Col xs={12}>
           <Form.Item
             name={'document'}
-            getValueFromEvent={(e) => {
-              if (Array.isArray(e)) {
-                return e;
-              }
-              return e && e.fileList;
-            }}
-            valuePropName={'fileList'}
+            getValueFromEvent={formItemProps.getValueFromEvent}
+            valuePropName={formItemProps.valuePropName}
             rules={[
               {
                 required: true,
                 message: 'Загрузка документа обязательна',
               },
-              {
-                async validator(_, value: RcFile[]) {
-                  value.forEach((file) => {
-                    const message = validateDocument(file);
-                    if (typeof message !== 'boolean') {
-                      throw new Error(message);
-                    }
-                  });
-                },
-              },
+              ...formItemProps.rules,
             ]}
           >
-            {/* @ts-ignore */}
-            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url} onRemove={onDelete}>
+            <Upload
+              {...uploadProps}
+              action={uploadData?.url}
+              onRemove={() => {
+                reset();
+                onDelete && onDelete();
+              }}
+            >
               {!docFile?.length && <Button>Загрузить документ</Button>}
             </Upload>
           </Form.Item>
         </Col>
-        <Col>
+        <Col xs={12} style={{ textAlign: 'right' }}>
           <Form.Item noStyle={true}>
-            <Button disabled={disabled} type={'primary'} htmlType={'submit'} style={{ marginLeft: 'auto' }}>
+            <Button
+              disabled={disabled || isUploadFinished === false}
+              loading={isUploadFinished === false}
+              type={'primary'}
+              htmlType={'submit'}
+              style={{ marginLeft: 'auto' }}
+            >
               OK
             </Button>
           </Form.Item>
