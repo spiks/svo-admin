@@ -11,7 +11,6 @@ import SplashScreenLoader from '@components/SplashScreenLoader/SplashScreenLoade
 import { TherapistProfileStatus } from '../../../generated';
 import { DefaultOptionType } from 'rc-select/lib/Select';
 import { useRouter } from 'next/router';
-import { NAVIGATION } from '../../../constants/navigation';
 
 const TherapistsListComponent = dynamic(() => import('@components/TherapistsList/TherapistsList.component'), {
   loading: () => <SplashScreenLoader />,
@@ -65,7 +64,12 @@ const TherapistsPage: NextPage = () => {
 
   const handleTabListChange = useCallback(
     (key) => {
-      router.push(`${NAVIGATION.therapists}?activeTab=${key}`);
+      router.push({
+        query: {
+          ...router.query,
+          activeTab: key,
+        },
+      });
       setProfileStatus(undefined);
     },
     [router],
