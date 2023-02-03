@@ -91,8 +91,8 @@ export const UsersHeader: FC<UserHeaderProps> = ({
                 <Form.Item
                   rules={[
                     {
-                      pattern: REGEXP_PHONE,
-                      message: 'Неверный формат (+7 321 000 00 00)',
+                      pattern: /^(\+7)?\d{0,10}$/,
+                      message: 'Неверный формат',
                     },
                   ]}
                   name={'phone'}
@@ -124,9 +124,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
                       form.setFieldValue('phone', value);
                       handleFiltersApply();
                     }}
-                    prefix={'+7'}
-                    placeholder={'0000000000'}
-                    maxLength={10}
+                    placeholder={'Начните вводить номер'}
                     type={'tel'}
                     size={'large'}
                   />
