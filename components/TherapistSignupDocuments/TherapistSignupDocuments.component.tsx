@@ -42,8 +42,8 @@ export const TherapistSignupDocuments: FC = () => {
                 <Document
                   key={it.id}
                   style={getDocumentStyle(it?.isApprovedByModerator, therapist.status)}
-                  href={'#'}
-                  name={'Диплом'}
+                  href={`/users/therapists/${therapist.id}?section=documents&target=${it.id}`}
+                  name={documentName.diploma}
                 />
               );
             })}
