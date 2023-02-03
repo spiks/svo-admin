@@ -225,7 +225,7 @@ export const TherapistDocumentsForm: FC = () => {
         </Panel>
       </Collapse>
       <h2 style={{ marginBottom: '24px' }}>Документы об образовании</h2>
-      <Collapse style={{ width: '100%' }} expandIconPosition={'end'} defaultActiveKey={['1']}>
+      <Collapse style={{ width: '100%' }} expandIconPosition={'end'} defaultActiveKey={target}>
         {/* Диплом: обработка ошибок и первой загрузки */}
         {(() => {
           if (diplomas) {
