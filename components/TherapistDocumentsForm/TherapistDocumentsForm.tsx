@@ -278,6 +278,7 @@ export const TherapistDocumentsForm: FC = () => {
                       onClick={() => {
                         onDelete({ id: diploma.id });
                       }}
+                      disabled={isModerationNotAllowed || diplomasService.isMutating || diplomasService.query.isLoading}
                       loading={diplomasService.isFirstLoading || diplomasService.isMutating}
                       type={'text'}
                       icon={<DeleteOutlined style={{ color: '#1890FF' }} />}
@@ -295,11 +296,19 @@ export const TherapistDocumentsForm: FC = () => {
                   </Row>
                 }
               >
-                <DiplomaForm diploma={diploma} onSubmit={onSubmit} />
+                <DiplomaForm
+                  disabled={isModerationNotAllowed || diplomasService.query.isLoading || diplomasService.isMutating}
+                  diploma={diploma}
+                  onSubmit={onSubmit}
+                />
               </Panel>
             );
           })}
-        <AddFormButton label={'Добавить диплом об образовании'} onClick={diplomasService.createEmptyLocalDiploma} />
+        <AddFormButton
+          disabled={isModerationNotAllowed}
+          label={'Добавить диплом об образовании'}
+          onClick={diplomasService.createEmptyLocalDiploma}
+        />
       </Collapse>
       <Row align="middle" justify="end">
         {therapist.status === 'documents_awaiting_review' && (
