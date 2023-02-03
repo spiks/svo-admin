@@ -54,8 +54,11 @@ export const TherapistDocumentsForm: FC = () => {
           return doc?.isApprovedByModerator !== null;
         }
       });
-    const diplomaModeration = diplomas?.some((it) => {
-      return it.isApprovedByModerator;
+
+    const diplomaModeration = diplomas?.every((it) => {
+      if (it) {
+        return it.isApprovedByModerator !== null;
+      }
     });
 
     return documentsModeration && diplomaModeration;
