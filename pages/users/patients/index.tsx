@@ -1,15 +1,15 @@
 import { NextPage } from 'next';
-import { UsersHeader } from '../../../components/UsersHeader/UsersHeader.component';
-import { useUsersQueryParams } from '../../../components/UsersHeader/UsersHeader.hooks/useUsersQueryParams';
-import { MainLayout } from '../../../components/MainLayout/MainLayout.component';
-import { TabList } from '../../../components/TabList/TabList.component';
+import { UsersHeader } from '@components/UsersHeader/UsersHeader.component';
+import { useUsersQueryParams } from '@components/UsersHeader/UsersHeader.hooks/useUsersQueryParams';
+import { MainLayout } from '@components/MainLayout/MainLayout.component';
+import { TabList } from '@components/TabList/TabList.component';
 import { Badge, Form, Switch, Table } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
-import { PageWrapper } from '../../../components/PageWrapper/PageWrapper.component';
+import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import { ColumnsType, SortOrder, TableRowSelection } from 'antd/lib/table/interface';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getPatientList } from '../../../api/patient/getPatientList';
-import { UsersQueryParams } from '../../../components/UsersHeader/UsersHeader.typedef';
+import { UsersQueryParams } from '@components/UsersHeader/UsersHeader.typedef';
 import { GridView, toGridView } from '../../../helpers/toGridView';
 import { sortOrderCuts } from '../../../helpers/sortOrderCuts';
 
@@ -112,7 +112,7 @@ const ClientsPage: NextPage = () => {
   );
 
   useEffect(() => {
-    if (patientList && patientList.data.itemsAmount > (page + 1) * pageSize) {
+    if (patientList && patientList.data.itemsAmount > page * pageSize) {
       queryClient.prefetchQuery(getQueryKey(page + 1), () => {
         return fetchPatients(page);
       });
