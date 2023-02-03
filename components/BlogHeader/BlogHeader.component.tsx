@@ -38,9 +38,6 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
       subTitle={'В этом разделе собраны статьи, опубликованные на платформе'}
       extra={
         <>
-          <Button size="large" type="text">
-            Обратиться к FAQ
-          </Button>
           <Button
             onClick={() => {
               push('/content/blog/createArticle');
