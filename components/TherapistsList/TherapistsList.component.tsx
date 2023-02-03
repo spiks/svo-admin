@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Badge, Table } from 'antd';
 import { GridView, toGridView } from '../../helpers/toGridView';
 import { ColumnsType, SortOrder, TableRowSelection } from 'antd/lib/table/interface';
@@ -44,9 +44,6 @@ const rowSelection: TableRowSelection<GridView> = {
   },
   onSelect: (record, selected, selectedRows) => {
     // console.log(record, selected, selectedRows);
-  },
-  onSelectAll: (selected, selectedRows, changeRows) => {
-    // console.log(selected, selectedRows, changeRows);
   },
 };
 
@@ -137,7 +134,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
   );
 
   useEffect(() => {
-    if (therapistsList && therapistsList.data.itemsAmount > (page + 1) * pageSize) {
+    if (therapistsList && therapistsList.data.itemsAmount > page * pageSize) {
       queryClient.prefetchQuery(getQueryKey(page + 1), () => {
         return fetchTherapists(page);
       });
