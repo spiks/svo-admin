@@ -83,7 +83,7 @@ export const TherapistEmploymentForm: FC<Props> = ({ fetchedEmployments, id }) =
       <Button type="primary" htmlType="submit">
         Сохранить
       </Button>
-      <AddFormButton label={'Практический опыт и место работы'} onClick={addEmptyEmployment} />
+      <AddFormButton label={'Профильный опыт работы и место работы'} onClick={addEmptyEmployment} />
     </Form>
   );
 };

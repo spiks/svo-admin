@@ -13,7 +13,7 @@ export const TherapistEmploymentFormField: FC<Props> = ({ name, onDeleteButtonCl
       <Col flex={'1'}>
         <Form.Item
           style={{ margin: 0 }}
-          label="Практический опыт (лет)"
+          label="Профильный опыт работы (лет)"
           rules={[
             {
               message: 'Обязательно укажите опыт',

@@ -48,7 +48,7 @@ export const UserWorkPrinciplesForm: FC = () => {
             }
             return value;
           }}
-          label="Подход и принципы работы"
+          label="Профессиональные ценности и принципы работы"
           name="workPrinciples"
         >
           <TextArea rows={6} showCount maxLength={2048} />

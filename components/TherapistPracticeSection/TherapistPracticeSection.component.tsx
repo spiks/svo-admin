@@ -15,10 +15,10 @@ export const TherapistPracticeSection: FC = () => {
   return (
     <section>
       <Collapse defaultActiveKey={'employments'} expandIconPosition={'end'}>
-        <Panel key={'employments'} header={'Практический опыт и место работы'}>
+        <Panel key={'employments'} header={'Профильный опыт и место работы'}>
           <TherapistEmploymentForm fetchedEmployments={employments} id={id} />
         </Panel>
-        <Panel key={'specializations'} header={'Моя специализации'}>
+        <Panel key={'specializations'} header={'Специализации'}>
           <TherapistSpecializationsForm />
         </Panel>
         <Panel forceRender key={'tags'} header={'Мои теги'}>

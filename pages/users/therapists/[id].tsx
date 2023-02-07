@@ -48,8 +48,8 @@ const tabListItems: { label: string; key: USER_TAB_KEY }[] = [
   { label: 'Договор', key: USER_TAB_KEY.CONTRACT },
   { label: 'Личные аккаунты', key: USER_TAB_KEY.ACCOUNTS },
   { label: 'Моя практика и специализации', key: USER_TAB_KEY.PRACTICE },
-  { label: 'Презентация', key: USER_TAB_KEY.PRESENTATION },
-  { label: 'Принципы работы', key: USER_TAB_KEY.PRINCIPLES },
+  { label: 'Видеовизитка', key: USER_TAB_KEY.PRESENTATION },
+  { label: `Профессиональные ценности и принципы работы`, key: USER_TAB_KEY.PRINCIPLES },
   { label: 'Важное обо мне', key: USER_TAB_KEY.ABOUT },
 ];
 
