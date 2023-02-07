@@ -72,7 +72,7 @@ export const TherapistDocumentsForm: FC = () => {
 
   return (
     <section>
-      <h2 style={{ marginBottom: '24px' }}>Документы, подтверждающие персональные данные</h2>
+      <h2 style={{ marginBottom: '24px' }}>Документы</h2>
       <Collapse style={{ width: '100%', marginBottom: '24px' }} defaultActiveKey={target} expandIconPosition={'end'}>
         {/* Паспорт */}
         <Panel
