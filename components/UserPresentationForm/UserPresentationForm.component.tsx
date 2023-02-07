@@ -1,5 +1,4 @@
 import { Button, Form, FormProps, Input, notification, Typography } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
 import { updateTherapistVideoPresentation } from 'api/therapist/updateTherapistVideoPresentation';
 import { REGEXP_YOUTUBE } from 'constants/regexp';
 import { VideoPresentation } from 'generated';
@@ -13,8 +12,8 @@ export const UserPresentationForm: FC = () => {
   const [form] = Form.useForm();
 
   useEffect(() => {
-    form.setFieldsValue({ url: videoPresentation?.url, description: videoPresentation?.description });
-  }, [form, videoPresentation?.description, videoPresentation?.url]);
+    form.setFieldsValue({ url: videoPresentation?.url });
+  }, [form, videoPresentation?.url]);
 
   const onFinish: FormProps<VideoPresentation>['onFinish'] = async (values) => {
     try {
@@ -44,7 +43,6 @@ export const UserPresentationForm: FC = () => {
         wrapperCol={{ span: 16 }}
         initialValues={{
           url: videoPresentation?.url,
-          description: videoPresentation?.description,
         }}
       >
         <Form.Item
@@ -65,13 +63,6 @@ export const UserPresentationForm: FC = () => {
           <Typography.Text type={'secondary'}>
             Необходимо указать URL на видео-презентацию с видеохостинга
           </Typography.Text>
-        </Form.Item>
-        <Form.Item
-          label="Краткое описание"
-          name="description"
-          rules={[{ required: true, message: 'Пожалуйста, введите краткое описание' }]}
-        >
-          <TextArea rows={6} showCount maxLength={2048} />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: '8' }}>
           <Button type="primary" htmlType="submit">
