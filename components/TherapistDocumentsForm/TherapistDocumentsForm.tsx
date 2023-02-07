@@ -117,13 +117,10 @@ export const TherapistDocumentsForm: FC = () => {
                 ? passportService.updatePassport
                 : passportService.submitPassport;
 
-              const onDelete = Boolean(passport?.document) ? passportService.deletePassport.mutate : undefined;
-
               return (
                 <PassportForm
                   disabled={isModerationNotAllowed || passportService.isMutating || passportService.query.isLoading}
                   passport={passport}
-                  onDelete={onDelete}
                   onSubmit={!passportService.isFirstLoading && submitHandler.mutate}
                 />
               );
@@ -302,6 +299,7 @@ export const TherapistDocumentsForm: FC = () => {
                 <DiplomaForm
                   disabled={isModerationNotAllowed || diplomasService.query.isLoading || diplomasService.isMutating}
                   diploma={diploma}
+                  onDelete={onDelete}
                   onSubmit={onSubmit}
                 />
               </Panel>
