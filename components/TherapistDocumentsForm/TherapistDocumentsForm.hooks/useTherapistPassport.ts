@@ -64,11 +64,34 @@ export function useTherapistPassport(therapistId: string) {
     },
   );
 
+  const updatePassportDocument = useMutation(
+    (fileToken: string) => {
+      return PassportServiceWithToken.updateTherapistPassportDocument({
+        requestBody: {
+          arguments: {
+            therapistId,
+            document: fileToken,
+          },
+        },
+      });
+    },
+    {
+      onError(err: Error) {
+        notification.error({
+          message: 'Паспорт (документ)',
+          description: err.message,
+        });
+      },
+    },
+  );
+
   const updatePassport = useMutation(
     (values: PassportFormValues) => {
       const document = values.document.find(Boolean);
       if (document && !Boolean(query.data?.data?.document)) {
         return submitPassport.mutateAsync(values);
+      } else if (document && document.response?.token) {
+        updatePassportDocument.mutate(document.response.token);
       }
 
       return PassportServiceWithToken.updateTherapistPassport({

@@ -20,7 +20,12 @@ export type DiplomaFormValues = LocalDiploma['information'] & {
   document: UploadFile<FusSuccessResponse | undefined>[];
 };
 
-export const DiplomaForm: FC<DiplomaFormProps> = ({ diploma, onSubmit, disabled = false }) => {
+export const DiplomaForm: FC<DiplomaFormProps & { onDelete?: (values: { id: string }) => void }> = ({
+  diploma,
+  onSubmit,
+  disabled = false,
+  onDelete,
+}) => {
   const [form] = Form.useForm<DiplomaFormValues>();
 
   const docFile = Form.useWatch('document', form);
@@ -138,7 +143,14 @@ export const DiplomaForm: FC<DiplomaFormProps> = ({ diploma, onSubmit, disabled 
               ...formItemProps.rules,
             ]}
           >
-            <Upload {...uploadProps} onRemove={reset} action={uploadData?.url}>
+            <Upload
+              {...uploadProps}
+              onRemove={() => {
+                onDelete && onDelete({ id: form.getFieldValue('id') });
+                reset();
+              }}
+              action={uploadData?.url}
+            >
               {!docFile?.length && <Button>Загрузить документ</Button>}
             </Upload>
           </Form.Item>
