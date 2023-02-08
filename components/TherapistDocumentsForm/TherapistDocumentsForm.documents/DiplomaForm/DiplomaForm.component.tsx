@@ -132,7 +132,7 @@ export const DiplomaForm: FC<DiplomaFormProps & { onDelete?: (values: { id: stri
         <Col xs={12}>
           <Form.Item
             name={'document'}
-            label={' '}
+            label={'Документ'}
             getValueFromEvent={formItemProps.getValueFromEvent}
             valuePropName={formItemProps.valuePropName}
             rules={[

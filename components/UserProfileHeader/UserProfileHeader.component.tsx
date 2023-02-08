@@ -73,7 +73,7 @@ export const UserProfileHeader: FC = ({ children }) => {
       style={{ backgroundColor: '#FFFFFF' }}
       title={
         <div>
-          <span style={{ marginRight: '12px' }}>{`Просмотр профиля пользователя ${therapist.fullName ?? 'Аноним'} (${
+          <span style={{ marginRight: '12px' }}>{`Пользователь ${therapist.fullName ?? 'Аноним'} (${
             therapistStatusName[therapist.status]
           })`}</span>
           <Button
