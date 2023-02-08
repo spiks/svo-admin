@@ -13,6 +13,8 @@ import {
   ResourceIsNotAvailableConstraintViolation,
   StringIsTooLongConstraintViolation,
   StringIsTooShortConstraintViolation,
+  UserWithThisEmailAlreadyExistsApiProblem,
+  UserWithThisPhoneAlreadyExistsApiProblem,
   ValidationErrorApiProblem,
   ValueDoesNotMatchRegexConstraintViolation,
   ValueIsNotValidConstraintViolation,
@@ -28,6 +30,8 @@ export type ApiErrorData =
   | ValidationErrorApiProblem
   | AccessTokenExpiredApiProblem
   | InvalidAccessTokenApiProblem
+  | UserWithThisPhoneAlreadyExistsApiProblem
+  | UserWithThisEmailAlreadyExistsApiProblem
   | { type: string; detail: string };
 
 export type ApiViolation =

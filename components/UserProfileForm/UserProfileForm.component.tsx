@@ -10,6 +10,7 @@ import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
 import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
 import { TherapistServiceWithToken } from '../../api/services';
+import { ApiRegularError } from '../../api/errorClasses';
 
 export const UserProfileForm: FC = () => {
   const [form] = Form.useForm();
@@ -64,10 +65,33 @@ export const UserProfileForm: FC = () => {
         description: 'Информация сохранена!',
       });
     } catch (error) {
+      let message = 'неизвестная ошибка';
+      if (error instanceof ApiRegularError) {
+        switch (error.error.type) {
+          case 'user_with_this_email_already_exists':
+            message = 'Пользователь с такой почтой уже существует';
+            form.setFields([
+              {
+                name: 'email',
+                errors: [message],
+              },
+            ]);
+            break;
+          case 'user_with_this_phone_already_exists':
+            message = 'Пользователь с таким номером уже сщуествует';
+            form.setFields([
+              {
+                name: 'phone',
+                errors: [message],
+              },
+            ]);
+            break;
+        }
+      }
       notification.error({
         type: 'error',
         message: 'Ошибка',
-        description: 'Не удалось сохранить информацию',
+        description: 'Не удалось сохранить: ' + message,
       });
     } finally {
       refetch('therapist');
@@ -175,7 +199,6 @@ export const UserProfileForm: FC = () => {
       <Divider>Контактные данные</Divider>
       <Form.Item
         rules={[{ required: true, message: 'Пожалуйста, введите телефон', pattern: /^\+7[0-9]{10}$/ }]}
-        validateStatus="success"
         label="Номер телефона"
         name="phone"
       >
@@ -191,6 +214,7 @@ export const UserProfileForm: FC = () => {
         hasFeedback
         label="Email"
         name="email"
+        required={true}
         rules={[{ required: true, type: 'email', message: 'Пожалуйста, введите электронную почту' }]}
       >
         <Input prefix={<MailOutlined style={{ color: '#52C41A' }} />} type={'email'} />
