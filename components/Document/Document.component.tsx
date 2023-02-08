@@ -7,7 +7,7 @@ import { ArrowRightOutlined } from '@ant-design/icons';
 export type DocumentProps = {
   style: 'rejected' | 'approved' | 'pending' | 'empty';
   // Ссылка по которой переводит кнопка "Подробнее";
-  href: string;
+  href?: string;
   name: string;
 };
 
