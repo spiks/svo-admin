@@ -37,16 +37,20 @@ export const TherapistSignupDocuments: FC = () => {
               href={`/users/therapists/${therapist.id}?section=documents&target=snils`}
               name={documentName.snils}
             />
-            {diplomas?.map((it) => {
-              return (
-                <Document
-                  key={it.id}
-                  style={getDocumentStyle(it?.isApprovedByModerator, therapist.status)}
-                  href={`/users/therapists/${therapist.id}?section=documents&target=${it.id}`}
-                  name={documentName.diploma}
-                />
-              );
-            })}
+            {diplomas?.length ? (
+              diplomas?.map((it) => {
+                return (
+                  <Document
+                    key={it.id}
+                    style={getDocumentStyle(it?.isApprovedByModerator, therapist.status)}
+                    href={`/users/therapists/${therapist.id}?section=documents&target=${it.id}`}
+                    name={documentName.diploma}
+                  />
+                );
+              })
+            ) : (
+              <Document style={'empty'} name={documentName.diploma} />
+            )}
           </div>
         </Form.Item>
       </Form>
