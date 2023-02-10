@@ -5,6 +5,7 @@ import { FC } from 'react';
 import { Image } from '../Image/Image.component';
 import { ArticleBlogStatus } from '../../pages/content/blog';
 import { UserOutlined } from '@ant-design/icons';
+import { extractFullName } from '../../utility/extractFullName';
 
 export type BlogArticleProps = {
   selectedArticles: string[];
@@ -47,6 +48,7 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
   shortText,
 }) => {
   const selectedArticle = selectedArticles.includes(id);
+  const fullName = extractFullName(author);
   return (
     <Card
       style={
@@ -91,9 +93,7 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
           ) : (
             <Avatar style={{ marginRight: '8px' }} icon={<UserOutlined />} size={'small'} />
           )}
-          {author.fullName ? (
-            <Typography.Link style={{ fontSize: '16px', marginRight: '18px' }}>{author.fullName}</Typography.Link>
-          ) : null}
+          <Typography.Link style={{ fontSize: '16px', marginRight: '18px' }}>{fullName}</Typography.Link>
           <Typography.Text style={{ marginRight: '8px' }}>Опубликовано:</Typography.Text>
           <Typography.Text type="secondary">{moment(publicationDate).format('YYYY-MM-DD HH:MM')}</Typography.Text>
         </Col>

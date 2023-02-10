@@ -16,8 +16,8 @@ const russianFromDto = (information: RussianPassportInformation): RussianPasspor
 };
 
 const cleanValues: PassportFormValues = {
-  surName: '',
-  lastName: '',
+  surname: '',
+  patronymic: '',
   issuedAt: moment(),
   issuerName: '',
   number: '',
@@ -39,7 +39,7 @@ export function usePassportConverterFromDto(information?: PassportDetails, docum
       return cleanValues;
     }
 
-    const [name, lastName, surName] = information.fullName.split(' ');
+    const [name, lastName, surName] = [information.name, information.surname, information.patronymic];
 
     let countryRelated = { ...information };
     switch (countryRelated.country) {

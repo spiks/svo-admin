@@ -8,6 +8,7 @@ import { FC, useContext } from 'react';
 import { Header } from '../Header/Header.component';
 import { useTherapistBan } from '../../hooks/useTherapistBan';
 import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
+import { extractFullName } from '../../utility/extractFullName';
 
 const therapistStatusName: Record<TherapistProfileStatus, string> = {
   active: 'Активный',
@@ -46,7 +47,7 @@ export const UserProfileHeader: FC = ({ children }) => {
     },
     {
       path: `${therapist.id}`,
-      breadcrumbName: `${therapist.fullName ?? 'Аноним'}`,
+      breadcrumbName: extractFullName(therapist),
     },
   ];
 
@@ -73,7 +74,7 @@ export const UserProfileHeader: FC = ({ children }) => {
       style={{ backgroundColor: '#FFFFFF' }}
       title={
         <div>
-          <span style={{ marginRight: '12px' }}>{`Пользователь ${therapist.fullName ?? 'Аноним'} (${
+          <span style={{ marginRight: '12px' }}>{`Пользователь ${extractFullName(therapist)} (${
             therapistStatusName[therapist.status]
           })`}</span>
           <Button

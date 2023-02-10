@@ -10,15 +10,11 @@ export function usePassportFormConverter() {
   return useCallback((formValues: PassportFormValues): UpdateTherapistPassport['information'] => {
     delete (formValues as { document?: unknown }).document;
 
-    const values: Partial<UpdateTherapistPassport['information']> = {};
-    values.fullName = [formValues.name, formValues.lastName, formValues.surName].filter(Boolean).join(' ');
-
     const passport = {
       ...formValues,
-      ...values,
       issuedAt: moment(formValues.issuedAt).format('YYYY-MM-DD'),
       birthday: moment(formValues.birthday).format('YYYY-MM-DD'),
-    };
+    } as unknown as UpdateTherapistPassport['information'];
 
     switch (formValues.country) {
       case 'russia': {
@@ -29,7 +25,7 @@ export function usePassportFormConverter() {
         return pass;
       }
       default: {
-        return passport as UpdateTherapistPassport['information'];
+        return passport;
       }
     }
   }, []);

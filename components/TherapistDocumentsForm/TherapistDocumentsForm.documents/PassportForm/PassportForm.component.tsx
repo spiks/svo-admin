@@ -33,10 +33,7 @@ export type PassportFormProps = {
 
 export type PassportDetails = Passport['information'];
 
-export type PassportFormValues = Omit<PassportDetails, 'fullName' | 'birthday' | 'issuedAt'> & {
-  name: string;
-  lastName: string;
-  surName: string;
+export type PassportFormValues = Omit<PassportDetails, 'birthday' | 'issuedAt'> & {
   birthday: Moment;
   issuedAt: Moment;
   document: UploadFile<FusSuccessResponse | undefined>[];
@@ -79,12 +76,12 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
           </Form.Item>
         </Col>
         <Col xs={8}>
-          <Form.Item label={'Фамилия'} name={'lastName'} rules={[required, middleText]}>
+          <Form.Item label={'Фамилия'} name={'surname'} rules={[required, middleText]}>
             <Input type={'text'} />
           </Form.Item>
         </Col>
         <Col xs={8}>
-          <Form.Item label={'Отчество'} name={'surName'} rules={[middleText]}>
+          <Form.Item label={'Отчество'} name={'patronymic'} rules={[middleText]}>
             <Input type={'text'} />
           </Form.Item>
         </Col>
