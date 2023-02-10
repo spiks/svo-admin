@@ -70,8 +70,36 @@ export function useTherapistSnils(therapistId: string) {
     },
   );
 
+  const updateSnilsDocument = useMutation(
+    (fileToken: string) => {
+      return SnilsServiceWithToken.updateTherapistSnilsDocument({
+        requestBody: {
+          arguments: {
+            therapistId,
+            document: fileToken,
+          },
+        },
+      });
+    },
+    {
+      onError(err: Error) {
+        notification.error({
+          message: 'СНИЛС (документ)',
+          description: err.message,
+        });
+      },
+    },
+  );
+
   const updateSnils = useMutation(
     (values: SnilsFormValues) => {
+      const document = values.document.find(Boolean);
+      if (document && !Boolean(query.data?.data?.document)) {
+        return submitSnils.mutateAsync(values);
+      } else if (document && document.response?.token) {
+        updateSnilsDocument.mutate(document.response?.token);
+      }
+
       const _values: Omit<SnilsFormValues, 'document'> & { document?: unknown } = { ...values };
       delete _values.document;
       return SnilsServiceWithToken.updateTherapistSnils({
@@ -188,6 +216,7 @@ export function useTherapistSnils(therapistId: string) {
     updateSnils.status,
     approveSnils.status,
     rejectSnils.status,
+    updateSnilsDocument.status,
   ].includes('loading');
 
   return useMemo(() => {
