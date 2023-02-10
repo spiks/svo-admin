@@ -125,6 +125,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
             push(`${NAVIGATION.blog}/editArticle/${article.id}`);
             break;
           }
+          case 'article_rejected':
           case 'article_awaiting_review': {
             push(`${NAVIGATION.blog}/moderateArticle/${article.id}`);
             break;
