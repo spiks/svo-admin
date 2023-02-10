@@ -53,7 +53,9 @@ export const UserProfileForm: FC = () => {
         requestBody: {
           arguments: {
             email: values.email!,
-            fullName: values.fullName!,
+            surname: values.surname!,
+            name: values.name!,
+            patronymic: values.patronymic!,
             phone: values.phone,
             id: therapist.id,
           },
@@ -122,7 +124,9 @@ export const UserProfileForm: FC = () => {
       wrapperCol={{ span: 16 }}
       initialValues={{
         avatar: getAvatar(),
-        fullName: therapist.fullName,
+        name: therapist.name,
+        surname: therapist.surname,
+        patronymic: therapist.patronymic,
         email: therapist.email,
         phone: therapist.phone,
       }}
@@ -190,9 +194,35 @@ export const UserProfileForm: FC = () => {
           }
           return value;
         }}
-        label="Имя на платформе"
-        name="fullName"
+        label="Имя"
+        name="name"
         rules={[{ required: true, message: 'Пожалуйста, введите имя' }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        normalize={(value) => {
+          if (!value) {
+            return null;
+          }
+          return value;
+        }}
+        label="Фамилия"
+        name="surname"
+        rules={[{ required: true, message: 'Пожалуйста, введите фамилию' }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        normalize={(value) => {
+          if (!value) {
+            return null;
+          }
+          return value;
+        }}
+        label="Отчество"
+        name="patronymic"
+        rules={[{ required: true, message: 'Пожалуйста, введите отчество' }]}
       >
         <Input />
       </Form.Item>
