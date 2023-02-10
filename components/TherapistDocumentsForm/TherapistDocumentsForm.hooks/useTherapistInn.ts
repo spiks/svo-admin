@@ -102,8 +102,36 @@ export function useTherapistInn(therapistId: string) {
     },
   );
 
+  const updateInnDocument = useMutation(
+    (fileToken: string) => {
+      return InnServiceWithToken.updateTherapistInnDocument({
+        requestBody: {
+          arguments: {
+            therapistId,
+            document: fileToken,
+          },
+        },
+      });
+    },
+    {
+      onError(err: Error) {
+        notification.error({
+          message: 'ИНН (документ)',
+          description: err.message,
+        });
+      },
+    },
+  );
+
   const updateInn = useMutation(
     (values: InnFormValues) => {
+      const document = values.document.find(Boolean);
+      if (document && !Boolean(query.data?.data?.document)) {
+        return submitInn.mutateAsync(values);
+      } else if (document && document.response?.token) {
+        updateInnDocument.mutate(document.response?.token);
+      }
+
       const _values: Omit<InnFormValues, 'document'> & { document?: unknown } = { ...values };
       delete _values.document;
       return InnServiceWithToken.updateTherapistInn({
@@ -199,6 +227,7 @@ export function useTherapistInn(therapistId: string) {
     approveInn.status,
     rejectInn.status,
     submitInn.status,
+    updateInnDocument.status,
   ].includes('loading');
 
   return useMemo(() => {

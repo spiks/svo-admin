@@ -84,8 +84,33 @@ export function useTherapistDiplomas(therapistId: string) {
     },
   );
 
+  const updateDiplomaDocument = useMutation(
+    ({ fileToken, diplomaId }: { fileToken: string; diplomaId: string }) => {
+      return DiplomaServiceWithToken.updateTherapistDiplomaOfHigherEducationDocument({
+        requestBody: {
+          arguments: {
+            diplomaId,
+            document: fileToken,
+          },
+        },
+      });
+    },
+    {
+      onError(err: Error) {
+        notification.error({
+          message: 'Диплом (документ)',
+          description: err.message,
+        });
+      },
+    },
+  );
+
   const updateDiploma = useMutation(
     (values: DiplomaFormValues) => {
+      const document = values.document.find(Boolean);
+      if (document && document.response?.token) {
+        updateDiplomaDocument.mutate({ fileToken: document.response?.token, diplomaId: values.id });
+      }
       const dto = formToDto(values);
       return DiplomaServiceWithToken.updateTherapistDiplomaOfHigherEducation({
         requestBody: {
@@ -306,6 +331,7 @@ export function useTherapistDiplomas(therapistId: string) {
     rejectDiploma.status,
     createRemoteDiploma.status,
     deleteRemoteDiploma.status,
+    updateDiplomaDocument.status,
   ].includes('loading');
 
   return useMemo(() => {

@@ -166,13 +166,11 @@ export const TherapistDocumentsForm: FC = () => {
               return <Result status={'warning'} subTitle={'СНИЛС ещё не загружен клиентом'} />;
             } else {
               const submitHandler = Boolean(snils?.document) ? snilsService.updateSnils : snilsService.submitSnils;
-              const onDelete = Boolean(snils?.document) ? snilsService.deleteSnils.mutate : undefined;
               return (
                 <SnilsForm
                   disabled={isModerationNotAllowed || snilsService.isMutating || snilsService.query.isLoading}
                   snils={snils}
                   onSubmit={!snilsService.isFirstLoading && submitHandler.mutate}
-                  onDelete={onDelete}
                 />
               );
             }
@@ -211,13 +209,11 @@ export const TherapistDocumentsForm: FC = () => {
               return <Result status={'warning'} subTitle={'ИНН ещё не загружен клиентом'} />;
             } else {
               const submitHandler = Boolean(inn?.document) ? innService.updateInn : innService.submitInn;
-              const onDelete = Boolean(inn?.document) ? innService.deleteInn.mutate : undefined;
               return (
                 <InnForm
                   disabled={isModerationNotAllowed || innService.isMutating || innService.query.isLoading}
                   inn={inn}
                   onSubmit={!innService.isFirstLoading && submitHandler.mutate}
-                  onDelete={onDelete}
                 />
               );
             }
@@ -299,7 +295,6 @@ export const TherapistDocumentsForm: FC = () => {
                 <DiplomaForm
                   disabled={isModerationNotAllowed || diplomasService.query.isLoading || diplomasService.isMutating}
                   diploma={diploma}
-                  onDelete={onDelete}
                   onSubmit={onSubmit}
                 />
               </Panel>
