@@ -24,7 +24,7 @@ const cleanValues: PassportFormValues = {
   name: '',
   country: 'russia',
   gender: 'male',
-  birthday: moment(),
+  birthday: moment().subtract(1, 'day'),
   document: [],
 };
 
