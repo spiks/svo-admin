@@ -8,9 +8,12 @@ import { submitContract } from 'api/therapist/submitContract';
 import { updateSignedContract } from 'api/therapist/updateSignedContract';
 import { useCallback, useMemo } from 'react';
 import { getTherapistContracts } from '../api/therapist/getTherapistContracts';
+import { TherapistContractServiceWithToken } from '../api/services';
+import { useTherapistSignupQueriesRefresh } from './useTherapistSignupQueries';
 
 export function useContractsQuery(therapistId: string) {
   const client = useQueryClient();
+  const refresh = useTherapistSignupQueriesRefresh(therapistId);
 
   const { data, isLoading, isError } = useQuery(
     ['contracts', therapistId],
@@ -44,6 +47,30 @@ export function useContractsQuery(therapistId: string) {
           message: 'Ошибка',
           description: 'Не удалось сохранить контракт',
         });
+      },
+    },
+  );
+
+  const submitTherapistSignedContract = useMutation(
+    (values: SignedContractFormValues) => {
+      const document = values.signedContract.find(Boolean);
+      if (!document?.response) {
+        throw new Error('Нельзя создать документ без файла');
+      }
+      return TherapistContractServiceWithToken.submitTherapistSignedContract({
+        requestBody: {
+          arguments: {
+            therapistId,
+            contract: document.response?.token,
+          },
+        },
+      });
+    },
+    {
+      onSuccess() {
+        refetch();
+        refresh('therapist');
+        refresh('documents');
       },
     },
   );
@@ -131,15 +158,17 @@ export function useContractsQuery(therapistId: string) {
       therapistRejectContract,
       submitTherapistContract,
       updateTherapistSignedContract,
+      submitTherapistSignedContract,
     };
   }, [
     isLoading,
     isError,
     data?.data.contract,
     data?.data.signedContract,
+    therapistAcceptContract,
+    therapistRejectContract,
     submitTherapistContract,
     updateTherapistSignedContract,
-    therapistRejectContract,
-    therapistAcceptContract,
+    submitTherapistSignedContract,
   ]);
 }
