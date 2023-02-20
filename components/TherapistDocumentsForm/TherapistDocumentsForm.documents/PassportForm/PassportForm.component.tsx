@@ -16,6 +16,7 @@ import {
 import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
 import { Moment } from 'moment';
 import { useRequiredUploadFormItem } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/useRequiredUploadFormItem';
+import { birthday } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/birthday.rule';
 
 const countryRelatedFields = new Map<Passport['information']['country'], ComponentType>();
 countryRelatedFields.set('russia', RussianPassportFields);
@@ -105,7 +106,7 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
           </Form.Item>
         </Col>
         <Col xs={8}>
-          <Form.Item label={'Дата рождения'} name={'birthday'} rules={[required]}>
+          <Form.Item label={'Дата рождения'} name={'birthday'} rules={[required, birthday]}>
             <DatePicker style={{ width: '100%' }} format={'YYYY-MM-DD'} />
           </Form.Item>
         </Col>
