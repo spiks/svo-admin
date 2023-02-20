@@ -7,8 +7,10 @@ const profileTypeTranslations: Record<AccountProfiles, string> = {
 };
 
 export function toGridView(it: PatientListingPreview) {
+  const fullName = [it.surname, it.name].filter(Boolean).join(' ').trim();
   return {
     ...it,
+    fullName: fullName || 'Аноним',
     id: it.id,
     key: it.id,
     profiles: it.profiles

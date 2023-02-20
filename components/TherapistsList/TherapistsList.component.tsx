@@ -15,7 +15,6 @@ const columns: ColumnsType<GridView> = [
   {
     title: 'Имя пользователя',
     dataIndex: 'fullName',
-    render: (text) => <a>{text || 'Аноним'}</a>,
   },
   {
     title: 'Профили',
