@@ -14,6 +14,10 @@ export const TherapistContractSection: FC = () => {
 
   const { Panel } = Collapse;
 
+  const contractSubmit = signedContract?.url
+    ? contractService.updateTherapistSignedContract
+    : contractService.submitTherapistSignedContract;
+
   return (
     <section>
       <h2 style={{ marginBottom: '24px' }}>Договор</h2>
@@ -60,7 +64,7 @@ export const TherapistContractSection: FC = () => {
         >
           <SignedContractForm
             signedContract={signedContract}
-            onSubmit={contractService.updateTherapistSignedContract.mutate}
+            onSubmit={contractSubmit.mutate}
             onReject={contractService.therapistRejectContract.mutate}
             onAccept={contractService.therapistAcceptContract.mutate}
           />
