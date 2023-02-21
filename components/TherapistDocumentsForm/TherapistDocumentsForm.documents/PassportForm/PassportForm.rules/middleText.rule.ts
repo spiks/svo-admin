@@ -1,8 +1,8 @@
 import { Rule } from 'rc-field-form/es/interface';
 
 export const middleText: Rule = {
-  // (API) `fullName` : maxLength = 255 (у нас 3 составляющих)
-  max: 85,
+  // (API) `name, surname, patronymic` : maxLength = 100 )
+  max: 100,
   type: 'string',
-  message: 'Максимальная длина 85 символов',
+  message: 'Максимальная длина 100 символов',
 };
