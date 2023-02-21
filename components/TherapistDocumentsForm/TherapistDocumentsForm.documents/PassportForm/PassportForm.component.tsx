@@ -17,6 +17,7 @@ import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocum
 import { Moment } from 'moment';
 import { useRequiredUploadFormItem } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/useRequiredUploadFormItem';
 import { birthday } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/birthday.rule';
+import { issuerName } from './PassportForm.rules/issuerName.rule';
 
 const countryRelatedFields = new Map<Passport['information']['country'], ComponentType>();
 countryRelatedFields.set('russia', RussianPassportFields);
@@ -117,7 +118,7 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
         </Col>
       </Row>
       {CountryRelated && <CountryRelated />}
-      <Form.Item label={'Кем выдан'} name={'issuerName'} rules={[required, middleText]}>
+      <Form.Item label={'Кем выдан'} name={'issuerName'} rules={[required, issuerName]}>
         <Input type={'text'} />
       </Form.Item>
       {/* TODO: Для исключений из общей формы пасспорта можно добавить HOC, который принимал бы в себя список стран-исключений и скрывал Input при наличии в этом списке значения соответствующего country, на мой взгляд слишком императивно */}
