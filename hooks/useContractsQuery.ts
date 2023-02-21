@@ -114,6 +114,7 @@ export function useContractsQuery(therapistId: string) {
           description: 'Контракт отклонен!',
         });
         refetch();
+        refresh('therapist');
       },
       onError: () => {
         notification.error({
@@ -137,6 +138,7 @@ export function useContractsQuery(therapistId: string) {
           description: 'Договор подтверждён!',
         });
         refetch();
+        refresh('therapist');
       },
       onError: (err: Error) => {
         notification.error({
