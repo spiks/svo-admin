@@ -45,7 +45,7 @@ export const UserBiographyForm: FC = () => {
         onFinish={onFinish}
         form={form}
         size="large"
-        labelCol={{ span: 8 }}
+        labelCol={{ span: 10 }}
         wrapperCol={{ span: 16 }}
         initialValues={{
           biography: therapist.biography,
@@ -59,7 +59,7 @@ export const UserBiographyForm: FC = () => {
             }
             return value;
           }}
-          label="Биография психолога"
+          label="Твой путь в профессии"
           name="biography"
         >
           <TextArea rows={6} showCount maxLength={2048} />
@@ -71,12 +71,12 @@ export const UserBiographyForm: FC = () => {
             }
             return value;
           }}
-          label="Профессиональное кредо"
+          label="Твоё профессиональное кредо"
           name="creed"
         >
           <TextArea rows={6} showCount maxLength={2048} />
         </Form.Item>
-        <Form.Item wrapperCol={{ offset: '8' }}>
+        <Form.Item wrapperCol={{ offset: '10' }}>
           <Button type="primary" htmlType="submit">
             Сохранить
           </Button>
