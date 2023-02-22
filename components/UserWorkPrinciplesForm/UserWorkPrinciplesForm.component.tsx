@@ -30,13 +30,13 @@ export const UserWorkPrinciplesForm: FC = () => {
   };
 
   return (
-    <div style={{ padding: '80px 160px' }}>
+    <div style={{ padding: '80px 0px' }}>
       <Form
         onFinish={onFinish}
         form={form}
         size="large"
-        labelCol={{ span: 8 }}
-        wrapperCol={{ span: 16 }}
+        labelCol={{ span: 10 }}
+        wrapperCol={{ span: 12 }}
         initialValues={{
           workPrinciples: therapist.workPrinciples,
         }}
@@ -53,7 +53,7 @@ export const UserWorkPrinciplesForm: FC = () => {
         >
           <TextArea rows={6} showCount maxLength={2048} />
         </Form.Item>
-        <Form.Item wrapperCol={{ offset: '8' }}>
+        <Form.Item wrapperCol={{ offset: '10' }}>
           <Button type="primary" htmlType="submit">
             Сохранить
           </Button>
