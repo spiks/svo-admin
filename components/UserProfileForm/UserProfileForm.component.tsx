@@ -197,9 +197,9 @@ export const UserProfileForm: FC = () => {
           }
           return value;
         }}
-        label="Имя"
-        name="name"
-        rules={[{ required: true, message: 'Пожалуйста, введите имя' }]}
+        label="Фамилия"
+        name="surname"
+        rules={[{ required: true, message: 'Пожалуйста, введите фамилию' }]}
       >
         <Input />
       </Form.Item>
@@ -210,9 +210,9 @@ export const UserProfileForm: FC = () => {
           }
           return value;
         }}
-        label="Фамилия"
-        name="surname"
-        rules={[{ required: true, message: 'Пожалуйста, введите фамилию' }]}
+        label="Имя"
+        name="name"
+        rules={[{ required: true, message: 'Пожалуйста, введите имя' }]}
       >
         <Input />
       </Form.Item>
