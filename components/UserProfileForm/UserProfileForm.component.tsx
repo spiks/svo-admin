@@ -1,4 +1,4 @@
-import { Button, Divider, Form, FormProps, Input, notification, Upload } from 'antd';
+import { Button, Divider, Form, FormProps, Input, notification, Typography, Upload } from 'antd';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useContext } from 'react';
 import { MailOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
@@ -139,6 +139,7 @@ export const UserProfileForm: FC = () => {
         }}
       >
         <Upload
+          style={{ position: 'relative' }}
           beforeUpload={(file) => {
             const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
             const isMaxSize = file.size < 15728640;
@@ -184,6 +185,10 @@ export const UserProfileForm: FC = () => {
             <div style={{ marginTop: '8px' }}>Загрузить</div>
           </div>
         </Upload>
+        <Typography.Text type={'secondary'} style={{ display: 'inline-block', maxWidth: '400px', width: '100%' }}>
+          Изображение формата .jpg, .jpeg или .png не более 15 Мб с ограничением по высоте и ширине от 10 до 5400
+          пикселей
+        </Typography.Text>
       </Form.Item>
       <Form.Item
         normalize={(value) => {
