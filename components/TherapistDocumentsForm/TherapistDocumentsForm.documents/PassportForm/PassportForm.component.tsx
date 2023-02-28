@@ -73,12 +73,12 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
     <Form form={form} layout={'vertical'} onFinish={onSubmit} initialValues={{ ...convertedDto }} disabled={disabled}>
       <Row gutter={32}>
         <Col xs={8}>
-          <Form.Item label={'Имя'} name={'name'} rules={[required, middleText]}>
+          <Form.Item label={'Фамилия'} name={'surname'} rules={[required, middleText]}>
             <Input type={'text'} />
           </Form.Item>
         </Col>
         <Col xs={8}>
-          <Form.Item label={'Фамилия'} name={'surname'} rules={[required, middleText]}>
+          <Form.Item label={'Имя'} name={'name'} rules={[required, middleText]}>
             <Input type={'text'} />
           </Form.Item>
         </Col>
