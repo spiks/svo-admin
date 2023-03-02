@@ -22,6 +22,7 @@ import { UserBiographyForm } from '@components/UserBiographyForm/UserBiographyFo
 import { UserWorkPrinciplesForm } from '@components/UserWorkPrinciplesForm/UserWorkPrinciplesForm.component';
 import { TherapistPracticeSection } from '@components/TherapistPracticeSection/TherapistPracticeSection.component';
 import { TherapistSocialsLinksFrom } from '@components/TherapistSocialLinksForm/TherapistSocialLinksForm.component';
+import { TherapistSettingsForm } from '@components/TherapistSettingsForm/TherapistSettingsForm.component';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -40,6 +41,7 @@ export enum USER_TAB_KEY {
   PRESENTATION = 'PRESENTATION',
   PRINCIPLES = 'PRINCIPLES',
   ABOUT = 'ABOUT',
+  SETTINGS = 'SETTINGS',
 }
 
 const tabListItems: { label: string; key: USER_TAB_KEY }[] = [
@@ -51,6 +53,7 @@ const tabListItems: { label: string; key: USER_TAB_KEY }[] = [
   { label: 'Видеовизитка', key: USER_TAB_KEY.PRESENTATION },
   { label: `Профессиональные ценности и принципы работы`, key: USER_TAB_KEY.PRINCIPLES },
   { label: 'Важное обо мне', key: USER_TAB_KEY.ABOUT },
+  { label: 'Настройки', key: USER_TAB_KEY.SETTINGS },
 ];
 
 type TherapistPageContextValue = {
@@ -209,6 +212,12 @@ const TherapistPage: NextPage = () => {
         return (
           <PageWrapper>
             <TherapistSocialsLinksFrom />
+          </PageWrapper>
+        );
+      case USER_TAB_KEY.SETTINGS:
+        return (
+          <PageWrapper>
+            <TherapistSettingsForm />
           </PageWrapper>
         );
 
