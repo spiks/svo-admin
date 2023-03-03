@@ -1,7 +1,7 @@
 import { Button, Divider, Form, FormProps, Input, notification, Typography, Upload } from 'antd';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useContext } from 'react';
-import { MailOutlined, PhoneOutlined, PlusOutlined } from '@ant-design/icons';
+import { MailOutlined, PlusOutlined } from '@ant-design/icons';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
@@ -11,13 +11,20 @@ import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
 import { TherapistServiceWithToken } from '../../api/services';
 import { ApiRegularError } from '../../api/errorClasses';
+import { isValidPhoneNumber, parseNumber } from 'libphonenumber-js';
+import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
+
+type UserProfileFormValues = Omit<UpdateTherapistRequestType, 'phone'> & {
+  avatar: UploadFile[];
+  phone: CountryPhoneInputValue;
+};
 
 export const UserProfileForm: FC = () => {
   const [form] = Form.useForm();
   const { therapist } = useContext(TherapistPageContext);
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
-  const onFinish: FormProps<UpdateTherapistRequestType & { avatar: UploadFile[] }>['onFinish'] = async (values) => {
+  const onFinish: FormProps<UserProfileFormValues>['onFinish'] = async (values) => {
     const isAvatarChanged = Boolean(values?.avatar?.[0]?.originFileObj);
     if (isAvatarChanged) {
       const file = values.avatar[0].originFileObj!;
@@ -55,7 +62,7 @@ export const UserProfileForm: FC = () => {
             email: values.email!,
             surname: values.surname!,
             name: values.name!,
-            phone: values.phone,
+            phone: `+${values.phone.code}${values.phone.phone}`,
             id: therapist.id,
           },
         },
@@ -112,6 +119,9 @@ export const UserProfileForm: FC = () => {
     return avatar;
   };
 
+  const parsedNumber = therapist.phone ? parseNumber(therapist.phone) : { short: 'RU' };
+  const therapistNumber = parsedNumber as { short?: string; country?: string; phone?: string };
+
   return (
     <Form
       onFinish={onFinish}
@@ -126,7 +136,7 @@ export const UserProfileForm: FC = () => {
         name: therapist.name,
         surname: therapist.surname,
         email: therapist.email,
-        phone: therapist.phone,
+        phone: { ...therapistNumber, ...(therapistNumber && { short: therapistNumber.country }) },
       }}
     >
       <Divider>Персональные данные</Divider>
@@ -218,11 +228,20 @@ export const UserProfileForm: FC = () => {
       </Form.Item>
       <Divider>Контактные данные</Divider>
       <Form.Item
-        rules={[{ required: true, message: 'Пожалуйста, введите телефон', pattern: /^\+7[0-9]{10}$/ }]}
+        rules={[
+          {
+            required: true,
+            async validator(_, value) {
+              if (!isValidPhoneNumber(`+${value.code}${value.phone}`)) {
+                throw new Error('Введите настоящий номер');
+              }
+            },
+          },
+        ]}
         label="Номер телефона"
         name="phone"
       >
-        <Input prefix={<PhoneOutlined style={{ color: '#52C41A' }} />} />
+        <CountryPhoneInput />
       </Form.Item>
       <Form.Item
         normalize={(value) => {

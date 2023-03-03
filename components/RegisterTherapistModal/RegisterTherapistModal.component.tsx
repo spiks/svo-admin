@@ -1,23 +1,10 @@
 import React, { FC, useCallback, useState } from 'react';
-import { Button, Form, Input, Modal, ModalProps, Typography } from 'antd';
+import { Button, Form, Modal, ModalProps, Typography } from 'antd';
 import { useRegisterTherapist } from '@components/RegisterTherapistModal/RegisterTherapistModal.hooks/useRegisterTherapist';
+import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
-const normalizePhone = (phone: unknown): string => {
-  if (typeof phone !== 'string') {
-    throw new Error(`Номер телефона представляет из себя строку: ${phone}`);
-  }
-
-  const norm = '+' + phone.match(/\d+/g)?.join('');
-  const regexp = /^\+7[0-9]{10}$/;
-
-  if (!regexp.test(norm)) {
-    throw new Error(`Переданное значение невозможно нормализовать: ${phone}`);
-  }
-
-  return norm;
-};
-
-export type RegisterTherapistForm = { phone: string };
+export type RegisterTherapistForm = { phone: CountryPhoneInputValue };
 export type RegisterTherapistModalProps = Omit<ModalProps, 'footer' | 'onCancel'> & {
   onCancel: () => void;
 };
@@ -76,28 +63,30 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
         form={form}
         layout={'vertical'}
         onFinish={(values) => {
-          registerTherapist.mutate({ phone: normalizePhone(values.phone) });
+          const { phone } = values;
+          registerTherapist.mutate({ phone: `+${phone.code}${phone.phone}` });
+        }}
+        initialValues={{
+          phone: { short: 'RU' },
         }}
         disabled={registerTherapist.isLoading}
       >
         <Form.Item
           name={'phone'}
           label={'Номер телефона'}
+          required={true}
+          validateTrigger={'onSubmit'}
           rules={[
             {
               async validator(_, value) {
-                try {
-                  normalizePhone(value);
-                } catch (err) {
-                  throw new Error('Введите корректное значение (+7 000 000 00 00)');
+                if (!isValidPhoneNumber(`+${value.code}${value.phone}`)) {
+                  throw new Error('Введите настоящий номер');
                 }
               },
             },
           ]}
-          required={true}
-          validateTrigger={'onSubmit'}
         >
-          <Input type={'tel'} />
+          <CountryPhoneInput />
         </Form.Item>
       </Form>
     </Modal>

@@ -6,9 +6,12 @@ import { useContext } from 'react';
 import { OpenAPI } from '../generated';
 import getConfig from 'next/config';
 import SplashScreenLoader from '../components/SplashScreenLoader/SplashScreenLoader.component';
+import { ConfigProvider as CountryPhoneConfigProvider } from 'antd-country-phone-input';
+import ru from 'world_countries_lists/data/countries/ru/world.json';
 
 require('../styles/ant.less');
 require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
+import 'antd-country-phone-input/dist/index.css';
 
 createErrorResponseInterceptor();
 
@@ -18,9 +21,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { isLoading } = useContext(AuthContext);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {isLoading ? <SplashScreenLoader /> : <Component {...pageProps} />}
-    </QueryClientProvider>
+    <CountryPhoneConfigProvider locale={ru}>
+      <QueryClientProvider client={queryClient}>
+        {isLoading ? <SplashScreenLoader /> : <Component {...pageProps} />}
+      </QueryClientProvider>
+    </CountryPhoneConfigProvider>
   );
 }
 
