@@ -1,7 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { notification } from 'antd';
 import { TherapistServiceWithToken } from '../../../api/services';
-import { RegisterTherapistForm } from '@components/RegisterTherapistModal/RegisterTherapistModal.component';
 import { ApiRegularError } from '../../../api/errorClasses';
 
 export type UseRegisterTherapistParameters = {
@@ -12,7 +11,7 @@ export type UseRegisterTherapistParameters = {
 
 export function useRegisterTherapist({ onDone, onFail }: UseRegisterTherapistParameters) {
   return useMutation(
-    (values: RegisterTherapistForm) => {
+    (values: { phone: string }) => {
       return TherapistServiceWithToken.registerTherapist({
         requestBody: {
           arguments: {
@@ -33,8 +32,8 @@ export function useRegisterTherapist({ onDone, onFail }: UseRegisterTherapistPar
         let message = `Неизвестная ошибка: ` + resp.error.type;
         const type = resp.error.type;
         switch (type) {
-          case 'therapist_with_this_phone_already_exists':
-            message = 'Терапевт с таким номером уже существует';
+          case 'user_with_this_phone_already_exists':
+            message = 'Пользователь с таким номером уже существует';
             break;
         }
         notification.error({
