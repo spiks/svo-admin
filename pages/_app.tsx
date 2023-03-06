@@ -8,10 +8,11 @@ import getConfig from 'next/config';
 import SplashScreenLoader from '../components/SplashScreenLoader/SplashScreenLoader.component';
 import { ConfigProvider as CountryPhoneConfigProvider } from 'antd-country-phone-input';
 import ru from 'world_countries_lists/data/countries/ru/world.json';
+import 'antd-country-phone-input/dist/index.css';
+import { CountryCode, getCountryCallingCode } from 'libphonenumber-js';
 
 require('../styles/ant.less');
 require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
-import 'antd-country-phone-input/dist/index.css';
 
 createErrorResponseInterceptor();
 
@@ -19,9 +20,19 @@ const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 2, ref
 
 function MyApp({ Component, pageProps }: AppProps) {
   const { isLoading } = useContext(AuthContext);
-
   return (
-    <CountryPhoneConfigProvider locale={ru}>
+    <CountryPhoneConfigProvider
+      areaMapper={(area) => {
+        // Обновляем коды стран из более свежей библиотеки
+        const code = getCountryCallingCode(area.short as CountryCode);
+
+        return {
+          ...area,
+          phoneCode: Number(code),
+        };
+      }}
+      locale={ru}
+    >
       <QueryClientProvider client={queryClient}>
         {isLoading ? <SplashScreenLoader /> : <Component {...pageProps} />}
       </QueryClientProvider>
