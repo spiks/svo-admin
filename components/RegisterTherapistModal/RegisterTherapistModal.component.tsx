@@ -80,8 +80,10 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
               async validator(_, value) {
                 if (!value.code) {
                   throw new Error('Выберите код страны');
-                } else if (!/^\+\d{9,15}$/.test(`+${value.code}${value.phone}`)) {
-                  throw new Error('Не верный формат номера');
+                } else if (!value.phone) {
+                  throw new Error('Введите номер телефона');
+                } else if (value.phone.length !== 10) {
+                  throw new Error('Длина номера должна быть 10 символов');
                 }
               },
             },

@@ -11,8 +11,7 @@ import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
 import { TherapistServiceWithToken } from '../../api/services';
 import { ApiRegularError } from '../../api/errorClasses';
-import { parsePhoneNumber } from 'libphonenumber-js';
-import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
+import CountryPhoneInput, { CountryPhoneInputValue, defaultAreas } from 'antd-country-phone-input';
 
 type UserProfileFormValues = Omit<UpdateTherapistRequestType, 'phone'> & {
   avatar: UploadFile[];
@@ -119,7 +118,16 @@ export const UserProfileForm: FC = () => {
     return avatar;
   };
 
-  const therapistNumber = therapist.phone && parsePhoneNumber(therapist.phone);
+  const numbers = therapist.phone?.substring(therapist.phone.length - 10);
+  const code = therapist.phone?.replace(numbers as string, '');
+  const area = defaultAreas.find((area) => {
+    return Number(area.phoneCode) === Number(code?.substring(1));
+  });
+  const therapistNumber = therapist.phone && {
+    country: area?.short,
+    phone: numbers,
+    code,
+  };
 
   return (
     <Form
@@ -138,7 +146,7 @@ export const UserProfileForm: FC = () => {
         phone: therapistNumber
           ? {
               ...therapistNumber,
-              ...(therapistNumber && { short: therapistNumber.country, phone: therapistNumber.nationalNumber }),
+              ...(therapistNumber && { short: therapistNumber.country, phone: therapistNumber.phone }),
             }
           : { short: 'RU' },
       }}
@@ -238,8 +246,10 @@ export const UserProfileForm: FC = () => {
             async validator(_, value) {
               if (!value.code) {
                 throw new Error('Выберите код страны');
-              } else if (!/^\+\d{9,15}$/.test(`+${value.code}${value.phone}`)) {
-                throw new Error('Не верный формат номера');
+              } else if (!value.phone) {
+                throw new Error('Введите номер телефона');
+              } else if (value.phone.length !== 10) {
+                throw new Error('Длина номера должна быть 10 символов');
               }
             },
           },
