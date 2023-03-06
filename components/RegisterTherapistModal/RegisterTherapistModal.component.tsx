@@ -2,7 +2,6 @@ import React, { FC, useCallback, useState } from 'react';
 import { Button, Form, Modal, ModalProps, Typography } from 'antd';
 import { useRegisterTherapist } from '@components/RegisterTherapistModal/RegisterTherapistModal.hooks/useRegisterTherapist';
 import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
-import { isValidPhoneNumber } from 'libphonenumber-js';
 
 export type RegisterTherapistForm = { phone: CountryPhoneInputValue };
 export type RegisterTherapistModalProps = Omit<ModalProps, 'footer' | 'onCancel'> & {
@@ -79,8 +78,10 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
           rules={[
             {
               async validator(_, value) {
-                if (!isValidPhoneNumber(`+${value.code}${value.phone}`)) {
-                  throw new Error('Введите настоящий номер');
+                if (!value.code) {
+                  throw new Error('Выберите код страны');
+                } else if (!/^\+\d{9,15}$/.test(`+${value.code}${value.phone}`)) {
+                  throw new Error('Не верный формат номера');
                 }
               },
             },
