@@ -11,7 +11,7 @@ import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
 import { TherapistServiceWithToken } from '../../api/services';
 import { ApiRegularError } from '../../api/errorClasses';
-import { isValidPhoneNumber, parseNumber } from 'libphonenumber-js';
+import { parsePhoneNumber } from 'libphonenumber-js';
 import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
 
 type UserProfileFormValues = Omit<UpdateTherapistRequestType, 'phone'> & {
@@ -119,8 +119,7 @@ export const UserProfileForm: FC = () => {
     return avatar;
   };
 
-  const parsedNumber = therapist.phone ? parseNumber(therapist.phone) : { short: 'RU' };
-  const therapistNumber = parsedNumber as { short?: string; country?: string; phone?: string };
+  const therapistNumber = therapist.phone && parsePhoneNumber(therapist.phone);
 
   return (
     <Form
@@ -136,7 +135,12 @@ export const UserProfileForm: FC = () => {
         name: therapist.name,
         surname: therapist.surname,
         email: therapist.email,
-        phone: { ...therapistNumber, ...(therapistNumber && { short: therapistNumber.country }) },
+        phone: therapistNumber
+          ? {
+              ...therapistNumber,
+              ...(therapistNumber && { short: therapistNumber.country, phone: therapistNumber.nationalNumber }),
+            }
+          : { short: 'RU' },
       }}
     >
       <Divider>Персональные данные</Divider>
@@ -232,8 +236,10 @@ export const UserProfileForm: FC = () => {
           {
             required: true,
             async validator(_, value) {
-              if (!isValidPhoneNumber(`+${value.code}${value.phone}`)) {
-                throw new Error('Введите настоящий номер');
+              if (!value.code) {
+                throw new Error('Выберите код страны');
+              } else if (!/^\+\d{9,15}$/.test(`+${value.code}${value.phone}`)) {
+                throw new Error('Не верный формат номера');
               }
             },
           },
@@ -253,8 +259,7 @@ export const UserProfileForm: FC = () => {
         hasFeedback
         label="Email"
         name="email"
-        required={true}
-        rules={[{ required: true, type: 'email', message: 'Пожалуйста, введите электронную почту' }]}
+        required={false}
       >
         <Input prefix={<MailOutlined style={{ color: '#52C41A' }} />} type={'email'} />
       </Form.Item>
