@@ -1,7 +1,7 @@
-import { Button, Divider, Form, FormProps, Input, notification, Typography, Upload } from 'antd';
+import { Button, Col, Divider, Form, FormProps, Input, notification, Row, Tooltip, Typography, Upload } from 'antd';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
-import { FC, useContext } from 'react';
-import { MailOutlined, PlusOutlined } from '@ant-design/icons';
+import { FC, useCallback, useContext } from 'react';
+import { CopyOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
@@ -130,6 +130,10 @@ export const UserProfileForm: FC = () => {
     code,
   };
 
+  const copyAmoCrmId = useCallback(() => {
+    navigator.clipboard.writeText(form.getFieldValue('amoCrmContactId'));
+  }, [form]);
+
   return (
     <Form
       onFinish={onFinish}
@@ -241,21 +245,28 @@ export const UserProfileForm: FC = () => {
       >
         <Input />
       </Form.Item>
-      <Form.Item
-        normalize={(value) => {
-          if (!value) {
-            return null;
-          }
-          return value;
-        }}
-        label="Системный ID"
-        name="amoCrmContactId"
-      >
-        <Input disabled style={{ width: 'calc(100% - 40px)' }} />
+      <Form.Item label="Системный ID">
+        <Row>
+          <Col flex={1}>
+            <Form.Item
+              normalize={(value) => {
+                if (!value) {
+                  return null;
+                }
+                return value;
+              }}
+              name="amoCrmContactId"
+            >
+              <Input />
+            </Form.Item>
+          </Col>
+          <Col>
+            <Tooltip placement="left" title="Копировать amoCrm id">
+              <Button onClick={copyAmoCrmId} icon={<CopyOutlined />} />
+            </Tooltip>
+          </Col>
+        </Row>
       </Form.Item>
-      {/*<Tooltip placement="left" title="Копировать amoCrm id">*/}
-      {/*  <Button icon={<CopyOutlined />} />*/}
-      {/*</Tooltip>*/}
       <Divider>Контактные данные</Divider>
       <Form.Item
         rules={[
