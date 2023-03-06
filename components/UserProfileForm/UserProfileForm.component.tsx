@@ -61,6 +61,7 @@ export const UserProfileForm: FC = () => {
             email: values.email!,
             surname: values.surname!,
             name: values.name!,
+            amoCrmContactId: therapist.amoCrmContactId,
             phone: `+${values.phone.code}${values.phone.phone}`,
             id: therapist.id,
           },
@@ -142,6 +143,8 @@ export const UserProfileForm: FC = () => {
         avatar: getAvatar(),
         name: therapist.name,
         surname: therapist.surname,
+        id: therapist.id,
+        amoCrmContactId: therapist.amoCrmContactId,
         email: therapist.email,
         phone: therapistNumber
           ? {
@@ -238,6 +241,21 @@ export const UserProfileForm: FC = () => {
       >
         <Input />
       </Form.Item>
+      <Form.Item
+        normalize={(value) => {
+          if (!value) {
+            return null;
+          }
+          return value;
+        }}
+        label="Системный ID"
+        name="amoCrmContactId"
+      >
+        <Input disabled style={{ width: 'calc(100% - 40px)' }} />
+      </Form.Item>
+      {/*<Tooltip placement="left" title="Копировать amoCrm id">*/}
+      {/*  <Button icon={<CopyOutlined />} />*/}
+      {/*</Tooltip>*/}
       <Divider>Контактные данные</Divider>
       <Form.Item
         rules={[
