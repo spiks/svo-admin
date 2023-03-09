@@ -28,7 +28,7 @@ export const TherapistSocialsLinksFrom: FC = () => {
   }, [socialLinks]);
 
   return (
-    <Form form={form} initialValues={{}} onFinish={socialLinksService.updateSocialLinks.mutate} layout="vertical">
+    <Form form={form} onFinish={socialLinksService.updateSocialLinks.mutate} layout="vertical">
       <Collapse defaultActiveKey={['instagram']} expandIconPosition={'end'}>
         <Panel forceRender={true} header={'Instagram'} key="instagram">
           <Form.Item
@@ -41,7 +41,7 @@ export const TherapistSocialsLinksFrom: FC = () => {
             rules={[
               {
                 pattern: REGEXP_INSTAGRAM,
-                message: 'Неверный формат',
+                message: 'Введите ссылку (https://www.instagram.com/)',
               },
             ]}
             name={'instagramLink'}
@@ -61,7 +61,7 @@ export const TherapistSocialsLinksFrom: FC = () => {
             rules={[
               {
                 pattern: REGEXP_TELEGRAM,
-                message: 'Неверный формат',
+                message: 'Введите ссылку (https://www.t.me/)',
               },
             ]}
             name={'telegramLink'}
@@ -81,7 +81,7 @@ export const TherapistSocialsLinksFrom: FC = () => {
             rules={[
               {
                 pattern: REGEXP_VK,
-                message: 'Неверный формат',
+                message: 'Введите ссылку (https://www.vk.com/)',
               },
             ]}
             name={'vkLink'}
@@ -101,7 +101,7 @@ export const TherapistSocialsLinksFrom: FC = () => {
             rules={[
               {
                 pattern: REGEXP_YOUTUBE_PROFILE,
-                message: 'Неверный формат',
+                message: 'Введите ссылку (https://www.youtube.com/channel/)',
               },
             ]}
             name={'youtubeLink'}
@@ -121,7 +121,7 @@ export const TherapistSocialsLinksFrom: FC = () => {
             rules={[
               {
                 pattern: REGEXP_FACEBOOK,
-                message: 'Неверный формат',
+                message: 'Введите ссылку (https://www.facebook.com/)',
               },
             ]}
             name={'facebookLink'}
@@ -141,7 +141,7 @@ export const TherapistSocialsLinksFrom: FC = () => {
             rules={[
               {
                 pattern: REGEXP_TWITTER,
-                message: 'Неверный формат',
+                message: 'Введите ссылку (https://www.twitter.com/)',
               },
             ]}
             name={'twitterLink'}
