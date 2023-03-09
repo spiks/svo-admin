@@ -7,11 +7,11 @@ import { UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
-import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
 import { TherapistServiceWithToken } from '../../api/services';
 import { ApiRegularError } from '../../api/errorClasses';
 import CountryPhoneInput, { CountryPhoneInputValue, defaultAreas } from 'antd-country-phone-input';
+import { removeTherapistAvatar } from '../../api/therapist/removeTherapistAvatar';
 
 type UserProfileFormValues = Omit<UpdateTherapistRequestType, 'phone'> & {
   avatar: UploadFile[];
@@ -43,7 +43,7 @@ export const UserProfileForm: FC = () => {
           });
         }
       }
-    } else if (!isAvatarChanged && therapist?.avatar?.sizes) {
+    } else if (!isAvatarChanged && !values.avatar.length && therapist?.avatar?.sizes) {
       try {
         await removeTherapistAvatar(therapist.id);
       } catch (err) {
@@ -120,9 +120,9 @@ export const UserProfileForm: FC = () => {
   };
 
   const numbers = therapist.phone?.substring(therapist.phone.length - 10);
-  const code = therapist.phone?.replace(numbers as string, '');
+  const code = therapist.phone?.replace(numbers as string, '')?.substring(1);
   const area = defaultAreas.find((area) => {
-    return Number(area.phoneCode) === Number(code?.substring(1));
+    return Number(area.phoneCode) === Number(code);
   });
   const therapistNumber = therapist.phone && {
     country: area?.short,
@@ -159,61 +159,45 @@ export const UserProfileForm: FC = () => {
       }}
     >
       <Divider>Персональные данные</Divider>
-      <Form.Item
-        label="Изображение профиля"
-        name={'avatar'}
-        valuePropName={'fileList'}
-        getValueFromEvent={(e: UploadChangeParam<UploadFile<unknown>>) => {
-          return e.fileList;
-        }}
-      >
-        <Upload
-          style={{ position: 'relative' }}
-          beforeUpload={(file) => {
-            const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-            const isMaxSize = file.size < 15728640;
-
-            if (!isJpgOrPng) {
-              form.setFields([
-                {
-                  name: 'avatar',
-                  errors: ['Допустимые форматы .jpeg, .jpg, .png!'],
-                },
-              ]);
-              notification.error({
-                type: 'error',
-                message: 'Ошибка',
-                description: `${file.name} имееет неверный формат!`,
-              });
-            }
-            if (!isMaxSize) {
-              notification.error({
-                type: 'error',
-                message: 'Ошибка',
-                description: `Превышен максимальный размер файла!`,
-              });
-            }
-
-            const result = (isJpgOrPng && isMaxSize) || Upload.LIST_IGNORE;
-            if (result) {
-              form.setFields([
-                {
-                  name: 'avatar',
-                  errors: [],
-                },
-              ]);
-            }
-            return (isJpgOrPng && isMaxSize) || Upload.LIST_IGNORE;
+      <Form.Item label="Изображение профиля">
+        <Form.Item
+          name={'avatar'}
+          valuePropName={'fileList'}
+          getValueFromEvent={(e: UploadChangeParam<UploadFile<unknown>>) => {
+            return e.fileList;
           }}
-          maxCount={1}
-          listType="picture-card"
-          showUploadList={true}
         >
-          <div>
-            <PlusOutlined />
-            <div style={{ marginTop: '8px' }}>Загрузить</div>
-          </div>
-        </Upload>
+          <Upload
+            beforeUpload={(file) => {
+              const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+              const isMaxSize = file.size < 15728640;
+
+              if (!isJpgOrPng) {
+                notification.error({
+                  type: 'error',
+                  message: 'Ошибка',
+                  description: `${file.name} имееет неверный формат!`,
+                });
+              }
+              if (!isMaxSize) {
+                notification.error({
+                  type: 'error',
+                  message: 'Ошибка',
+                  description: `Превышен максимальный размер файла!`,
+                });
+              }
+              return (isJpgOrPng && isMaxSize) || Upload.LIST_IGNORE;
+            }}
+            maxCount={1}
+            listType="picture-card"
+            showUploadList={true}
+          >
+            <div>
+              <PlusOutlined />
+              <div style={{ marginTop: '8px' }}>Загрузить</div>
+            </div>
+          </Upload>
+        </Form.Item>
         <Typography.Text type={'secondary'} style={{ display: 'inline-block', maxWidth: '400px', width: '100%' }}>
           Изображение формата .jpg, .jpeg или .png не более 15 Мб с ограничением по высоте и ширине от 10 до 5400
           пикселей
