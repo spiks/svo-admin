@@ -197,6 +197,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
       pagination={{
         current: page,
         pageSize: pageSize,
+        pageSizeOptions: [10, 20, 50],
         onChange: handlePaginationChange,
         total: therapistsList?.data.itemsAmount,
       }}
