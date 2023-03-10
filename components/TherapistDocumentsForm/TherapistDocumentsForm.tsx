@@ -113,7 +113,7 @@ export const TherapistDocumentsForm: FC = () => {
             } else if (!passport && therapist.status !== 'created_by_admin' && therapist.status !== 'active') {
               return <Result status={'warning'} subTitle={'Паспорт ещё не загружен клиентом'} />;
             } else {
-              const submitHandler = Boolean(passport?.document)
+              const submitHandler = Boolean(passport?.document || passport?.information.number)
                 ? passportService.updatePassport
                 : passportService.submitPassport;
 

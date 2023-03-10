@@ -88,10 +88,8 @@ export function useTherapistPassport(therapistId: string) {
   const updatePassport = useMutation(
     (values: PassportFormValues) => {
       const document = values.document.find(Boolean);
-      if (document && !Boolean(query.data?.data?.document)) {
-        return submitPassport.mutateAsync(values);
-      } else if (document && document.response?.token) {
-        updatePassportDocument.mutate(document.response.token);
+      if (document && document.response?.token) {
+        updatePassportDocument.mutate(document.response?.token);
       }
 
       return PassportServiceWithToken.updateTherapistPassport({
