@@ -25,7 +25,7 @@ export const TherapistSpecializationTagsForm: FC<Props> = ({ fetchedSpecializati
       notification.error({
         type: 'error',
         message: 'Ошибка',
-        description: 'Не удалось теги',
+        description: 'Не удалось обновить теги',
       });
     },
   });
