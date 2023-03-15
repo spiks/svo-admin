@@ -6,12 +6,12 @@ export const updateTherapistSocialLinks = async (socialLinks: SocialLinks, thera
     requestBody: {
       arguments: {
         therapistId,
-        telegram: socialLinks.telegramLink,
-        facebook: socialLinks.facebookLink,
-        twitter: socialLinks.twitterLink,
-        instagram: socialLinks.instagramLink,
-        youtube: socialLinks.youtubeLink,
-        vk: socialLinks.vkLink,
+        telegramLink: socialLinks.telegramLink,
+        facebookLink: socialLinks.facebookLink,
+        twitterLink: socialLinks.twitterLink,
+        instagramLink: socialLinks.instagramLink,
+        youtubeLink: socialLinks.youtubeLink,
+        vkLink: socialLinks.vkLink,
       },
     },
   });
