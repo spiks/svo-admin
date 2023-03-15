@@ -10,7 +10,7 @@ const { CheckableTag } = Tag;
 
 export const TherapistSpecializationsForm = () => {
   const {
-    therapist: { specializations: fetchedSpecializations, additionalSpecializations, id },
+    therapist: { specializations: fetchedSpecializations, additionalSpecializations, id, mainSpecialization },
   } = useContext(TherapistPageContext);
   const [selectedSpecializations, setSelectedSpecializations] = useState<string[]>([]);
   const [form] = Form.useForm<{ employments: Employment[] }>();
@@ -18,7 +18,7 @@ export const TherapistSpecializationsForm = () => {
   const refetch = useTherapistSignupQueriesRefresh(id);
 
   const { mutate } = useMutation(
-    (tagIds: string[]) => updateTherapistSpecializations(id, tagIds, additionalSpecializations),
+    (tagIds: string[]) => updateTherapistSpecializations(id, tagIds, additionalSpecializations, mainSpecialization),
     {
       onError: () => {
         notification.error({
@@ -52,7 +52,13 @@ export const TherapistSpecializationsForm = () => {
   );
 
   const { mutate: mutateAdditionalSpecializations } = useMutation(
-    () => updateTherapistSpecializations(id, selectedSpecializations, form.getFieldValue('additionalSpecializations')),
+    () =>
+      updateTherapistSpecializations(
+        id,
+        selectedSpecializations,
+        form.getFieldValue('additionalSpecializations'),
+        mainSpecialization,
+      ),
     {
       onSuccess: async () => {
         notification.success({
