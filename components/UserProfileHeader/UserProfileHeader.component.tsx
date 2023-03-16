@@ -9,6 +9,7 @@ import { Header } from '../Header/Header.component';
 import { useTherapistBan } from '../../hooks/useTherapistBan';
 import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 import { extractFullName } from '../../utility/extractFullName';
+import { DownloadOutlined } from '@ant-design/icons';
 
 const therapistStatusName: Record<TherapistProfileStatus, string> = {
   active: 'Активный',
@@ -85,6 +86,15 @@ export const UserProfileHeader: FC = ({ children }) => {
             }}
           >
             {banWord}
+          </Button>
+          <Button
+            size={'large'}
+            target={'_blank'}
+            href={`/cv/${therapist.id}`}
+            type={'link'}
+            icon={<DownloadOutlined />}
+          >
+            Скачать CV
           </Button>
         </div>
       }
