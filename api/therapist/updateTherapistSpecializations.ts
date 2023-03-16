@@ -9,10 +9,10 @@ export const updateTherapistSpecializations = async (
   return TherapistServiceWithToken.updateTherapistSpecializations({
     requestBody: {
       arguments: {
-        mainSpecialization,
         therapistId,
         specializations,
         additionalSpecializations: additionalSpecializations || null,
+        mainSpecialization: mainSpecialization || null,
       },
     },
   });

@@ -13,7 +13,8 @@ export const TherapistSpecializationsForm = () => {
     therapist: { specializations: fetchedSpecializations, additionalSpecializations, id, mainSpecialization },
   } = useContext(TherapistPageContext);
   const [selectedSpecializations, setSelectedSpecializations] = useState<string[]>([]);
-  const [form] = Form.useForm<{ employments: Employment[] }>();
+  const [mainSpecializationForm] = Form.useForm<{ mainSpecialization: string | null }>();
+  const [additionalSpecializationsForm] = Form.useForm<{ additionalSpecializations: string | null }>();
 
   const refetch = useTherapistSignupQueriesRefresh(id);
 
@@ -56,7 +57,7 @@ export const TherapistSpecializationsForm = () => {
       updateTherapistSpecializations(
         id,
         selectedSpecializations,
-        form.getFieldValue('additionalSpecializations'),
+        additionalSpecializationsForm.getFieldValue('additionalSpecializations'),
         mainSpecialization,
       ),
     {
@@ -78,9 +79,58 @@ export const TherapistSpecializationsForm = () => {
     },
   );
 
+  const { mutate: mutateMainSpecialization } = useMutation(
+    () =>
+      updateTherapistSpecializations(
+        id,
+        selectedSpecializations,
+        additionalSpecializations,
+        mainSpecializationForm.getFieldValue('mainSpecialization'),
+      ),
+
+    {
+      onSuccess: async () => {
+        notification.success({
+          type: 'success',
+          message: 'Успех',
+          description: 'Основная специализация сохранена',
+        });
+        refetch('therapist');
+      },
+      onError: () => {
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: 'Не удалось сохранить основную специализацию',
+        });
+      },
+    },
+  );
+
   return (
     <>
       <Space direction="vertical" size="middle">
+        <Form
+          onFinish={() => {
+            mutateMainSpecialization();
+          }}
+          form={mainSpecializationForm}
+          initialValues={{ mainSpecialization }}
+          layout={'vertical'}
+        >
+          <Row gutter={[16, 0]} align={'bottom'}>
+            <Col flex={1}>
+              <Form.Item style={{ margin: 0 }} label="Основная специализация" name="mainSpecialization">
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Button htmlType="submit" type="primary">
+                ОК
+              </Button>
+            </Col>
+          </Row>
+        </Form>
         {fetchedSpecializations.map(({ group, items }) => (
           <Space direction="vertical" size="small" key={group}>
             <div>{group}</div>
@@ -100,7 +150,7 @@ export const TherapistSpecializationsForm = () => {
         ))}
         <Form
           onFinish={() => mutateAdditionalSpecializations()}
-          form={form}
+          form={additionalSpecializationsForm}
           initialValues={{ additionalSpecializations }}
           layout={'vertical'}
         >
