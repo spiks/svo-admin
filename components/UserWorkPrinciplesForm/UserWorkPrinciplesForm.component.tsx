@@ -51,7 +51,7 @@ export const UserWorkPrinciplesForm: FC = () => {
           label="Профессиональные ценности и принципы работы"
           name="workPrinciples"
         >
-          <TextArea rows={6} showCount maxLength={2048} />
+          <TextArea rows={6} showCount maxLength={4096} />
         </Form.Item>
         <Form.Item wrapperCol={{ offset: '10' }}>
           <Button type="primary" htmlType="submit">
