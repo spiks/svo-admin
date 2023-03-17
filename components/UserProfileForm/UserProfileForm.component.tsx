@@ -3,7 +3,6 @@ import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useCallback, useContext } from 'react';
 import { CopyOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
-import { UpdateTherapistRequestType } from 'api/therapist/updateTherapist';
 import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
@@ -12,10 +11,16 @@ import { TherapistServiceWithToken } from '../../api/services';
 import { ApiRegularError } from '../../api/errorClasses';
 import CountryPhoneInput, { CountryPhoneInputValue, defaultAreas } from 'antd-country-phone-input';
 import { removeTherapistAvatar } from '../../api/therapist/removeTherapistAvatar';
+import { Email, Name, Surname, TherapistAmoCrmContactId, Uuid } from 'generated';
 
-type UserProfileFormValues = Omit<UpdateTherapistRequestType, 'phone'> & {
+type UserProfileFormValues = {
   avatar: UploadFile[];
   phone: CountryPhoneInputValue;
+  id: Uuid;
+  surname: Surname;
+  name: Name;
+  email: Email | null;
+  amoCrmContactId: TherapistAmoCrmContactId | null;
 };
 
 export const UserProfileForm: FC = () => {
@@ -58,12 +63,12 @@ export const UserProfileForm: FC = () => {
       await TherapistServiceWithToken.updateTherapistPersonalInformation({
         requestBody: {
           arguments: {
-            email: values.email!,
-            surname: values.surname!,
-            name: values.name!,
-            amoCrmContactId: therapist.amoCrmContactId,
-            phone: `+${values.phone.code}${values.phone.phone}`,
             id: therapist.id,
+            surname: values.surname,
+            name: values.name,
+            phone: `+${values.phone.code}${values.phone.phone}`,
+            email: values.email,
+            amoCrmContactId: values.amoCrmContactId ? +values.amoCrmContactId : null,
           },
         },
       });
@@ -233,12 +238,7 @@ export const UserProfileForm: FC = () => {
         <Row>
           <Col flex={1}>
             <Form.Item
-              normalize={(value) => {
-                if (!value) {
-                  return null;
-                }
-                return value;
-              }}
+              rules={[{ pattern: /^[0-9]+$/, message: 'ID должен состоять только из цифр' }]}
               name="amoCrmContactId"
             >
               <Input />
