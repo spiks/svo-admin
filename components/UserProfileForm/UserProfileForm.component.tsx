@@ -12,6 +12,7 @@ import { ApiRegularError } from '../../api/errorClasses';
 import CountryPhoneInput, { CountryPhoneInputValue, defaultAreas } from 'antd-country-phone-input';
 import { removeTherapistAvatar } from '../../api/therapist/removeTherapistAvatar';
 import { Email, Name, Surname, TherapistAmoCrmContactId, Uuid } from 'generated';
+import { parsePhoneNumber } from 'libphonenumber-js';
 
 type UserProfileFormValues = {
   avatar: UploadFile[];
@@ -124,16 +125,7 @@ export const UserProfileForm: FC = () => {
     return avatar;
   };
 
-  const numbers = therapist.phone?.substring(therapist.phone.length - 10);
-  const code = therapist.phone?.replace(numbers as string, '')?.substring(1);
-  const area = defaultAreas.find((area) => {
-    return Number(area.phoneCode) === Number(code);
-  });
-  const therapistNumber = therapist.phone && {
-    country: area?.short,
-    phone: numbers,
-    code,
-  };
+  const phoneNumber = therapist.phone && parsePhoneNumber(therapist.phone);
 
   const copyAmoCrmId = useCallback(() => {
     navigator.clipboard.writeText(form.getFieldValue('amoCrmContactId'));
@@ -155,10 +147,10 @@ export const UserProfileForm: FC = () => {
         id: therapist.id,
         amoCrmContactId: therapist.amoCrmContactId,
         email: therapist.email,
-        phone: therapistNumber
+        phone: phoneNumber
           ? {
-              ...therapistNumber,
-              ...(therapistNumber && { short: therapistNumber.country, phone: therapistNumber.phone }),
+              ...phoneNumber,
+              ...(phoneNumber && { short: phoneNumber.country, phone: phoneNumber.nationalNumber }),
             }
           : { short: 'RU' },
       }}
