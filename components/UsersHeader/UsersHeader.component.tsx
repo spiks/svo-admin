@@ -3,7 +3,6 @@ import { Alert, Button, Col, Form, Input, PageHeader, Row } from 'antd';
 import { FilterFilled, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { useUsersHeaderForm } from './UsersHeader.hooks/useUsersHeaderForm';
-import { REGEXP_PHONE } from '../../constants/regexp';
 import { useUsersQueryParams } from './UsersHeader.hooks/useUsersQueryParams';
 import { RegisterTherapistButton } from '@components/RegisterTherapistModal/RegisterTherapistModal.children/RegisterTherapistButton/RegisterTherapistButton.component';
 
@@ -88,46 +87,8 @@ export const UsersHeader: FC<UserHeaderProps> = ({
                 </Form.Item>
               </Col>
               <Col flex={2}>
-                <Form.Item
-                  rules={[
-                    {
-                      pattern: /^(\+7)?\d{0,10}$/,
-                      message: 'Неверный формат',
-                    },
-                  ]}
-                  name={'phone'}
-                  label={'Номер телефона'}
-                  tooltip={'Номер телефона'}
-                >
-                  <Input
-                    onPaste={(e) => {
-                      e.preventDefault();
-
-                      const text = e.clipboardData.getData('text');
-                      if (!text) {
-                        return;
-                      }
-
-                      const numericParts = text.match(/[0-9]+/gi);
-                      if (!numericParts?.length) {
-                        return;
-                      }
-
-                      const numericText = numericParts.join('');
-                      const isFullPhone = /^[78][0-9]{10}$/.test(numericText);
-
-                      let value: string = numericText;
-                      if (isFullPhone) {
-                        value = value.substring(1);
-                      }
-
-                      form.setFieldValue('phone', value);
-                      handleFiltersApply();
-                    }}
-                    placeholder={'Начните вводить номер'}
-                    type={'tel'}
-                    size={'large'}
-                  />
+                <Form.Item name={'phone'} label={'Номер телефона'} tooltip={'Номер телефона'}>
+                  <Input placeholder={'Начните вводить номер'} type={'tel'} size={'large'} />
                 </Form.Item>
               </Col>
               <Col flex={1}>
