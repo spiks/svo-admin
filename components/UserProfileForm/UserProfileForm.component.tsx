@@ -9,10 +9,10 @@ import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
 import { uploadFile } from 'api/upload/uploadFile';
 import { TherapistServiceWithToken } from '../../api/services';
 import { ApiRegularError } from '../../api/errorClasses';
-import CountryPhoneInput, { CountryPhoneInputValue, defaultAreas } from 'antd-country-phone-input';
+import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
 import { removeTherapistAvatar } from '../../api/therapist/removeTherapistAvatar';
 import { Email, Name, Surname, TherapistAmoCrmContactId, Uuid } from 'generated';
-import { parsePhoneNumber } from 'libphonenumber-js';
+import { CountryCode, getCountryCallingCode, isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 
 type UserProfileFormValues = {
   avatar: UploadFile[];
@@ -67,7 +67,7 @@ export const UserProfileForm: FC = () => {
             id: therapist.id,
             surname: values.surname,
             name: values.name,
-            phone: `+${values.phone.code}${values.phone.phone}`,
+            phone: '+' + getCountryCallingCode(values.phone.short as CountryCode) + values.phone.phone,
             email: values.email,
             amoCrmContactId: values.amoCrmContactId ? +values.amoCrmContactId : null,
           },
@@ -149,8 +149,8 @@ export const UserProfileForm: FC = () => {
         email: therapist.email,
         phone: phoneNumber
           ? {
-              ...phoneNumber,
-              ...(phoneNumber && { short: phoneNumber.country, phone: phoneNumber.nationalNumber }),
+              short: phoneNumber.country ?? phoneNumber.getPossibleCountries()[0] ?? 'RU',
+              phone: phoneNumber.nationalNumber,
             }
           : { short: 'RU' },
       }}
@@ -253,8 +253,13 @@ export const UserProfileForm: FC = () => {
                 throw new Error('Выберите код страны');
               } else if (!value.phone) {
                 throw new Error('Введите номер телефона');
-              } else if (value.phone.length !== 10) {
-                throw new Error('Длина номера должна быть 10 символов');
+              }
+              const isLengthValid = isPossiblePhoneNumber(
+                '+' + getCountryCallingCode(value.short) + value.phone,
+                value.short,
+              );
+              if (!isLengthValid) {
+                throw new Error('Неверная длина номера');
               }
             },
           },
