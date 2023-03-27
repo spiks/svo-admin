@@ -2,6 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import { Button, Form, Modal, ModalProps, Typography } from 'antd';
 import { useRegisterTherapist } from '@components/RegisterTherapistModal/RegisterTherapistModal.hooks/useRegisterTherapist';
 import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
+import { CountryCode, getCountryCallingCode, isPossiblePhoneNumber } from 'libphonenumber-js';
 
 export type RegisterTherapistForm = { phone: CountryPhoneInputValue };
 export type RegisterTherapistModalProps = Omit<ModalProps, 'footer' | 'onCancel'> & {
@@ -63,7 +64,9 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
         layout={'vertical'}
         onFinish={(values) => {
           const { phone } = values;
-          registerTherapist.mutate({ phone: `+${phone.code}${phone.phone}` });
+          registerTherapist.mutate({
+            phone: '+' + getCountryCallingCode(phone.short as CountryCode) + phone.phone,
+          });
         }}
         initialValues={{
           phone: { short: 'RU' },
@@ -82,8 +85,14 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
                   throw new Error('Выберите код страны');
                 } else if (!value.phone) {
                   throw new Error('Введите номер телефона');
-                } else if (value.phone.length !== 10) {
-                  throw new Error('Длина номера должна быть 10 символов');
+                }
+                const isLengthValid = isPossiblePhoneNumber(
+                  '+' + getCountryCallingCode(value.short) + value.phone,
+                  value.short,
+                );
+
+                if (!isLengthValid) {
+                  throw new Error('Неверная длина номера');
                 }
               },
             },
