@@ -249,7 +249,7 @@ export const UserProfileForm: FC = () => {
           {
             required: true,
             async validator(_, value) {
-              if (!value.code) {
+              if (!value.short) {
                 throw new Error('Выберите код страны');
               } else if (!value.phone) {
                 throw new Error('Введите номер телефона');
