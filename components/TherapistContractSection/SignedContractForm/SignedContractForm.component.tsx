@@ -106,7 +106,7 @@ export const SignedContractForm: FC<SignedContractFormProps> = ({ signedContract
             ]}
           >
             {/* @ts-ignore */}
-            <Upload headers={{ 'X-Requested-With': null }} action={uploadData?.url}>
+            <Upload disabled={!canUploadSignedContract} headers={{ 'X-Requested-With': null }} action={uploadData?.url}>
               {!docFile?.length && <Button disabled={!canUploadSignedContract}>Загрузить документ</Button>}
             </Upload>
           </Form.Item>
@@ -139,13 +139,15 @@ export const SignedContractForm: FC<SignedContractFormProps> = ({ signedContract
           </Form.Item>
         </Col>
       </Row>
-      <Row align={'middle'} justify={'end'}>
-        <Form.Item>
-          <Button disabled={!canUploadSignedContract} type={'primary'} htmlType={'submit'}>
-            {'Сохранить'}
-          </Button>
-        </Form.Item>
-      </Row>
+      {therapist.status === 'created_by_admin' && (
+        <Row align={'middle'} justify={'end'}>
+          <Form.Item>
+            <Button disabled={!canUploadSignedContract} type={'primary'} htmlType={'submit'}>
+              {'Сохранить'}
+            </Button>
+          </Form.Item>
+        </Row>
+      )}
     </Form>
   );
 };
