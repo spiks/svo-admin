@@ -147,10 +147,10 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                 </Col>
               </Row>
             </Form>
-            {children}
           </Col>
         </Row>
       )}
+      {children}
     </Header>
   );
 };
