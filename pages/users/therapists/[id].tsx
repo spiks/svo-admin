@@ -10,7 +10,6 @@ import { getTherapistDocuments } from '../../../api/therapist/getTherapistDocume
 import { useTherapistSignupQueries } from '../../../hooks/useTherapistSignupQueries';
 import { TherapistSignupDocuments } from '@components/TherapistSignupDocuments/TherapistSignupDocuments.component';
 import { TherapistSignupInterview } from '@components/TherapistSignupInterview/TherapistSignupInterview.component';
-import { SmileOutlined } from '@ant-design/icons';
 import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.component';
 import { UserProfileHeader } from '@components/UserProfileHeader/UserProfileHeader.component';
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
@@ -259,17 +258,20 @@ const TherapistPage: NextPage = () => {
                     switch (currentStage) {
                       case STAGE.CONTRACT:
                         return <></>;
+                      case STAGE.ACTIVE:
                       case STAGE.DOCUMENTS:
                         return <TherapistSignupDocuments />;
                       case STAGE.INTERVIEW:
                         return <TherapistSignupInterview />;
-                      case STAGE.ACTIVE:
-                        return (
-                          <Result
-                            icon={<SmileOutlined />}
-                            title="Терапевт имеет уже подтверждённый и активированный аккаунт!"
-                          />
-                        );
+                      // По новым макетам с такой логикой администратор не сможет заблокировать пользователя.
+                      // Поэтому убираем.
+                      // case STAGE.ACTIVE:
+                      //   return (
+                      //     <Result
+                      //       icon={<SmileOutlined />}
+                      //       title="Терапевт имеет уже подтверждённый и активированный аккаунт!"
+                      //     />
+                      //   );
                     }
                   })()}
                 </div>
