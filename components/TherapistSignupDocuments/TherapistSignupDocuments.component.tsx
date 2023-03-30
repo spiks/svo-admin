@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react';
 import { TherapistPageContext } from '../../pages/users/therapists/[id]';
-import { Form, Spin } from 'antd';
+import { Button, Form, Spin } from 'antd';
 import { Document } from '../Document/Document.component';
 import { getDocumentStyle } from '../Document/Document.utils';
 import { documentName } from './TherapistSignupDocuments.utils';
@@ -8,14 +8,30 @@ import { useTherapistPassport } from '@components/TherapistDocumentsForm/Therapi
 import { useTherapistInn } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistInn';
 import { useTherapistSnils } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistSnils';
 import { useTherapistDiplomas } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useTherapistDiplomas';
+import { useTherapistBan } from '../../hooks/useTherapistBan';
+import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
 export const TherapistSignupDocuments: FC = () => {
   const { therapist, isLoading } = useContext(TherapistPageContext);
+  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
   const { passport } = useTherapistPassport(therapist.id);
   const { inn } = useTherapistInn(therapist.id);
   const { snils } = useTherapistSnils(therapist.id);
   const { diplomas } = useTherapistDiplomas(therapist.id);
+
+  const { banTherapist, unbanTherapist, isMutating } = useTherapistBan({
+    onSuccess() {
+      refetch('therapist');
+    },
+  });
+
+  const bannedStatuses = ['blocked', 'pre_blocked'];
+  const banMethod = bannedStatuses.includes(therapist.status)
+    ? unbanTherapist.mutate.bind(null, therapist.id)
+    : banTherapist.mutate.bind(null, therapist.id);
+
+  const banWord = bannedStatuses.includes(therapist.status) ? 'Разблокировать' : 'Заблокировать';
 
   return (
     <Spin spinning={isLoading}>
@@ -52,6 +68,18 @@ export const TherapistSignupDocuments: FC = () => {
               <Document style={'empty'} name={documentName.diploma} />
             )}
           </div>
+          <Button
+            loading={isMutating || isLoading}
+            size="large"
+            onClick={() => {
+              banMethod();
+            }}
+            style={{
+              marginTop: '24px',
+            }}
+          >
+            {banWord}
+          </Button>
         </Form.Item>
       </Form>
     </Spin>

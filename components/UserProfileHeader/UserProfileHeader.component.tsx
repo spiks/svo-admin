@@ -6,8 +6,6 @@ import { useRouter } from 'next/router';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { FC, useContext } from 'react';
 import { Header } from '../Header/Header.component';
-import { useTherapistBan } from '../../hooks/useTherapistBan';
-import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 import { extractFullName } from '../../utility/extractFullName';
 import { DownloadOutlined } from '@ant-design/icons';
 
@@ -27,13 +25,7 @@ const therapistStatusName: Record<TherapistProfileStatus, string> = {
 };
 
 export const UserProfileHeader: FC = ({ children }) => {
-  const { therapist, isLoading } = useContext(TherapistPageContext);
-  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
-  const { banTherapist, unbanTherapist, isMutating } = useTherapistBan({
-    onSuccess() {
-      refetch('therapist');
-    },
-  });
+  const { therapist } = useContext(TherapistPageContext);
 
   const { back } = useRouter();
 
@@ -63,13 +55,6 @@ export const UserProfileHeader: FC = ({ children }) => {
     );
   };
 
-  const bannedStatuses = ['blocked', 'pre_blocked'];
-  const banMethod = bannedStatuses.includes(therapist.status)
-    ? unbanTherapist.mutate.bind(null, therapist.id)
-    : banTherapist.mutate.bind(null, therapist.id);
-
-  const banWord = bannedStatuses.includes(therapist.status) ? 'Разблокировать' : 'Заблокировать';
-
   return (
     <Header
       style={{ backgroundColor: '#FFFFFF' }}
@@ -78,15 +63,6 @@ export const UserProfileHeader: FC = ({ children }) => {
           <span style={{ marginRight: '12px' }}>{`Пользователь ${extractFullName(therapist)} (${
             therapistStatusName[therapist.status]
           })`}</span>
-          <Button
-            loading={isMutating || isLoading}
-            size="large"
-            onClick={() => {
-              banMethod();
-            }}
-          >
-            {banWord}
-          </Button>
           <Button
             size={'large'}
             target={'_blank'}
