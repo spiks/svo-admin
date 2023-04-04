@@ -22,6 +22,7 @@ import { UserWorkPrinciplesForm } from '@components/UserWorkPrinciplesForm/UserW
 import { TherapistPracticeSection } from '@components/TherapistPracticeSection/TherapistPracticeSection.component';
 import { TherapistSocialsLinksFrom } from '@components/TherapistSocialLinksForm/TherapistSocialLinksForm.component';
 import { TherapistSettingsForm } from '@components/TherapistSettingsForm/TherapistSettingsForm.component';
+import { SmileOutlined } from '@ant-design/icons';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -172,35 +173,30 @@ const TherapistPage: NextPage = () => {
             <TherapistDocumentsForm />
           </PageWrapper>
         );
-
       case USER_TAB_KEY.CONTRACT:
         return (
           <PageWrapper>
             <TherapistContractSection />
           </PageWrapper>
         );
-
       case USER_TAB_KEY.PRACTICE:
         return (
           <PageWrapper>
             <TherapistPracticeSection />
           </PageWrapper>
         );
-
       case USER_TAB_KEY.PRESENTATION:
         return (
           <PageWrapper>
             <UserPresentationForm />
           </PageWrapper>
         );
-
       case USER_TAB_KEY.ABOUT:
         return (
           <PageWrapper>
             <UserBiographyForm />
           </PageWrapper>
         );
-
       case USER_TAB_KEY.PRINCIPLES:
         return (
           <PageWrapper>
@@ -219,7 +215,6 @@ const TherapistPage: NextPage = () => {
             <TherapistSettingsForm />
           </PageWrapper>
         );
-
       default:
         return (
           <PageWrapper>
@@ -258,20 +253,17 @@ const TherapistPage: NextPage = () => {
                     switch (currentStage) {
                       case STAGE.CONTRACT:
                         return <></>;
-                      case STAGE.ACTIVE:
                       case STAGE.DOCUMENTS:
                         return <TherapistSignupDocuments />;
                       case STAGE.INTERVIEW:
                         return <TherapistSignupInterview />;
-                      // По новым макетам с такой логикой администратор не сможет заблокировать пользователя.
-                      // Поэтому убираем.
-                      // case STAGE.ACTIVE:
-                      //   return (
-                      //     <Result
-                      //       icon={<SmileOutlined />}
-                      //       title="Терапевт имеет уже подтверждённый и активированный аккаунт!"
-                      //     />
-                      //   );
+                      case STAGE.ACTIVE:
+                        return (
+                          <Result
+                            icon={<SmileOutlined />}
+                            title="Терапевт имеет уже подтверждённый и активированный аккаунт!"
+                          />
+                        );
                     }
                   })()}
                 </div>

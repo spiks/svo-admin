@@ -6,6 +6,8 @@ import {
   useTherapistServicePricing,
 } from './TherapistSettingsForm.hooks/useTherapistServicePricing';
 import { MIN_PRICE_FOR_INDIVIDUAL_SESSION, MIN_PRICE_FOR_PAIR_SESSION } from '../../constants/sessionPrices';
+import { useTherapistBan } from '../../hooks/useTherapistBan';
+import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
 const { Panel } = Collapse;
 
@@ -13,11 +15,26 @@ export const TherapistSettingsForm: FC = () => {
   const [form] = Form.useForm<ServicePricingFormValues>();
   const { therapist } = useContext(TherapistPageContext);
   const { servicePricing, updateServicePricing } = useTherapistServicePricing(therapist.id);
+  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
   useEffect(() => {
     form.setFieldsValue({ ...servicePricing });
     // eslint-disable-next-line
   }, [servicePricing]);
+
+  const { banTherapist, unbanTherapist, isMutating } = useTherapistBan({
+    onSuccess() {
+      refetch('therapist');
+    },
+  });
+
+  const bannedStatuses = ['blocked', 'pre_blocked'];
+  const banMethod = bannedStatuses.includes(therapist.status)
+    ? unbanTherapist.mutate.bind(null, therapist.id)
+    : banTherapist.mutate.bind(null, therapist.id);
+  const banWord = bannedStatuses.includes(therapist.status)
+    ? 'Разблокировать пользователя'
+    : 'Заблокировать пользователя';
 
   return (
     <section>
@@ -86,6 +103,26 @@ export const TherapistSettingsForm: FC = () => {
           </Form>
         </Panel>
       </Collapse>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+        }}
+      >
+        <Button
+          loading={isMutating}
+          size="large"
+          onClick={() => {
+            banMethod();
+          }}
+          style={{
+            marginTop: '24px',
+          }}
+          danger={true}
+        >
+          {banWord}
+        </Button>
+      </div>
     </section>
   );
 };
