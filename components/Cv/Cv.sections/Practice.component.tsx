@@ -19,14 +19,21 @@ export const Practice: FC = () => {
     .flatMap((spec) => {
       return spec.items;
     })
+    .filter((item) => {
+      return item.isSelected;
+    })
     .map((item) => {
       return item.name;
     })
     .join(', ');
 
-  const formatedTags = specTags.flatMap((group) => {
-    return group.items;
-  });
+  const formatedTags = specTags
+    .flatMap((group) => {
+      return group.items;
+    })
+    .filter((tag) => {
+      return tag.isSelected;
+    });
 
   return (
     <CvSection title={'Практика и специализации'}>
