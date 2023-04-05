@@ -24,10 +24,10 @@ export const SiderMenuItems = [
     label: 'Пользователи',
     icon: <UserOutlined />,
     children: [
-      // {
-      //   label: 'Клиенты',
-      //   url: NAVIGATION.patients,
-      // },
+      {
+        label: 'Клиенты',
+        url: NAVIGATION.patients,
+      },
       {
         label: 'Психологи',
         url: NAVIGATION.therapists,
