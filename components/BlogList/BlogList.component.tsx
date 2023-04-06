@@ -166,45 +166,47 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
               />
             </Col>
           </Row>
-          <Row>
-            {!showFilters && (
-              <Row align="middle" gutter={24}>
-                <Col>
-                  <span style={{ marginRight: '28px' }}>Множественный выбор</span>
-                  <Switch onChange={toggleMultipleChoice} defaultChecked={multipleChoice} />
-                </Col>
-                <Col>
-                  <Button
-                    disabled={!multipleChoice}
-                    onClick={() => {
-                      selectAllArticles();
-                    }}
-                    style={{ marginRight: '8px' }}
-                  >
-                    Выбрать всё
-                  </Button>
-                  <Button
-                    disabled={!multipleChoice}
-                    onClick={() => {
-                      sendArticlesToArchive();
-                    }}
-                  >
-                    Отправить в архив
-                  </Button>
-                </Col>
-              </Row>
-            )}
+          {activeTab !== 'article_archived' && (
             <Row>
-              <Pagination
-                className={style['pagination']}
-                current={page}
-                showSizeChanger
-                pageSize={pageSize}
-                onChange={handlePaginationChange}
-                pageSizeOptions={['10', '20', '50']}
-              />
+              {!showFilters && (
+                <Row align="middle" gutter={24}>
+                  <Col>
+                    <span style={{ marginRight: '28px' }}>Множественный выбор</span>
+                    <Switch onChange={toggleMultipleChoice} defaultChecked={multipleChoice} />
+                  </Col>
+                  <Col>
+                    <Button
+                      disabled={!multipleChoice}
+                      onClick={() => {
+                        selectAllArticles();
+                      }}
+                      style={{ marginRight: '8px' }}
+                    >
+                      Выбрать всё
+                    </Button>
+                    <Button
+                      disabled={!multipleChoice}
+                      onClick={() => {
+                        sendArticlesToArchive();
+                      }}
+                    >
+                      Отправить в архив
+                    </Button>
+                  </Col>
+                </Row>
+              )}
+              <Row>
+                <Pagination
+                  className={style['pagination']}
+                  current={page}
+                  showSizeChanger
+                  pageSize={pageSize}
+                  onChange={handlePaginationChange}
+                  pageSizeOptions={['10', '20', '50']}
+                />
+              </Row>
             </Row>
-          </Row>
+          )}
         </Row>
       }
       pagination={{
