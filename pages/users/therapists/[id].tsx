@@ -2,16 +2,15 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { MainLayout } from '@components/MainLayout/MainLayout.component';
-import { Divider, PageHeader, Result, Spin, Steps, Typography } from 'antd';
+import { Divider, Form, FormProps, notification, PageHeader, Result, Spin, Steps, Typography, UploadFile } from 'antd';
 import { NotFoundLayout } from '@components/NotFoundLayout/NotFoundLayout.component';
 import { Step } from 'rc-steps';
-import { TherapistProfile } from '../../../generated';
+import { Email, Name, Surname, TherapistAmoCrmContactId, TherapistProfile, Uuid } from '../../../generated';
 import { getTherapistDocuments } from '../../../api/therapist/getTherapistDocuments';
-import { useTherapistSignupQueries } from '../../../hooks/useTherapistSignupQueries';
+import { useTherapistSignupQueries, useTherapistSignupQueriesRefresh } from '../../../hooks/useTherapistSignupQueries';
 import { TherapistSignupDocuments } from '@components/TherapistSignupDocuments/TherapistSignupDocuments.component';
 import { TherapistSignupInterview } from '@components/TherapistSignupInterview/TherapistSignupInterview.component';
-import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.component';
-import { UserProfileHeader } from '@components/UserProfileHeader/UserProfileHeader.component';
+import { TherapistProfileHeader } from '@components/TherapistProfileHeader/TherapistProfileHeader.component';
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import { TabList } from '@components/TabList/TabList.component';
 import { TherapistDocumentsForm } from '@components/TherapistDocumentsForm/TherapistDocumentsForm';
@@ -23,6 +22,15 @@ import { TherapistPracticeSection } from '@components/TherapistPracticeSection/T
 import { TherapistSocialsLinksFrom } from '@components/TherapistSocialLinksForm/TherapistSocialLinksForm.component';
 import { TherapistSettingsForm } from '@components/TherapistSettingsForm/TherapistSettingsForm.component';
 import { SmileOutlined } from '@ant-design/icons';
+import { CountryPhoneInputValue } from 'antd-country-phone-input';
+import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
+import { uploadFile } from 'api/upload/uploadFile';
+import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
+import { removeTherapistAvatar } from 'api/therapist/removeTherapistAvatar';
+import { TherapistServiceWithToken } from 'api/services';
+import { CountryCode, getCountryCallingCode } from 'libphonenumber-js';
+import { ApiRegularError } from 'api/errorClasses';
+import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.component';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -62,11 +70,22 @@ type TherapistPageContextValue = {
   isLoading: boolean;
 };
 
+export type UserProfileFormValues = {
+  avatar: UploadFile[];
+  phone: CountryPhoneInputValue;
+  id: Uuid;
+  surname: Surname;
+  name: Name;
+  email: Email | null;
+  amoCrmContactId?: TherapistAmoCrmContactId | null;
+};
+
 // Контекст страницы терапевта
 export const TherapistPageContext = createContext({} as TherapistPageContextValue);
 
 const TherapistPage: NextPage = () => {
   const { query, replace, events } = useRouter();
+  const [form] = Form.useForm<UserProfileFormValues>();
 
   const [routeChanging, setRouteChanging] = useState(false);
 
@@ -97,6 +116,7 @@ const TherapistPage: NextPage = () => {
   }, [query]);
 
   const { isLoading, isError, therapist, documents } = useTherapistSignupQueries(therapistId);
+  const refetch = useTherapistSignupQueriesRefresh(therapistId);
 
   const [currentStage, setCurrentStage] = useState<STAGE>(STAGE.DOCUMENTS);
 
@@ -159,12 +179,105 @@ const TherapistPage: NextPage = () => {
     return <MainLayout loading={true} />;
   }
 
+  const onFinish: FormProps<UserProfileFormValues>['onFinish'] = async (values) => {
+    const isAvatarChanged = Boolean(values?.avatar?.[0]?.originFileObj);
+    if (isAvatarChanged) {
+      const file = values.avatar[0].originFileObj!;
+      try {
+        const { data: cred } = await requestFileUploadUrl('avatar');
+        const avatarToken = (await uploadFile(cred, file)).data.token;
+        await updateTherapistAvatar({
+          therapistId: therapistId,
+          avatar: avatarToken,
+        });
+      } catch (err) {
+        if (!(err instanceof Error)) {
+          notification.error({
+            type: 'error',
+            message: 'Ошибка',
+            description: `Неизвестная ошибка`,
+          });
+        }
+      }
+    } else if (!isAvatarChanged && !values.avatar.length && therapist?.avatar?.sizes) {
+      try {
+        await removeTherapistAvatar(therapistId);
+      } catch (err) {
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: 'Не удалось удалить изображение',
+        });
+      }
+    }
+    try {
+      await TherapistServiceWithToken.updateTherapistPersonalInformation({
+        requestBody: {
+          arguments: {
+            id: therapistId,
+            surname: values.surname,
+            name: values.name,
+            phone: '+' + getCountryCallingCode(values.phone.short as CountryCode) + values.phone.phone,
+            email: values.email,
+            amoCrmContactId: values.amoCrmContactId ? +values.amoCrmContactId : null,
+          },
+        },
+      });
+      notification.success({
+        type: 'success',
+        message: 'Успех',
+        description: 'Информация сохранена!',
+      });
+    } catch (error) {
+      let message = 'неизвестная ошибка';
+      if (error instanceof ApiRegularError) {
+        switch (error.error.type) {
+          case 'user_with_this_email_already_exists':
+            message = 'Пользователь с такой почтой уже существует';
+            form.setFields([
+              {
+                name: 'email',
+                errors: [message],
+              },
+            ]);
+            break;
+          case 'user_with_this_phone_already_exists':
+            message = 'Пользователь с таким номером уже сщуествует';
+            form.setFields([
+              {
+                name: 'phone',
+                errors: [message],
+              },
+            ]);
+            break;
+        }
+      }
+      notification.error({
+        type: 'error',
+        message: 'Ошибка',
+        description: 'Не удалось сохранить: ' + message,
+      });
+    } finally {
+      refetch('therapist');
+    }
+  };
+
   const renderTabContents = () => {
     switch (activeTab) {
       case USER_TAB_KEY.INFORMATION:
         return (
           <PageWrapper>
-            <UserProfileForm />
+            <UserProfileForm
+              id={therapist?.id}
+              amoCrmContactId={therapist?.amoCrmContactId}
+              name={therapist?.name}
+              surname={therapist?.surname}
+              avatar={therapist?.avatar}
+              phone={therapist?.phone}
+              email={therapist?.email}
+              form={form}
+              onFinish={onFinish}
+            />
           </PageWrapper>
         );
       case USER_TAB_KEY.DOCUMENTS:
@@ -227,9 +340,9 @@ const TherapistPage: NextPage = () => {
   return (
     <TherapistPageContext.Provider value={contextValue}>
       <MainLayout>
-        <UserProfileHeader>
+        <TherapistProfileHeader>
           <TabList items={tabListItems} activeKey={activeTab} onChange={handleTabListChange} />
-        </UserProfileHeader>
+        </TherapistProfileHeader>
         <div style={{ overflowY: 'auto', overflowX: 'hidden' }}>
           {activeTab === USER_TAB_KEY.INFORMATION && (
             <PageWrapper>

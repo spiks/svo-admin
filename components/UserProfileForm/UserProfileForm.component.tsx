@@ -1,131 +1,52 @@
-import { Button, Col, Divider, Form, FormProps, Input, notification, Row, Tooltip, Typography, Upload } from 'antd';
+import { Button, Col, Divider, Form, FormInstance, Input, notification, Row, Tooltip, Typography, Upload } from 'antd';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useCallback, useContext } from 'react';
 import { CopyOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
-import { TherapistPageContext } from 'pages/users/therapists/[id]';
-import { useTherapistSignupQueriesRefresh } from 'hooks/useTherapistSignupQueries';
-import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
-import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';
-import { uploadFile } from 'api/upload/uploadFile';
-import { TherapistServiceWithToken } from '../../api/services';
-import { ApiRegularError } from '../../api/errorClasses';
-import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
-import { removeTherapistAvatar } from '../../api/therapist/removeTherapistAvatar';
-import { Email, Name, Surname, TherapistAmoCrmContactId, Uuid } from 'generated';
-import { CountryCode, getCountryCallingCode, isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
+import { UserProfileFormValues } from 'pages/users/therapists/[id]';
+import CountryPhoneInput from 'antd-country-phone-input';
 
-type UserProfileFormValues = {
-  avatar: UploadFile[];
-  phone: CountryPhoneInputValue;
-  id: Uuid;
-  surname: Surname;
-  name: Name;
-  email: Email | null;
-  amoCrmContactId: TherapistAmoCrmContactId | null;
+import {
+  City,
+  Country,
+  Email,
+  MediaImage,
+  Name,
+  Phone,
+  ProfileGender,
+  Surname,
+  TherapistAmoCrmContactId,
+  Uuid,
+} from 'generated';
+import { getCountryCallingCode, isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
+
+export type UserProfileFormProps = {
+  id?: Uuid;
+  surname?: Surname | null;
+  name?: Name | null;
+  avatar?: MediaImage | null;
+  gender?: ProfileGender | null;
+  email?: Email | null;
+  phone?: Phone | null;
+  amoCrmContactId?: TherapistAmoCrmContactId | null;
+  form: FormInstance<UserProfileFormValues>;
+  onFinish: (values: UserProfileFormValues) => void;
 };
 
-export const UserProfileForm: FC = () => {
-  const [form] = Form.useForm();
-  const { therapist } = useContext(TherapistPageContext);
-  const refetch = useTherapistSignupQueriesRefresh(therapist.id);
-
-  const onFinish: FormProps<UserProfileFormValues>['onFinish'] = async (values) => {
-    const isAvatarChanged = Boolean(values?.avatar?.[0]?.originFileObj);
-    if (isAvatarChanged) {
-      const file = values.avatar[0].originFileObj!;
-      try {
-        const { data: cred } = await requestFileUploadUrl('avatar');
-        const avatarToken = (await uploadFile(cred, file)).data.token;
-        await updateTherapistAvatar({
-          therapistId: therapist.id,
-          avatar: avatarToken,
-        });
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          notification.error({
-            type: 'error',
-            message: 'Ошибка',
-            description: `Неизвестная ошибка`,
-          });
-        }
-      }
-    } else if (!isAvatarChanged && !values.avatar.length && therapist?.avatar?.sizes) {
-      try {
-        await removeTherapistAvatar(therapist.id);
-      } catch (err) {
-        notification.error({
-          type: 'error',
-          message: 'Ошибка',
-          description: 'Не удалось удалить изображение',
-        });
-      }
-    }
-    try {
-      await TherapistServiceWithToken.updateTherapistPersonalInformation({
-        requestBody: {
-          arguments: {
-            id: therapist.id,
-            surname: values.surname,
-            name: values.name,
-            phone: '+' + getCountryCallingCode(values.phone.short as CountryCode) + values.phone.phone,
-            email: values.email,
-            amoCrmContactId: values.amoCrmContactId ? +values.amoCrmContactId : null,
-          },
-        },
-      });
-      notification.success({
-        type: 'success',
-        message: 'Успех',
-        description: 'Информация сохранена!',
-      });
-    } catch (error) {
-      let message = 'неизвестная ошибка';
-      if (error instanceof ApiRegularError) {
-        switch (error.error.type) {
-          case 'user_with_this_email_already_exists':
-            message = 'Пользователь с такой почтой уже существует';
-            form.setFields([
-              {
-                name: 'email',
-                errors: [message],
-              },
-            ]);
-            break;
-          case 'user_with_this_phone_already_exists':
-            message = 'Пользователь с таким номером уже сщуествует';
-            form.setFields([
-              {
-                name: 'phone',
-                errors: [message],
-              },
-            ]);
-            break;
-        }
-      }
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Не удалось сохранить: ' + message,
-      });
-    } finally {
-      refetch('therapist');
-    }
-  };
-
+export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...props }) => {
   const getAvatar = () => {
-    const avatar: UploadFile[] = [];
-    const therapistAvatar = therapist.avatar?.sizes.small;
-    if (therapistAvatar) {
-      avatar.push({
+    const uploadedAvatar: UploadFile[] = [];
+    const userAvatar = props.avatar?.sizes.small;
+    if (userAvatar) {
+      uploadedAvatar.push({
         uid: '0',
         name: 'avatar.webp',
-        url: 'https://' + therapistAvatar.url,
+        url: 'https://' + userAvatar.url,
       });
     }
-    return avatar;
+    return uploadedAvatar;
   };
 
-  const phoneNumber = therapist.phone && parsePhoneNumber(therapist.phone);
+  const phoneNumber = props.phone && parsePhoneNumber(props.phone);
 
   const copyAmoCrmId = useCallback(() => {
     navigator.clipboard.writeText(form.getFieldValue('amoCrmContactId'));
@@ -142,11 +63,11 @@ export const UserProfileForm: FC = () => {
       wrapperCol={{ span: 16 }}
       initialValues={{
         avatar: getAvatar(),
-        name: therapist.name,
-        surname: therapist.surname,
-        id: therapist.id,
-        amoCrmContactId: therapist.amoCrmContactId,
-        email: therapist.email,
+        name: props.name,
+        surname: props.surname,
+        id: props.id,
+        amoCrmContactId: props.amoCrmContactId,
+        email: props.email,
         phone: phoneNumber
           ? {
               short: phoneNumber.country ?? phoneNumber.getPossibleCountries()[0] ?? 'RU',
@@ -226,23 +147,25 @@ export const UserProfileForm: FC = () => {
       >
         <Input />
       </Form.Item>
-      <Form.Item label="Системный ID">
-        <Row>
-          <Col flex={1}>
-            <Form.Item
-              rules={[{ pattern: /^[0-9]+$/, message: 'ID должен состоять только из цифр' }]}
-              name="amoCrmContactId"
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col>
-            <Tooltip placement="left" title="Копировать amoCrm id">
-              <Button onClick={copyAmoCrmId} icon={<CopyOutlined />} />
-            </Tooltip>
-          </Col>
-        </Row>
-      </Form.Item>
+      {props.amoCrmContactId !== undefined && (
+        <Form.Item label="Системный ID">
+          <Row>
+            <Col flex={1}>
+              <Form.Item
+                rules={[{ pattern: /^[0-9]+$/, message: 'ID должен состоять только из цифр' }]}
+                name="amoCrmContactId"
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col>
+              <Tooltip placement="left" title="Копировать amoCrm id">
+                <Button onClick={copyAmoCrmId} icon={<CopyOutlined />} />
+              </Tooltip>
+            </Col>
+          </Row>
+        </Form.Item>
+      )}
       <Divider>Контактные данные</Divider>
       <Form.Item
         rules={[
