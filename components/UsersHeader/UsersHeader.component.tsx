@@ -12,6 +12,7 @@ type UserHeaderProps = {
   form: Parameters<typeof useUsersHeaderForm>[0];
   subTitle?: string;
   description?: string;
+  addUser?: boolean;
 };
 /**
  * Шапка с параметрами для фильтрации листинга для подразделов категории "Пользователи";
@@ -25,6 +26,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
   description,
   subTitle,
   children,
+  addUser = false,
 }) => {
   const { back } = useRouter();
   const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters } =
@@ -47,7 +49,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
         title={title}
         onBack={title ? back : undefined}
         extra={[
-          <RegisterTherapistButton key={1} />,
+          addUser && <RegisterTherapistButton key={1} />,
           <Button type={'default'} size={'large'} icon={<FilterFilled />} onClick={toggleShowFilters} key={2}>
             Параметры поиска
           </Button>,

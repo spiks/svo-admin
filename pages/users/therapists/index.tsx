@@ -86,6 +86,7 @@ const TherapistsPage: NextPage = () => {
         subTitle={'В этом разделе собраны профили терапевтов системы'}
         form={form}
         searchPlaceholder={'Начните вводить имя терапевта'}
+        addUser
       >
         <TabList
           defaultActiveKey={'active'}
