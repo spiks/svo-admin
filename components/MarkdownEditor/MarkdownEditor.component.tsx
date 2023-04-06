@@ -1,9 +1,8 @@
-import { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
 import { Editor, EditorProps } from 'react-draft-wysiwyg';
 import { fromStringToContentState } from './MarkdownEditor.utils';
 import { MarkdownEditorBlockType, MarkdownEditorInlineStyle, MarkdownEditorProps } from './MarkdownEditor.typedef';
-import { convertToRaw, RichUtils } from 'draft-js';
-import { draftToMarkdown } from 'markdown-draft-js';
+import { convertFromRaw, convertToRaw, EditorState, Modifier, RichUtils } from 'draft-js';
 import styles from './MarkdownEditor.module.css';
 import Image from 'next/image';
 import formatBoldSvg from './MarkdownEditor.resources/format_bold_24px.svg';
@@ -13,9 +12,49 @@ import formatUnorderedListSvg from './MarkdownEditor.resources/format_list_bulle
 import formatOrderedListSvg from './MarkdownEditor.resources/format_list_numbered_24px.svg';
 import formatSizeSvg from './MarkdownEditor.resources/title_24px.svg';
 import formatStrikeThroughSvg from './MarkdownEditor.resources/format_strikethrough_24px.svg';
-import { Popover, Radio, RadioChangeEvent } from 'antd';
+import blockImageSvg from './MarkdownEditor.resources/block_image.svg';
+import { Button, Col, Form, Input, Popover, Radio, RadioChangeEvent, Row, Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { useImageForm } from '@components/MarkdownEditor/MarkdownEditor.hooks/useImageForm';
+import { getValueFromEvent } from '@components/MarkdownEditor/MarkdownEditor.utils/getValueFromUploadEvent';
+import { HttpRequestHeader } from 'antd/es/upload/interface';
+import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
 
 export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange }) => {
+  const {
+    form: imageForm,
+    imageValidator,
+    submit: imageFormSubmit,
+    imageUploadUrl,
+    image: imageFormImage,
+    url: imageFormUrl,
+    urlValidator,
+  } = useImageForm({
+    onSuccess: async (link) => {
+      if (!link) {
+        return;
+      }
+
+      const cleanLink = link.split('?')[0];
+      const fileNameIndex = cleanLink.lastIndexOf('/');
+      const alt = cleanLink.substring(fileNameIndex + 1);
+
+      // Так как чистый маркдаун не сохраняется в стейт, приходится использовать специальный идентификатор
+      // <img, на месте которого может быть любой другой произвольный набор символов. Не нашел, как нативно вместо изображения,
+      // вставлять md так, чтобы он не удалялся и был доступен после сохранения или редактирования статьи.
+      // Текущая реализация на фронте предполагает, что мы заменяем <img на !, таким образом переводя контент в маркдавн.
+      let image = `\n<img[${alt}](${cleanLink})\n`;
+      const contentState = Modifier.insertText(
+        editorState.getCurrentContent(),
+        editorState.getSelection(),
+        image,
+        editorState.getCurrentInlineStyle(),
+      );
+      setEditorState(EditorState.push(editorState, contentState, 'insert-characters'));
+      imageForm.resetFields();
+    },
+  });
+
   const [editorState, setEditorState] = useState(fromStringToContentState(initialValue));
   const [touched, setTouched] = useState(false);
 
@@ -25,8 +64,12 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
       return;
     }
 
-    const draftState = fromStringToContentState(initialValue);
-    setEditorState(draftState);
+    if (initialValue) {
+      const draft = markdownToDraft(initialValue);
+      const content = convertFromRaw(draft);
+      const state = EditorState.createWithContent(content);
+      setEditorState(state);
+    }
   }, [initialValue, touched]);
 
   /** Editor state change handler */
@@ -44,8 +87,8 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
       }
 
       const contentState = draftState.getCurrentContent();
-      const rawContentState = convertToRaw(contentState);
-      const markdown = draftToMarkdown(rawContentState);
+      const raw = convertToRaw(contentState);
+      const markdown = draftToMarkdown(raw);
       onChange(markdown);
     },
     [onChange, touched],
@@ -120,7 +163,7 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
         <button type="button" onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.ORDERED_LIST_ITEM)}>
           <Image {...formatOrderedListSvg} alt={'ordered list'} unoptimized={true} />
         </button>
-        {/* BLock text type */}
+        {/* Block text type */}
         <Popover
           content={
             <Radio.Group
@@ -138,6 +181,61 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
         >
           <button type="button">
             <Image {...formatSizeSvg} alt={'block text type'} unoptimized={true} />
+          </button>
+        </Popover>
+        {/* Add image */}
+        <Popover
+          placement={'top'}
+          content={
+            <Form form={imageForm} layout={'vertical'} onFinish={imageFormSubmit}>
+              <Form.Item name={'url'} label={'URL'} rules={[urlValidator]}>
+                <Input type={'text'} disabled={!!imageFormImage} />
+              </Form.Item>
+              <Form.Item
+                name={'image'}
+                getValueFromEvent={getValueFromEvent}
+                valuePropName={'fileList'}
+                rules={[imageValidator]}
+                style={{
+                  maxWidth: '219px',
+                }}
+              >
+                <Upload
+                  headers={{ 'X-Requested-With': null } as unknown as HttpRequestHeader}
+                  multiple={false}
+                  maxCount={1}
+                  showUploadList={true}
+                  action={imageUploadUrl}
+                >
+                  <Button disabled={!!imageFormImage || imageFormUrl} icon={<UploadOutlined />}>
+                    Загрузить с компьютера
+                  </Button>
+                </Upload>
+              </Form.Item>
+              <Form.Item>
+                <Row justify={'space-between'}>
+                  <Col>
+                    <Button
+                      htmlType={'button'}
+                      onClick={imageForm.resetFields.bind(null, undefined) as unknown as MouseEventHandler<unknown>}
+                      danger={true}
+                    >
+                      Сбросить
+                    </Button>
+                  </Col>
+                  <Col>
+                    <Button htmlType={'submit'} type={'primary'} disabled={!imageFormImage && !imageFormUrl}>
+                      Вставить
+                    </Button>
+                  </Col>
+                </Row>
+              </Form.Item>
+            </Form>
+          }
+          title={'Вставить изображение'}
+        >
+          <button type={'button'}>
+            <Image {...blockImageSvg} alt={'add image'} unoptimized={true} />
           </button>
         </Popover>
       </div>

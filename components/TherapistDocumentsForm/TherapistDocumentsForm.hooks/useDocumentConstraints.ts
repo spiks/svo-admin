@@ -13,7 +13,7 @@ function formatBytes(bytes: number, decimals = 2) {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
 
-export function useUploadPersonalDocumentConstraints(constraints?: FileUploadCredentials['constraints']) {
+export function useDocumentConstraints(constraints?: FileUploadCredentials['constraints']) {
   return useCallback(
     (file: { size: number; type: string }) => {
       const typeRules = constraints?.find((rules) => {

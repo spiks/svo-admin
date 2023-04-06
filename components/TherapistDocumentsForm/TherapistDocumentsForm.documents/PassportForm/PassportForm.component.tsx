@@ -13,7 +13,7 @@ import {
   FusSuccessResponse,
   useFileUpload,
 } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
-import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
+import { useDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useDocumentConstraints';
 import { Moment } from 'moment';
 import { useRequiredUploadFormItem } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/useRequiredUploadFormItem';
 import { birthday } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/birthday.rule';
@@ -59,7 +59,7 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
 
   const docFile = Form.useWatch('document', form);
   const { uploadData } = useFileUpload('personal_document');
-  const validateDocument = useUploadPersonalDocumentConstraints(uploadData?.constraints);
+  const validateDocument = useDocumentConstraints(uploadData?.constraints);
   const { reset, isUploadFinished, formItemProps, uploadProps } = useRequiredUploadFormItem(
     form,
     'document',
