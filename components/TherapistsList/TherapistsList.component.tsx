@@ -1,7 +1,7 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { Badge, Table } from 'antd';
 import { GridView, toGridView } from '../../helpers/toGridView';
-import { ColumnsType, SortOrder, TableRowSelection } from 'antd/lib/table/interface';
+import { ColumnsType, SortOrder } from 'antd/lib/table/interface';
 import { useRouter } from 'next/router';
 import { useUsersQueryParams } from '@components/UsersHeader/UsersHeader.hooks/useUsersQueryParams';
 import { getTherapistList } from '../../api/therapist/getTherapistList';
@@ -10,7 +10,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { TAB_KEY } from '../../pages/users/therapists';
 import { TherapistProfileStatus } from '../../generated';
 
-// Колонки списка
 const columns: ColumnsType<GridView> = [
   {
     title: 'Имя пользователя',
@@ -36,15 +35,6 @@ const columns: ColumnsType<GridView> = [
     width: 181,
   },
 ];
-
-const rowSelection: TableRowSelection<GridView> = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  onSelect: (record, selected, selectedRows) => {
-    // console.log(record, selected, selectedRows);
-  },
-};
 
 // Ключи применяемые для фильтрации пользователей для отдельных разделов
 const queryStatusLists: Record<TAB_KEY, TherapistProfileStatus[]> = {
@@ -185,7 +175,6 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
           </div>
         );
       }}
-      rowSelection={isMultipleChoice ? { ...rowSelection } : undefined}
       columns={columns}
       onRow={(data) => {
         return {

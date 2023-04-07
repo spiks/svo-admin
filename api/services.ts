@@ -2,6 +2,7 @@ import { provideToken } from './provideToken';
 import {
   AccountService,
   AdminBlogService,
+  AppointmentService,
   DiplomaOfHigherEducationService,
   InnService,
   PassportService,
@@ -27,4 +28,5 @@ export const TherapistInterviewServiceWithToken = provideToken(TherapistIntervie
 export const TherapistContractServiceWithToken = provideToken(TherapistContractService);
 export const UploadingFilesServiceWithToken = provideToken(UploadingFilesService);
 export const AdminBlogServiceWithToken = provideToken(AdminBlogService);
+export const AppointmentServiceWithToken = provideToken(AppointmentService);
 export const VideoPresentationWithToken = provideToken(VideoPresentationService);
