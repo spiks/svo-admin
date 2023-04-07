@@ -21,7 +21,7 @@ export function useImageForm({ onSuccess }: UseImageFormParams = {}) {
   const [form] = Form.useForm<ImageFormValue>();
   const url = Form.useWatch('url', form);
   const imageFileList = Form.useWatch('image', form);
-  const { uploadData } = useFileUpload('message_attachment');
+  const { uploadData } = useFileUpload('article_cover');
   const validateDocument = useDocumentConstraints(uploadData?.constraints);
 
   useEffect(() => {
