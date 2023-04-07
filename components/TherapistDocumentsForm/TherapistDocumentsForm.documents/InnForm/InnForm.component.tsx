@@ -5,7 +5,7 @@ import {
   FusSuccessResponse,
   useFileUpload,
 } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
-import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
+import { useDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useDocumentConstraints';
 import { getUploadFileFromStaticFile } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.utils/getUploadFileFromStaticFile';
 import { useRequiredUploadFormItem } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/useRequiredUploadFormItem';
 
@@ -26,7 +26,7 @@ export const InnForm: FC<InnFormProps> = ({ inn, onSubmit, onDelete, disabled = 
 
   const docFile = Form.useWatch('document', form);
   const { uploadData } = useFileUpload('personal_document');
-  const validateDocument = useUploadPersonalDocumentConstraints(uploadData?.constraints);
+  const validateDocument = useDocumentConstraints(uploadData?.constraints);
   const { reset, isUploadFinished, formItemProps, uploadProps } = useRequiredUploadFormItem(
     form,
     'document',

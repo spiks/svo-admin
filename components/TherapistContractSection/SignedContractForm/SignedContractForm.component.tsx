@@ -2,7 +2,7 @@ import {
   FusSuccessResponse,
   useFileUpload,
 } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
-import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
+import { useDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useDocumentConstraints';
 import { getUploadFileFromStaticFile } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.utils/getUploadFileFromStaticFile';
 import { Button, Col, Form, Row, Select, Typography, Upload, UploadFile } from 'antd';
 import { RcFile } from 'antd/lib/upload';
@@ -27,7 +27,7 @@ export const SignedContractForm: FC<SignedContractFormProps> = ({ signedContract
   const [form] = Form.useForm<SignedContractFormValues>();
   const docFile = Form.useWatch('signedContract', form);
   const { uploadData } = useFileUpload('personal_document');
-  const validateDocument = useUploadPersonalDocumentConstraints(uploadData?.constraints);
+  const validateDocument = useDocumentConstraints(uploadData?.constraints);
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
 
   const getContractStatus = () => {

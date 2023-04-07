@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from 'react';
 import { Snils, SnilsInformation } from '../../../../generated';
 import { Button, Col, Form, Input, Row, Upload, UploadFile } from 'antd';
-import { useUploadPersonalDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useUploadValidationFromConstraints';
+import { useDocumentConstraints } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useDocumentConstraints';
 import { getUploadFileFromStaticFile } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.utils/getUploadFileFromStaticFile';
 import {
   FusSuccessResponse,
@@ -26,7 +26,7 @@ export const SnilsForm: FC<SnilsFormProps> = ({ snils, onSubmit, onDelete, disab
 
   const docFile = Form.useWatch('document', form);
   const { uploadData } = useFileUpload('personal_document');
-  const validateDocument = useUploadPersonalDocumentConstraints(uploadData?.constraints);
+  const validateDocument = useDocumentConstraints(uploadData?.constraints);
   const { reset, isUploadFinished, formItemProps, uploadProps } = useRequiredUploadFormItem(
     form,
     'document',
