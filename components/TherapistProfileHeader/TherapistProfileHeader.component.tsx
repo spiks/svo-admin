@@ -24,7 +24,7 @@ const therapistStatusName: Record<TherapistProfileStatus, string> = {
   created_by_admin: 'Создан администратором',
 };
 
-export const UserProfileHeader: FC = ({ children }) => {
+export const TherapistProfileHeader: FC = ({ children }) => {
   const { therapist } = useContext(TherapistPageContext);
 
   const { back } = useRouter();
