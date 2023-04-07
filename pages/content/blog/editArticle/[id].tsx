@@ -14,11 +14,8 @@ import { blogBreadcrumbItemRender } from '../../../../helpers/blogBreadcrumbItem
 import { useGetBlogArticle } from '../../../../hooks/useGetBlogArticle';
 import { NAVIGATION } from '../../../../constants/navigation';
 import { UploadFile } from 'antd/lib/upload/interface';
-import { requestFileUploadUrl } from '../../../../api/upload/requestFileUploadUrl';
-import { uploadFile } from '../../../../api/upload/uploadFile';
-import { updateBlogArticleCover } from '../../../../api/blog/updateBlogArticleCover';
 import { useQueryClient } from '@tanstack/react-query';
-import { removeBlogArticleCover } from '../../../../api/blog/removeBlogArticleCover';
+import { manageBlogArticleCover } from '../../../../helpers/manageBlogArticleCover';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -54,37 +51,7 @@ const EditArticlePage: NextPage = () => {
     const values: AdminUpdateBlogArticle & { cover: UploadFile[] } = form.getFieldsValue(true);
 
     // Этап №1: Обновляем обложку
-    const isCoverChanged = Boolean(values?.cover?.[0]?.originFileObj);
-    if (isCoverChanged) {
-      const file = values.cover[0].originFileObj!;
-      try {
-        const { data: cred } = await requestFileUploadUrl('article_cover');
-        const coverToken = (await uploadFile(cred, file)).data.token;
-        await updateBlogArticleCover({
-          id: values.id,
-          cover: coverToken,
-        });
-      } catch (err) {
-        if (!(err instanceof Error)) {
-          notification.error({
-            type: 'error',
-            message: 'Ошибка',
-            description: `Неизвестная ошибка`,
-          });
-        }
-      }
-    } else if (!isCoverChanged && !values.cover.length && article?.cover?.sizes) {
-      try {
-        await removeBlogArticleCover({ id: values.id });
-      } catch (err) {
-        console.error(err);
-        notification.error({
-          type: 'error',
-          message: 'Ошибка',
-          description: `Не удалось удалить обложку.`,
-        });
-      }
-    }
+    await manageBlogArticleCover(values?.cover, articleId, article?.cover || undefined);
 
     // Этап №2: Обновляем всё остальное
     try {
@@ -97,7 +64,7 @@ const EditArticlePage: NextPage = () => {
       // Сбрасываем кэщ (обновляем статьи в списке)
       await client.invalidateQueries({ queryKey: ['articles'] });
       // Перенаправляем на список статьей
-      await push(NAVIGATION.blog);
+      await push(`${NAVIGATION.blog}${values.isArchived ? '?activeTab=article_archived' : ''}`);
       form.resetFields();
     } catch (err) {
       notification.error({
@@ -106,7 +73,7 @@ const EditArticlePage: NextPage = () => {
         description: 'Не удалось изменить статью. Проверьте, все ли поля заполнены верно.',
       });
     }
-  }, [form, article?.cover?.sizes, client, push]);
+  }, [form, articleId, article?.cover, client, push]);
 
   return (
     <MainLayout>
@@ -125,7 +92,7 @@ const EditArticlePage: NextPage = () => {
             type={'primary'}
             key="2"
           >
-            Опубликовать
+            Редактировать
           </Button>,
         ]}
       >

@@ -13,7 +13,7 @@ export type BlogArticleProps = {
   status: ArticleBlogStatus;
 };
 
-const getTagItem = (status: ArticleBlogStatus) => {
+export const getTagItem = (status: ArticleBlogStatus) => {
   switch (status) {
     case 'article_published':
     case 'article_archived': {
@@ -89,12 +89,12 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
         </Col>
         <Col span={14}>
           {author.avatar ? (
-            <Avatar style={{ marginRight: '8px' }} src={author.avatar} size={'small'} />
+            <Avatar style={{ marginRight: '8px' }} src={'https://' + author.avatar.sizes.medium.url} size={'small'} />
           ) : (
             <Avatar style={{ marginRight: '8px' }} icon={<UserOutlined />} size={'small'} />
           )}
           <Typography.Link style={{ fontSize: '16px', marginRight: '18px' }}>{fullName}</Typography.Link>
-          <Typography.Text style={{ marginRight: '8px' }}>Опубликовано:</Typography.Text>
+          <Typography.Text style={{ marginRight: '8px' }}>Дата создания:</Typography.Text>
           <Typography.Text type="secondary">{moment(publicationDate).format('YYYY-MM-DD HH:MM')}</Typography.Text>
         </Col>
         <Col>{getTagItem(status)}</Col>

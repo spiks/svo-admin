@@ -3,7 +3,7 @@ import { MainLayout } from '@components/MainLayout/MainLayout.component';
 import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import SplashScreenLoader from '@components/SplashScreenLoader/SplashScreenLoader.component';
 import { TabList } from '@components/TabList/TabList.component';
-import { BreadcrumbProps, Button, Form, FormProps, notification, Tag } from 'antd';
+import { BreadcrumbProps, Button, Form, FormProps, notification } from 'antd';
 import { NextPage } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -17,6 +17,8 @@ import { AdminRejectBlogArticle, rejectArticle } from '../../../../api/blog/reje
 import { NAVIGATION } from '../../../../constants/navigation';
 import { useGetBlogArticle } from '../../../../hooks/useGetBlogArticle';
 import { UploadFile } from 'antd/lib/upload/interface';
+import { manageBlogArticleCover } from '../../../../helpers/manageBlogArticleCover';
+import { getTagItem } from '@components/BlogArticle/BlogArticle.component';
 
 const EditArticleFormComponent = dynamic(() => import('@components/EditArticleForm/EditArticleForm.component'), {
   loading: () => <SplashScreenLoader />,
@@ -50,13 +52,18 @@ const ModerateArticlePage: NextPage = () => {
   }, []);
 
   const handlePublishArticle = useCallback(async () => {
+    const values: AdminUpdateBlogArticle & { cover: UploadFile[] } = form.getFieldsValue(true);
+    await manageBlogArticleCover(values?.cover, articleId, article?.cover || undefined);
+
     try {
+      await updateBlogArticle({ ...values, shortText: values.shortText ?? null });
       await publishArticle(articleId);
       notification.success({
         type: 'success',
         message: 'Успех',
-        description: 'Статья успешно опубликована',
+        description: values?.isArchived ? 'Статья архивирована' : 'Статья успешно опубликована',
       });
+      await push(`${NAVIGATION.blog}${values.isArchived ? '?activeTab=article_archived' : ''}`);
     } catch (err) {
       notification.error({
         type: 'error',
@@ -64,7 +71,7 @@ const ModerateArticlePage: NextPage = () => {
         description: 'Не удалось опубликовать статью',
       });
     }
-  }, [articleId]);
+  }, [article?.cover, articleId, form, push]);
 
   const editArticle: FormProps<AdminUpdateBlogArticle>['onFinish'] = useCallback(async () => {
     const values: AdminUpdateBlogArticle = form.getFieldsValue(true);
@@ -75,7 +82,7 @@ const ModerateArticlePage: NextPage = () => {
         message: 'Успех',
         description: 'Статья успешно изменена',
       });
-      await push(NAVIGATION.blog);
+      await push(`${NAVIGATION.blog}?activeTab=${article?.status}`);
       form.resetFields();
     } catch (err) {
       notification.error({
@@ -84,7 +91,7 @@ const ModerateArticlePage: NextPage = () => {
         description: 'Не удалось изменить статью. Проверьте, все ли поля заполнены верно.',
       });
     }
-  }, [form, push]);
+  }, [article?.status, form, push]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -98,7 +105,7 @@ const ModerateArticlePage: NextPage = () => {
         message: 'Успех',
         description: 'Статья не будет опубликована',
       });
-      await push(NAVIGATION.blog);
+      await push(`${NAVIGATION.blog}?activeTab=article_rejected`);
       rejectArticleForm.resetFields();
     } catch (err) {
       notification.error({
@@ -127,21 +134,21 @@ const ModerateArticlePage: NextPage = () => {
         title={
           <div style={{ display: 'flex', alignItems: 'center', columnGap: '12px' }}>
             {article?.title}
-            <Tag
-              key="1"
-              color={'#FFFBE6'}
-              style={{ border: '1px solid #FFE58F', borderRadius: '2px', color: '#D48806' }}
-            >
-              {'На модерации'}
-            </Tag>
+            {article?.status && getTagItem(article?.status)}
           </div>
         }
         extra={[
-          <Button style={{ color: '#FF4D4F' }} onClick={handleToggleModal} type="text" key="1">
-            Отклонить
-          </Button>,
+          article?.status === 'article_awaiting_review' ? (
+            <Button style={{ color: '#FF4D4F' }} onClick={handleToggleModal} type="text" key="1">
+              Отклонить
+            </Button>
+          ) : (
+            <Button onClick={back} type="text" key="1">
+              Закрыть
+            </Button>
+          ),
           <Button onClick={handlePublishArticle} type={'primary'} key="2">
-            Опубликовать
+            {form.getFieldValue('isArchived') ? 'Архивировать' : 'Опубликовать'}
           </Button>,
         ]}
       >

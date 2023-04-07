@@ -24,7 +24,7 @@ export const ArticleTextForm: FC<Props> = ({ text, title, onReturnBackButtonClic
         </Form.Item>
         <Form.Item>
           <Button disabled={!(Boolean(title) && Boolean(text))} size="large" type="primary" htmlType="submit">
-            {'Опубликовать'}
+            {'Редактировать'}
           </Button>
         </Form.Item>
       </div>
