@@ -4,7 +4,7 @@ import { useCallback, useMemo, useRef } from 'react';
 import { BlogHeaderQueryParams } from '../BlogHeader.typedef';
 
 export function useBlogHeaderForm() {
-  const { replace } = useRouter();
+  const { replace, query } = useRouter();
   const [form] = Form.useForm<BlogHeaderQueryParams>();
 
   const handleFiltersApply = useCallback(async () => {
@@ -15,13 +15,13 @@ export function useBlogHeaderForm() {
 
     await replace({
       query: {
-        ...(search && { search }),
-        ...(tags && { tags }),
-        ...(publishDate && { publishDate }),
+        ...query,
+        search,
+        tags,
+        publishDate,
       },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form]);
+  }, [form, query, replace]);
 
   const handleResetFilters = useCallback(() => {
     form.resetFields();

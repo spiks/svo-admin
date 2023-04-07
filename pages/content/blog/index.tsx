@@ -60,7 +60,7 @@ const BlogPage: NextPage = () => {
       <BlogHeader showFilters={showFilters} handleShowFilters={handleShowFilters}>
         <TabList
           items={tabListItems}
-          defaultActiveKey={'published'}
+          defaultActiveKey={'article_published'}
           activeKey={activeTab}
           onChange={handleTabListChange}
         />
