@@ -21,6 +21,7 @@ import { HttpRequestHeader } from 'antd/es/upload/interface';
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
 
 export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange }) => {
+  const [uploadOpen, setUploadOpen] = useState(false);
   const {
     form: imageForm,
     imageValidator,
@@ -52,6 +53,8 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
       );
       setEditorState(EditorState.push(editorState, contentState, 'insert-characters'));
       imageForm.resetFields();
+
+      setUploadOpen(false);
     },
   });
 
@@ -186,6 +189,7 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
         {/* Add image */}
         <Popover
           placement={'top'}
+          open={uploadOpen}
           content={
             <Form form={imageForm} layout={'vertical'} onFinish={imageFormSubmit}>
               <Form.Item name={'url'} label={'URL'} rules={[urlValidator]}>
@@ -234,7 +238,7 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
           }
           title={'Вставить изображение'}
         >
-          <button type={'button'}>
+          <button onClick={setUploadOpen.bind(null, !uploadOpen)} type={'button'}>
             <Image {...blockImageSvg} alt={'add image'} unoptimized={true} />
           </button>
         </Popover>
