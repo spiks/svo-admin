@@ -92,7 +92,7 @@ const EditArticlePage: NextPage = () => {
             type={'primary'}
             key="2"
           >
-            Редактировать
+            Сохранить
           </Button>,
         ]}
       >
