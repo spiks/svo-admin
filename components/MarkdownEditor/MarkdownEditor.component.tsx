@@ -21,6 +21,30 @@ import { HttpRequestHeader } from 'antd/es/upload/interface';
 import { draftToMarkdown, markdownToDraft } from 'markdown-draft-js';
 
 export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange }) => {
+  const [touched, setTouched] = useState(false);
+
+  /** Editor state change handler */
+  const handleEditorStateChange: EditorProps['onEditorStateChange'] = useCallback(
+    (draftState) => {
+      setEditorState(draftState);
+
+      /** User changed content, don't reveal initial value anymore  */
+      if (!touched) {
+        setTouched(true);
+      }
+
+      if (!onChange) {
+        return;
+      }
+
+      const contentState = draftState.getCurrentContent();
+      const raw = convertToRaw(contentState);
+      const markdown = draftToMarkdown(raw);
+      onChange(markdown);
+    },
+    [onChange, touched],
+  );
+
   const [uploadOpen, setUploadOpen] = useState(false);
   const {
     form: imageForm,
@@ -51,15 +75,15 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
         image,
         editorState.getCurrentInlineStyle(),
       );
+      const nextState = EditorState.push(editorState, contentState, 'insert-characters');
       setEditorState(EditorState.push(editorState, contentState, 'insert-characters'));
+      handleEditorStateChange(nextState);
       imageForm.resetFields();
-
       setUploadOpen(false);
     },
   });
 
   const [editorState, setEditorState] = useState(fromStringToContentState(initialValue));
-  const [touched, setTouched] = useState(false);
 
   /** Keep initial value until any changes by user happen  */
   useEffect(() => {
@@ -74,28 +98,6 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
       setEditorState(state);
     }
   }, [initialValue, touched]);
-
-  /** Editor state change handler */
-  const handleEditorStateChange: EditorProps['onEditorStateChange'] = useCallback(
-    (draftState) => {
-      setEditorState(draftState);
-
-      /** User changed content, don't reveal initial value anymore  */
-      if (!touched) {
-        setTouched(true);
-      }
-
-      if (!onChange) {
-        return;
-      }
-
-      const contentState = draftState.getCurrentContent();
-      const raw = convertToRaw(contentState);
-      const markdown = draftToMarkdown(raw);
-      onChange(markdown);
-    },
-    [onChange, touched],
-  );
 
   /** Current block formatting styles toggle */
   const handleInlineStyleToggle = useCallback(
