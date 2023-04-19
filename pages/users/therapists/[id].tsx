@@ -31,6 +31,7 @@ import { TherapistServiceWithToken } from 'api/services';
 import { CountryCode, getCountryCallingCode } from 'libphonenumber-js';
 import { ApiRegularError } from 'api/errorClasses';
 import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.component';
+import { TherapistLegalForm } from '@components/TherapistLegalForm/TherapistLegalForm.component';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -44,6 +45,7 @@ export enum USER_TAB_KEY {
   INFORMATION = 'INFORMATION',
   DOCUMENTS = 'DOCUMENTS',
   CONTRACT = 'CONTRACT',
+  DETAILS = 'DETAILS',
   ACCOUNTS = 'ACCOUNTS',
   PRACTICE = 'PRACTICE',
   PRESENTATION = 'PRESENTATION',
@@ -56,6 +58,7 @@ const tabListItems: { label: string; key: USER_TAB_KEY }[] = [
   { label: 'Сведения', key: USER_TAB_KEY.INFORMATION },
   { label: 'Документы', key: USER_TAB_KEY.DOCUMENTS },
   { label: 'Договор', key: USER_TAB_KEY.CONTRACT },
+  { label: 'Юридический статус и реквизиты', key: USER_TAB_KEY.DETAILS },
   { label: 'Личные аккаунты', key: USER_TAB_KEY.ACCOUNTS },
   { label: 'Моя практика и специализации', key: USER_TAB_KEY.PRACTICE },
   { label: 'Видеовизитка', key: USER_TAB_KEY.PRESENTATION },
@@ -326,6 +329,12 @@ const TherapistPage: NextPage = () => {
         return (
           <PageWrapper>
             <TherapistSettingsForm />
+          </PageWrapper>
+        );
+      case USER_TAB_KEY.DETAILS:
+        return (
+          <PageWrapper>
+            <TherapistLegalForm />
           </PageWrapper>
         );
       default:
