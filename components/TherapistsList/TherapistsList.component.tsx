@@ -103,6 +103,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
           count: pageSize,
           offset: page * pageSize,
         },
+        mainSpecialization: null,
         orderBy: {
           field: 'createdAt',
           orderDirection: sortOrderCuts[sortOrder],

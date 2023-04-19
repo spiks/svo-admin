@@ -1,10 +1,11 @@
 import { TherapistServiceWithToken } from 'api/services';
+import { MainSpecialization } from 'generated';
 
 export const updateTherapistSpecializations = async (
   therapistId: string,
   specializations: string[],
   additionalSpecializations: string | null,
-  mainSpecialization: string | null,
+  mainSpecialization: MainSpecialization | null,
 ) => {
   return TherapistServiceWithToken.updateTherapistSpecializations({
     requestBody: {
