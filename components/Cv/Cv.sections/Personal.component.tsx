@@ -43,7 +43,6 @@ const formatPassportNumber = (information: Passport['information']) => {
 export const Personal: FC = () => {
   const query = useContext(CvContext);
 
-  const personalInformation = query.data!.personalInformation;
   const documents = query.data!.documents;
   const passport = documents?.passport;
   const snils = documents?.snils;
@@ -62,10 +61,10 @@ export const Personal: FC = () => {
         </tr>
         <tr className={styles['row-8']}>
           <td className={styles['cell-130']}>
-            <CvEntry title={'Фамилия'} value={personalInformation.surname || '-'} />
+            <CvEntry title={'Фамилия'} value={passport?.information.surname || '-'} />
           </td>
           <td className={styles['cell-130']}>
-            <CvEntry title={'Имя'} value={personalInformation.name || '-'} />
+            <CvEntry title={'Имя'} value={passport?.information.name || '-'} />
           </td>
           <td className={styles['cell-130']}>
             <CvEntry title={'Отчество'} value={passport ? passport.information.patronymic || '-' : '-'} />
