@@ -47,7 +47,7 @@ export const Top: FC = () => {
           }}
         >
           <CvName>
-            {[personalInformation.surname, personalInformation.name, patronymic].filter(Boolean).join(' ')}
+            {[passport?.information.surname, passport?.information.name, patronymic].filter(Boolean).join(' ')}
           </CvName>
           <CvText>Стоимость услуг: {minPrice === -1 ? '-' : `от ${minPrice} руб.`}</CvText>
         </div>
