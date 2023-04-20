@@ -1,4 +1,4 @@
-import { FC, useContext } from 'react';
+import { FC, useContext, useMemo } from 'react';
 import { Avatar } from 'antd';
 import { CvName } from '@components/Cv/Cv.children/CvName.component';
 import { CvText } from '@components/Cv/Cv.children/CvText.component';
@@ -13,7 +13,14 @@ export const Top: FC = () => {
   const servicePricing = data!.servicePricing;
   const passport = data!.documents.passport;
 
-  const minPrice = Math.min(servicePricing?.forPairSession || -1, servicePricing?.forIndividualSession || -1);
+  const minPrice = useMemo(() => {
+    if (servicePricing.forIndividualSession && servicePricing.forPairSession) {
+      return Math.min(servicePricing?.forPairSession, servicePricing?.forIndividualSession);
+    }
+
+    return servicePricing.forIndividualSession || servicePricing.forPairSession;
+  }, [servicePricing.forIndividualSession, servicePricing.forPairSession]);
+
   const avatarSrc = personalInformation.avatar?.sizes.medium.url
     ? `https://${personalInformation.avatar?.sizes.medium.url}`
     : undefined;
@@ -49,7 +56,7 @@ export const Top: FC = () => {
           <CvName>
             {[passport?.information.surname, passport?.information.name, patronymic].filter(Boolean).join(' ')}
           </CvName>
-          <CvText>Стоимость услуг: {minPrice === -1 ? '-' : `от ${minPrice} руб.`}</CvText>
+          <CvText>Стоимость услуг: {!minPrice ? '-' : `от ${minPrice} руб.`}</CvText>
         </div>
       </div>
       <div
