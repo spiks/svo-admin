@@ -2,7 +2,20 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { MainLayout } from '@components/MainLayout/MainLayout.component';
-import { Divider, Form, FormProps, notification, PageHeader, Result, Spin, Steps, Typography, UploadFile } from 'antd';
+import {
+  Col,
+  Divider,
+  Form,
+  FormProps,
+  notification,
+  PageHeader,
+  Result,
+  Row,
+  Spin,
+  Steps,
+  Typography,
+  UploadFile,
+} from 'antd';
 import { NotFoundLayout } from '@components/NotFoundLayout/NotFoundLayout.component';
 import { Step } from 'rc-steps';
 import { Email, Name, Surname, TherapistAmoCrmContactId, TherapistProfile, Uuid } from '../../../generated';
@@ -32,6 +45,7 @@ import { CountryCode, getCountryCallingCode } from 'libphonenumber-js';
 import { ApiRegularError } from 'api/errorClasses';
 import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.component';
 import { TherapistLegalForm } from '@components/TherapistLegalForm/TherapistLegalForm.component';
+import { TherapistPaymentInformationForm } from '@components/TherapistPaymentInformationForm/TherapistPaymentInformationForm.component';
 
 // Этапы регистрации терапевта
 enum STAGE {
@@ -334,7 +348,14 @@ const TherapistPage: NextPage = () => {
       case USER_TAB_KEY.DETAILS:
         return (
           <PageWrapper>
-            <TherapistLegalForm />
+            <Row justify="center" gutter={[0, 48]}>
+              <Col span={24}>
+                <TherapistLegalForm />
+              </Col>
+              <Col span={24}>
+                <TherapistPaymentInformationForm />
+              </Col>
+            </Row>
           </PageWrapper>
         );
       default:
