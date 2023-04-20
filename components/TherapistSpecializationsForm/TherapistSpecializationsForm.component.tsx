@@ -1,10 +1,11 @@
-import { Button, Col, Form, Input, notification, Row, Space, Tag } from 'antd';
+import { Button, Col, Form, Input, notification, Row, Select, Space, Tag } from 'antd';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { updateTherapistSpecializations } from '../../api/therapist/updateTherapistSpecializations';
 import { TherapistPageContext } from '../../pages/users/therapists/[id]';
-import { Employment } from '../../generated';
 import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
+import { MainSpecialization } from '../../generated';
+import { SPECIALIZATIONS } from 'constants/mainSpecialization';
 
 const { CheckableTag } = Tag;
 
@@ -121,7 +122,7 @@ export const TherapistSpecializationsForm = () => {
           <Row gutter={[16, 0]} align={'bottom'}>
             <Col flex={1}>
               <Form.Item style={{ margin: 0 }} label="Основная специализация" name="mainSpecialization">
-                <Input />
+                <Select placeholder={'Выберите основную специализацию'} options={SPECIALIZATIONS} />
               </Form.Item>
             </Col>
             <Col>
