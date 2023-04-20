@@ -1,4 +1,4 @@
-import { Button, Col, Divider, Form, FormInstance, Input, notification, Row, Tooltip, Typography, Upload } from 'antd';
+import { Button, Col, Divider, Form, FormInstance, Input, Row, Tooltip, Typography } from 'antd';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useCallback } from 'react';
 import { CopyOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
@@ -8,6 +8,7 @@ import CountryPhoneInput from 'antd-country-phone-input';
 import { Email, MediaImage, Name, Phone, ProfileGender, Surname, TherapistAmoCrmContactId, Uuid } from 'generated';
 import { getCountryCallingCode, isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 import { UploadWithCrop } from '@components/UploadCrop/UploadCrop.component';
+import { validateUploadImage } from '../../helpers/validateUploadImage';
 
 export type UserProfileFormProps = {
   id?: Uuid;
@@ -77,24 +78,7 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
         >
           <UploadWithCrop
             beforeUpload={(file) => {
-              const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-              const isMaxSize = file.size < 15728640;
-
-              if (!isJpgOrPng) {
-                notification.error({
-                  type: 'error',
-                  message: 'Ошибка',
-                  description: `${file.name} имееет неверный формат!`,
-                });
-              }
-              if (!isMaxSize) {
-                notification.error({
-                  type: 'error',
-                  message: 'Ошибка',
-                  description: `Превышен максимальный размер файла!`,
-                });
-              }
-              return (isJpgOrPng && isMaxSize) || Upload.LIST_IGNORE;
+              return validateUploadImage(file);
             }}
             maxCount={1}
             listType="picture-card"
@@ -107,7 +91,7 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
           </UploadWithCrop>
         </Form.Item>
         <Typography.Text type={'secondary'} style={{ display: 'inline-block', maxWidth: '400px', width: '100%' }}>
-          Изображение формата .jpg, .jpeg или .png не более 15 Мб с ограничением по высоте и ширине от 10 до 5400
+          Изображение формата .jpg, .jpeg или .png не более 15.7 Мб с ограничением по высоте и ширине от 10 до 5400
           пикселей
         </Typography.Text>
       </Form.Item>

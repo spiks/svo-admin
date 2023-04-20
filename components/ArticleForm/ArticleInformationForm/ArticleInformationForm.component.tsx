@@ -5,6 +5,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { FC } from 'react';
 import { useGetListBlogTags } from '../../../hooks/useGetListBlogTags';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
+import { validateUploadImage } from '../../../helpers/validateUploadImage';
 
 const { Text } = Typography;
 
@@ -71,24 +72,7 @@ export const ArticleInformationForm: FC = ({ children }) => {
             >
               <Upload
                 beforeUpload={(file) => {
-                  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-                  const isMaxSize = file.size < 15728640;
-
-                  if (!isJpgOrPng) {
-                    notification.error({
-                      type: 'error',
-                      message: 'Ошибка',
-                      description: `${file.name} имееет неверный формат!`,
-                    });
-                  }
-                  if (!isMaxSize) {
-                    notification.error({
-                      type: 'error',
-                      message: 'Ошибка',
-                      description: `Превышен максимальный размер файла!`,
-                    });
-                  }
-                  return (isJpgOrPng && isMaxSize) || Upload.LIST_IGNORE;
+                  return validateUploadImage(file);
                 }}
                 maxCount={1}
                 listType="picture-card"
@@ -107,7 +91,9 @@ export const ArticleInformationForm: FC = ({ children }) => {
                 <Text type="secondary">{'Формат изображения: JPG, PNG.'}</Text>
               </Col>
               <Col span={24}>
-                <Text type="secondary">{'Размер изображения – не более 4.0 mb'}</Text>
+                <Text type="secondary">
+                  {'Размер изображения – не более 15.7 mb  с ограничением по высоте и ширине от 10 до 5400'}
+                </Text>
               </Col>
               <Col span={24}>
                 <Divider style={{ margin: '11px 0' }} />
