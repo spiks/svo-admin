@@ -1,5 +1,5 @@
-const { withSentryConfig } = require('@sentry/nextjs');
-const withAntdLess = require('next-plugin-antd-less');
+import { withSentryConfig } from '@sentry/nextjs';
+import withAntdLess from 'next-plugin-antd-less';
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -17,8 +17,9 @@ const nextConfig = {
   swcMinify: false,
 };
 
-const config = withAntdLess(nextConfig);
-
+let config = withAntdLess(nextConfig);
 // Подключаем Sentry только в production'е и игнорируем создание нового релиза для Sentry в CI
-module.exports =
+config =
   process.env.NODE_ENV === 'production' && process.env.NEXT_PUBLIC_SENTRY_DSN ? withSentryConfig(config) : config;
+
+export default config;
