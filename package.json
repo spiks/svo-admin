@@ -1,6 +1,7 @@
 {
   "name": "most-frontend-admin",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev -p 3001",
     "build": "next build",
