@@ -15,7 +15,7 @@ export const Links: FC = () => {
         {presentation && (
           <>
             <CvSubTitle>Видеовизитка</CvSubTitle>
-            <a className={styles['link']} href={'/'}>
+            <a className={styles['link']} href={presentation.url} target={'_blank'} rel={'noreferrer'}>
               {presentation.url}
             </a>
             <div style={{ height: '8px' }} />
@@ -24,7 +24,7 @@ export const Links: FC = () => {
         {socialLinks?.vkLink && (
           <>
             <CvSubTitle>ВКонтакте</CvSubTitle>
-            <a className={styles['link']} href={'/'}>
+            <a className={styles['link']} href={socialLinks.vkLink} target={'_blank'} rel={'noreferrer'}>
               {socialLinks.vkLink}
             </a>
             <div style={{ height: '8px' }} />
@@ -33,7 +33,7 @@ export const Links: FC = () => {
         {socialLinks?.facebookLink && (
           <>
             <CvSubTitle>Facebook</CvSubTitle>
-            <a className={styles['link']} href={'/'}>
+            <a className={styles['link']} href={socialLinks.facebookLink} target={'_blank'} rel={'noreferrer'}>
               {socialLinks.facebookLink}
             </a>
             <div style={{ height: '8px' }} />
@@ -42,7 +42,7 @@ export const Links: FC = () => {
         {socialLinks?.telegramLink && (
           <>
             <CvSubTitle>Telegram</CvSubTitle>
-            <a className={styles['link']} href={'/'}>
+            <a className={styles['link']} href={socialLinks.telegramLink} target={'_blank'} rel={'noreferrer'}>
               {socialLinks.telegramLink}
             </a>
             <div style={{ height: '8px' }} />
@@ -50,8 +50,8 @@ export const Links: FC = () => {
         )}
         {socialLinks?.instagramLink && (
           <>
-            <CvSubTitle>Telegram</CvSubTitle>
-            <a className={styles['link']} href={'/'}>
+            <CvSubTitle>Instagram</CvSubTitle>
+            <a className={styles['link']} href={socialLinks.instagramLink} target={'_blank'} rel={'noreferrer'}>
               {socialLinks.instagramLink}
             </a>
             <div style={{ height: '8px' }} />
@@ -59,8 +59,8 @@ export const Links: FC = () => {
         )}
         {socialLinks?.twitterLink && (
           <>
-            <CvSubTitle>Telegram</CvSubTitle>
-            <a className={styles['link']} href={'/'}>
+            <CvSubTitle>Twitter</CvSubTitle>
+            <a className={styles['link']} href={socialLinks.twitterLink} target={'_blank'} rel={'noreferrer'}>
               {socialLinks.twitterLink}
             </a>
             <div style={{ height: '8px' }} />
@@ -68,8 +68,8 @@ export const Links: FC = () => {
         )}
         {socialLinks?.youtubeLink && (
           <>
-            <CvSubTitle>Telegram</CvSubTitle>
-            <a className={styles['link']} href={'/'}>
+            <CvSubTitle>YouTube</CvSubTitle>
+            <a className={styles['link']} href={socialLinks.youtubeLink} target={'_blank'} rel={'noreferrer'}>
               {socialLinks.youtubeLink}
             </a>
             <div style={{ height: '8px' }} />
