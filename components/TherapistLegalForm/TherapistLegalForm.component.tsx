@@ -67,7 +67,7 @@ export const TherapistLegalForm: FC = () => {
                           },
                         ]}
                       >
-                        <Input />
+                        <Input maxLength={15} />
                       </Form.Item>
                     ) : null
                   }
