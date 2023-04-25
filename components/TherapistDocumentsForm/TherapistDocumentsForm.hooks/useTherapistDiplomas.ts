@@ -7,7 +7,6 @@ import { DiplomaOfHigherEducation } from '../../../generated';
 import { useQueryInitialLoading } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useQueryInitialLoading';
 import moment, { Moment } from 'moment';
 import { useDiplomaFromDtoConverter } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFromDtoConverter';
-import { ApiRegularError, ApiValidationError } from '../../../api/errorClasses';
 import { FusSuccessResponse } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.hooks/useFileUpload';
 import { useDiplomaFormConverter } from '../TherapistDocumentsForm.documents/DiplomaForm/DiplomaForm.hooks/useDiplomaFormConverter';
 
@@ -73,12 +72,9 @@ export function useTherapistDiplomas(therapistId: string) {
     },
     {
       onError: (_err) => {
-        const err = _err as ApiRegularError | ApiValidationError;
-        const isRegular = 'error' in err;
-        const message = isRegular ? err.error.type : err.type;
         notification.error({
           message: 'Диплом',
-          description: message,
+          description: 'Не удалось получить информацию о дипломе.',
         });
       },
     },
@@ -96,10 +92,10 @@ export function useTherapistDiplomas(therapistId: string) {
       });
     },
     {
-      onError(err: Error) {
+      onError() {
         notification.error({
-          message: 'Диплом (документ)',
-          description: err.message,
+          message: 'Диплом',
+          description: 'Не удалось обновить документ диплома. Попробуйте снова.',
         });
       },
     },
@@ -129,12 +125,11 @@ export function useTherapistDiplomas(therapistId: string) {
         });
         query.refetch();
       },
-      onError: (err: ApiRegularError | ApiValidationError) => {
-        const isRegular = 'error' in err;
-        const message = isRegular ? err.error.type : err.type;
+      onError: () => {
         notification.error({
           message: 'Диплом',
-          description: message,
+          description:
+            'Не удалось обновить информацию о дипломе. Перепроверьте правильность заполнения данных и попробуйте снова.',
         });
       },
     },
@@ -158,12 +153,11 @@ export function useTherapistDiplomas(therapistId: string) {
         });
         query.refetch();
       },
-      onError: (err: ApiRegularError | ApiValidationError) => {
-        const isRegular = 'error' in err;
-        const message = isRegular ? err.error.type : err.type;
+      onError: () => {
         notification.error({
+          type: 'error',
           message: 'Диплом',
-          description: message,
+          description: 'Не удалось потвердить диплом. Попробуйте снова.',
         });
       },
     },
@@ -187,12 +181,11 @@ export function useTherapistDiplomas(therapistId: string) {
         });
         query.refetch();
       },
-      onError: (err: ApiRegularError | ApiValidationError) => {
-        const isRegular = 'error' in err;
-        const message = isRegular ? err.error.type : err.type;
+      onError: () => {
         notification.error({
+          type: 'error',
           message: 'Диплом',
-          description: message,
+          description: 'Не удалось отклонить диплом. Попробуйте снова.',
         });
       },
     },
@@ -234,7 +227,7 @@ export function useTherapistDiplomas(therapistId: string) {
       if (!isLocal) {
         throw new Error('Данный метод предназначен создания заполненного диплома на сервере на основе локального');
       } else if (!document?.response) {
-        throw new Error('Для создания диплоам на сервере необходимо указать токен документа');
+        throw new Error('Для создания диплома на сервере необходимо указать токен документа');
       }
 
       const dto = formToDto(values);
@@ -264,14 +257,10 @@ export function useTherapistDiplomas(therapistId: string) {
 
         query.refetch();
       },
-      onError: (err: ApiRegularError | ApiValidationError | Error) => {
-        const isRegular = 'error' in err;
-        const isValidation = 'type' in err;
-        const isNative = 'message' in err;
-        const message = (isRegular && err.error.type) || (isValidation && err.type) || (isNative && err.message);
+      onError: () => {
         notification.error({
           message: 'Диплом',
-          description: message,
+          description: 'Не удалось сохранить диплом. Перепроверьте правильность заполнения данных и попробуйте снова.',
         });
       },
     },
@@ -313,12 +302,10 @@ export function useTherapistDiplomas(therapistId: string) {
         });
         query.refetch();
       },
-      onError: (err: ApiRegularError | ApiValidationError) => {
-        const isRegular = 'error' in err;
-        const message = isRegular ? err.error.type : err.type;
+      onError: () => {
         notification.error({
           message: 'Диплом',
-          description: message,
+          description: 'Не удалось удалить диплом. Попробуйте снова.',
         });
       },
     },

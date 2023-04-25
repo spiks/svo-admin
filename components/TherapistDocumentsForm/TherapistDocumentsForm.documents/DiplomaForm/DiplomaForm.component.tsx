@@ -124,7 +124,9 @@ export const DiplomaForm: FC<DiplomaFormProps & { onDelete?: (values: { id: stri
               picker={'year'}
               disabledDate={(date) => {
                 const min = moment().day(1).month(0).year(1900);
-                return date.isBefore(min);
+                const max = moment();
+
+                return date.isBefore(min) || date.isAfter(max);
               }}
             />
           </Form.Item>
