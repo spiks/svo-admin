@@ -6,6 +6,7 @@ import { Image } from '../Image/Image.component';
 import { ArticleBlogStatus } from '../../pages/content/blog';
 import { UserOutlined } from '@ant-design/icons';
 import { extractFullName } from '../../utility/extractFullName';
+import { ArticleMarkdown } from '@components/ArcticleMarkdown/ArticleMarkdown.component';
 
 export type BlogArticleProps = {
   selectedArticles: string[];
@@ -46,9 +47,12 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
   handleSelectArticle,
   status,
   shortText,
+  showPreviewFromArticle,
+  text,
 }) => {
   const selectedArticle = selectedArticles.includes(id);
   const fullName = extractFullName(author);
+  const description = showPreviewFromArticle ? <ArticleMarkdown>{text}</ArticleMarkdown> : <>{shortText}</>;
   return (
     <Card
       style={
@@ -84,7 +88,7 @@ export const BlogArticle: FC<BlogArticleProps & AdminBlogArticle> = ({
         </Col>
         <Col style={{ marginBottom: '24px' }} span={24}>
           <Typography.Paragraph ellipsis={{ rows: 3 }} type="secondary" style={{ fontSize: '16px' }}>
-            {shortText}
+            {description}
           </Typography.Paragraph>
         </Col>
         <Col span={14}>
