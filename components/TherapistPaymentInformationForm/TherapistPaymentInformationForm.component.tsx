@@ -48,7 +48,7 @@ export const TherapistPaymentInformationForm: FC = () => {
               <Col span={12}>
                 <Form.Item
                   name="bankAccountNumber"
-                  label="Банковские реквизиты"
+                  label="Расчетный счет"
                   rules={[{ required: true, pattern: /^[0-9]{20}$/, message: 'Введите корректное значение (20 цифр)' }]}
                 >
                   <Input maxLength={20} />
@@ -58,7 +58,7 @@ export const TherapistPaymentInformationForm: FC = () => {
                 <Form.Item
                   rules={[{ required: true, pattern: /^[0-9]{20}$/, message: 'Введите корректное значение (20 цифр)' }]}
                   name={'bankCorrespondentAccount'}
-                  label={'Коррсчет'}
+                  label={'Корреспондентский счет'}
                 >
                   <Input maxLength={20} />
                 </Form.Item>
