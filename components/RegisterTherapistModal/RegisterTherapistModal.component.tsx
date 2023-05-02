@@ -98,7 +98,7 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
             },
           ]}
         >
-          <CountryPhoneInput />
+          <CountryPhoneInput inline />
         </Form.Item>
       </Form>
     </Modal>

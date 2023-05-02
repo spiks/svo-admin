@@ -164,7 +164,7 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
         label="Номер телефона"
         name="phone"
       >
-        <CountryPhoneInput />
+        <CountryPhoneInput inline />
       </Form.Item>
       <Form.Item
         normalize={(value) => {
