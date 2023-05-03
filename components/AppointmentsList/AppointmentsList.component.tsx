@@ -1,94 +1,24 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Table } from 'antd';
+import { Button, Table } from 'antd';
 import { ColumnsType, SortOrder } from 'antd/lib/table/interface';
 import { sortOrderCuts } from '../../helpers/sortOrderCuts';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AppointmentServiceWithToken } from '../../api/services';
 import { useRouter } from 'next/router';
-import { AppointmentEndsAt, AppointmentStartsAt, AppointmentStatus, Uuid } from '../../generated';
-import { differenceInMinutes } from 'date-fns';
 import Link from 'next/link';
 import { NAVIGATION } from '../../constants/navigation';
-import { appointmentStatusTranslations } from '../../constants/appointmentStatusTranslations';
-
-type AppointmentListingPreview = {
-  appointmentId: Uuid;
-  endsAt: AppointmentEndsAt;
-  patientId: Uuid;
-  price: {
-    amount: number;
-  };
-  startsAt: AppointmentStartsAt;
-  status: AppointmentStatus;
-  therapistId: Uuid;
-};
-
-function appointmentToGridView(it: AppointmentListingPreview) {
-  return {
-    ...it,
-    date: new Date(it.startsAt).toLocaleString('ru-RU', {
-      year: 'numeric',
-      month: 'numeric',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    }),
-    therapist: { id: it.therapistId, fullName: 'Иван Сергеев' },
-    status: appointmentStatusTranslations[it.status],
-    price: `${Intl.NumberFormat('ru-RU').format(it.price.amount)} ₽`,
-    duration: `${differenceInMinutes(new Date(it.endsAt), new Date(it.startsAt))} минут`,
-  };
-}
-
-type GridView = ReturnType<typeof appointmentToGridView>;
-
-const columns: ColumnsType<GridView> = [
-  {
-    title: 'Дата и время',
-    dataIndex: 'date',
-    defaultSortOrder: 'descend' as const,
-    sorter: (a, b) => {
-      return new Date(a.date).getTime() - new Date(b.date).getTime();
-    },
-    width: 200,
-  },
-  {
-    title: 'Длительность',
-    dataIndex: 'duration',
-    width: 153,
-  },
-  {
-    title: 'Психолог',
-    dataIndex: 'therapist',
-    width: 313,
-    render: (therapist) => (
-      <Link href={`${NAVIGATION.therapists}/${therapist.id}`}>
-        <a>{therapist.fullName}</a>
-      </Link>
-    ),
-  },
-  {
-    title: 'Стоимость',
-    dataIndex: 'price',
-    width: 153,
-  },
-  {
-    title: 'Статус',
-    dataIndex: 'status',
-    width: 200,
-  },
-  {
-    title: 'Действие',
-    dataIndex: 'action',
-    render: (action) => <a>Сведения</a>,
-    width: 96,
-  },
-];
+import {
+  AppointmentGridView,
+  AppointmentListingPreview,
+  appointmentToGridView,
+} from '@components/AppointmentsList/AppointmentList.utils.tsx/appointmentToGridView';
+import { AppointmentInfoModal } from '@components/AppointmentInfoModal/AppointmentInfoModal.component';
 
 const AppointmentsList: FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState<NonNullable<SortOrder>>('descend');
+  const [appointmentModalOpen, setAppointmentModalOpen] = useState<AppointmentListingPreview>();
 
   const handlePaginationChange = useCallback((page: number, pageSize: number) => {
     setPageSize(pageSize);
@@ -148,6 +78,54 @@ const AppointmentsList: FC = () => {
     }
   }, [appointmentsList, fetchAppointmentsList, getQueryKey, page, pageSize, queryClient]);
 
+  const columns: ColumnsType<AppointmentGridView> = [
+    {
+      title: 'Дата и время',
+      dataIndex: 'date',
+      defaultSortOrder: 'descend' as const,
+      sorter: (a, b) => {
+        return new Date(a.date).getTime() - new Date(b.date).getTime();
+      },
+      width: 200,
+    },
+    {
+      title: 'Длительность',
+      dataIndex: 'duration',
+      width: 153,
+    },
+    {
+      title: 'Психолог',
+      dataIndex: 'therapist',
+      width: 313,
+      render: (therapist) => (
+        <Link href={`${NAVIGATION.therapists}/${therapist.id}`}>
+          <a>{therapist.fullName}</a>
+        </Link>
+      ),
+    },
+    {
+      title: 'Стоимость',
+      dataIndex: 'price',
+      width: 153,
+    },
+    {
+      title: 'Статус',
+      dataIndex: 'status',
+      width: 200,
+    },
+    {
+      title: 'Действие',
+      dataIndex: 'appointment',
+      render: (appointment) => (
+        <Button type={'link'} onClick={() => setAppointmentModalOpen(appointment)}>
+          Сведения
+        </Button>
+      ),
+      width: 96,
+    },
+  ];
+  const handleClose = () => setAppointmentModalOpen(undefined);
+
   return (
     <>
       <Table
@@ -168,6 +146,9 @@ const AppointmentsList: FC = () => {
           total: appointmentsList?.data.itemsAmount,
         }}
       />
+      {appointmentModalOpen && (
+        <AppointmentInfoModal {...appointmentModalOpen} open={!!appointmentModalOpen} onCancel={handleClose} />
+      )}
       {/*<Divider />*/}
       {/*<div>*/}
       {/*  <Paragraph type="secondary">1. Conveniently foster sticky technology and covalent platforms.</Paragraph>*/}
