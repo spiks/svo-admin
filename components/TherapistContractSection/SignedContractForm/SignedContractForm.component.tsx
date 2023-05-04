@@ -29,6 +29,7 @@ export const SignedContractForm: FC<SignedContractFormProps> = ({ signedContract
   const { uploadData } = useFileUpload('personal_document');
   const validateDocument = useDocumentConstraints(uploadData?.constraints);
   const refetch = useTherapistSignupQueriesRefresh(therapist.id);
+  const refetchStatuses = therapist.status === 'contract_rejected' || therapist.status === 'contract_not_submitted_yet';
 
   const getContractStatus = () => {
     if (therapist.status === 'active') {
@@ -58,8 +59,15 @@ export const SignedContractForm: FC<SignedContractFormProps> = ({ signedContract
     form.setFieldsValue({
       signedContract: [getUploadFileFromStaticFile(signedContract)],
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [signedContract]);
+
+  useEffect(() => {
+    if (signedContract && refetchStatuses) {
+      refetch('therapist');
+    }
+  }, [refetch, signedContract, refetchStatuses]);
 
   const handleChange = async (value: string) => {
     switch (value) {
