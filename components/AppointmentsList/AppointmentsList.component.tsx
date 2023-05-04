@@ -9,16 +9,32 @@ import Link from 'next/link';
 import { NAVIGATION } from '../../constants/navigation';
 import {
   AppointmentGridView,
-  AppointmentListingPreview,
   appointmentToGridView,
 } from '@components/AppointmentsList/AppointmentList.utils.tsx/appointmentToGridView';
 import { AppointmentInfoModal } from '@components/AppointmentInfoModal/AppointmentInfoModal.component';
+import { CancelAppointmentModal } from '@components/CancelAppointementModal/CancelAppointementModal.component';
+import { getAppointmentStatusTranslations } from '../../helpers/getAppointmentStatusTranslations';
+import { AppointmentStatus } from '../../generated';
 
 const AppointmentsList: FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState<NonNullable<SortOrder>>('descend');
-  const [appointmentModalOpen, setAppointmentModalOpen] = useState<AppointmentListingPreview>();
+  const [isAppointmentInfoModalOpen, setIsAppointmentInfoModalOpen] = useState<AppointmentGridView>();
+  const [isCancelAppointmentModalOpen, setIsCancelAppointmentModalOpen] = useState<AppointmentGridView>();
+
+  const handleOpenCancelAppointmentModal = useCallback(() => {
+    setIsAppointmentInfoModalOpen((prevState) => {
+      setIsCancelAppointmentModalOpen(prevState);
+      return undefined;
+    });
+  }, []);
+
+  const handleCloseCancelAppointmentModal = useCallback(() => {
+    setIsCancelAppointmentModalOpen(undefined);
+  }, []);
+
+  const handleCloseAppointmentInfoModal = useCallback(() => setIsAppointmentInfoModalOpen(undefined), []);
 
   const handlePaginationChange = useCallback((page: number, pageSize: number) => {
     setPageSize(pageSize);
@@ -112,19 +128,24 @@ const AppointmentsList: FC = () => {
       title: 'Статус',
       dataIndex: 'status',
       width: 200,
+      render: (_, appointment) => getAppointmentStatusTranslations(appointment.status, appointment.startsAt),
     },
     {
       title: 'Действие',
       dataIndex: 'appointment',
-      render: (appointment) => (
-        <Button type={'link'} onClick={() => setAppointmentModalOpen(appointment)}>
+      render: (_, appointment) => (
+        <Button
+          type={'link'}
+          onClick={() => {
+            setIsAppointmentInfoModalOpen(appointment);
+          }}
+        >
           Сведения
         </Button>
       ),
       width: 96,
     },
   ];
-  const handleClose = () => setAppointmentModalOpen(undefined);
 
   return (
     <>
@@ -146,19 +167,28 @@ const AppointmentsList: FC = () => {
           total: appointmentsList?.data.itemsAmount,
         }}
       />
-      {appointmentModalOpen && (
-        <AppointmentInfoModal {...appointmentModalOpen} open={!!appointmentModalOpen} onCancel={handleClose} />
+      {isAppointmentInfoModalOpen && (
+        <AppointmentInfoModal
+          fullName={isAppointmentInfoModalOpen.therapist.fullName}
+          cancelAppointmentButtonClick={handleOpenCancelAppointmentModal}
+          appointmentId={isAppointmentInfoModalOpen.appointmentId}
+          endsAt={isAppointmentInfoModalOpen.endsAt}
+          startsAt={isAppointmentInfoModalOpen.startsAt}
+          status={isAppointmentInfoModalOpen.status}
+          therapistId={isAppointmentInfoModalOpen.therapist.id}
+          open={!!isAppointmentInfoModalOpen}
+          onCancel={handleCloseAppointmentInfoModal}
+        />
       )}
-      {/*<Divider />*/}
-      {/*<div>*/}
-      {/*  <Paragraph type="secondary">1. Conveniently foster sticky technology and covalent platforms.</Paragraph>*/}
-      {/*  <Paragraph type="secondary">*/}
-      {/*    2. Synergistically seize client-centered methods of empowerment whereas cross functional interfaces.*/}
-      {/*    Interactively conceptualize corporate technologies via future-proof growth strategies. Synergistically seize*/}
-      {/*    client-centered methods of empowerment whereas cross functional interfaces. Interactively conceptualize*/}
-      {/*    corporate technologies via future-proof growth strategies.*/}
-      {/*  </Paragraph>*/}
-      {/*</div>*/}
+      {isCancelAppointmentModalOpen && (
+        <CancelAppointmentModal
+          open={!!isCancelAppointmentModalOpen}
+          onCancel={handleCloseCancelAppointmentModal}
+          fullName={isCancelAppointmentModalOpen.therapist.fullName}
+          appointmentId={isCancelAppointmentModalOpen.appointmentId}
+          therapistId={isCancelAppointmentModalOpen.therapist.id}
+        />
+      )}
     </>
   );
 };

@@ -1,20 +1,13 @@
-import { appointmentStatusTranslations } from '../../../constants/appointmentStatusTranslations';
 import { differenceInMinutes } from 'date-fns';
-import { AppointmentEndsAt, AppointmentStartsAt, AppointmentStatus, Uuid } from '../../../generated';
+import { AppointmentServiceWithToken } from '../../../api/services';
 
-export type AppointmentListingPreview = {
-  appointmentId: Uuid;
-  endsAt: AppointmentEndsAt;
-  patientId: Uuid;
-  price: {
-    amount: number;
-  };
-  startsAt: AppointmentStartsAt;
-  status: AppointmentStatus;
-  therapistId: Uuid;
-};
+export type AppointmentListingPreview = Awaited<
+  ReturnType<typeof AppointmentServiceWithToken.listAppointments>
+>['data']['items'][0];
 
 export function appointmentToGridView(it: AppointmentListingPreview) {
+  const fullName = [it.therapistId.surname, it.therapistId.name].filter(Boolean).join(' ').trim();
+
   return {
     ...it,
     date: new Date(it.startsAt).toLocaleString('ru-RU', {
@@ -24,11 +17,9 @@ export function appointmentToGridView(it: AppointmentListingPreview) {
       hour: '2-digit',
       minute: '2-digit',
     }),
-    therapist: { id: it.therapistId, fullName: 'Иван Сергеев' },
-    status: appointmentStatusTranslations[it.status],
+    therapist: { id: it.therapistId.id, fullName },
     price: `${Intl.NumberFormat('ru-RU').format(it.price.amount)} ₽`,
     duration: `${differenceInMinutes(new Date(it.endsAt), new Date(it.startsAt))} минут`,
-    appointment: it,
   };
 }
 
