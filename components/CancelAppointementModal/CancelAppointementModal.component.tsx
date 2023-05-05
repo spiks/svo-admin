@@ -5,7 +5,7 @@ import { UserOutlined } from '@ant-design/icons';
 import { NAVIGATION } from '../../constants/navigation';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AppointmentServiceWithToken } from '../../api/services';
-import { TherapistProfile } from '../../generated';
+import { AppointmentType, TherapistProfile } from '../../generated';
 
 const { Text } = Typography;
 
@@ -14,11 +14,19 @@ type Props = Omit<ModalProps, 'onCancel'> & {
   appointmentId: string;
   therapistId: string;
   onCancel: () => void;
+  appointmentType: AppointmentType;
 };
 
 type TherapistQueryData = { status: 'success'; data: TherapistProfile };
 
-export const CancelAppointmentModal: FC<Props> = ({ open, onCancel, therapistId, appointmentId, fullName }) => {
+export const CancelAppointmentModal: FC<Props> = ({
+  open,
+  onCancel,
+  therapistId,
+  appointmentId,
+  fullName,
+  appointmentType,
+}) => {
   const queryClient = useQueryClient();
   const therapistQuery = queryClient.getQueryState<TherapistQueryData>(['therapist', therapistId]);
   const therapistQueryData = therapistQuery?.data?.data;
@@ -69,9 +77,9 @@ export const CancelAppointmentModal: FC<Props> = ({ open, onCancel, therapistId,
 
   let content;
   if (isAppointmentCancelled) {
-    content = 'Запись отменена';
+    content = <h2>Запись отменена</h2>;
   } else {
-    content = isLoading ? <Spin /> : 'Уверены, что хотите отменить запись?';
+    content = isLoading ? <Spin /> : <h2>Уверены, что хотите отменить запись?</h2>;
   }
 
   return (
@@ -83,12 +91,10 @@ export const CancelAppointmentModal: FC<Props> = ({ open, onCancel, therapistId,
             <a>{fullName}</a>
           </Link>
         </Col>
-        <Text>{'Парная терапия'}</Text>
+        <Text>{appointmentType === 'individual' ? 'Индивидуальная' : 'Парная'}</Text>
       </Row>
       <Divider />
-      <Row justify={'space-around'}>
-        <h2>{content}</h2>
-      </Row>
+      <Row justify={'space-around'}>{content}</Row>
     </Modal>
   );
 };

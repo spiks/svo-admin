@@ -6,6 +6,7 @@ export type AppointmentListingPreview = Awaited<
 >['data']['items'][0];
 
 export function appointmentToGridView(it: AppointmentListingPreview) {
+  // @ts-ignore
   const fullName = [it.therapistId.surname, it.therapistId.name].filter(Boolean).join(' ').trim();
 
   return {
@@ -17,6 +18,7 @@ export function appointmentToGridView(it: AppointmentListingPreview) {
       hour: '2-digit',
       minute: '2-digit',
     }),
+    // @ts-ignore
     therapist: { id: it.therapistId.id, fullName },
     price: `${Intl.NumberFormat('ru-RU').format(it.price.amount)} ₽`,
     duration: `${differenceInMinutes(new Date(it.endsAt), new Date(it.startsAt))} минут`,

@@ -15,11 +15,13 @@ const { Text } = Typography;
 type Props = ModalProps & {
   fullName: string;
   appointmentId: string;
+  appointmentType: string;
   endsAt: string;
   startsAt: string;
   status: AppointmentStatus;
   therapistId: string;
   cancelAppointmentButtonClick: () => void;
+  rescheduleAppointmentButtonClick: () => void;
 };
 
 export const AppointmentInfoModal: FC<Props> = ({
@@ -29,8 +31,10 @@ export const AppointmentInfoModal: FC<Props> = ({
   therapistId,
   startsAt,
   cancelAppointmentButtonClick,
+  rescheduleAppointmentButtonClick,
   endsAt,
   status,
+  appointmentType,
 }) => {
   const therapistQuery = useQuery(['therapist', therapistId], getTherapistById.bind(null, therapistId));
   const therapistQueryData = therapistQuery.data?.data;
@@ -53,7 +57,7 @@ export const AppointmentInfoModal: FC<Props> = ({
               <a>{fullName}</a>
             </Link>
           </Col>
-          <Text>{'Парная терапия'}</Text>
+          <Text>{appointmentType === 'individual' ? 'Индивидуальная' : 'Парная'}</Text>
         </Row>
         <Divider />
         <Alert
@@ -88,7 +92,11 @@ export const AppointmentInfoModal: FC<Props> = ({
           <>
             <Divider />
             <Row justify={'space-around'}>
-              {status === 'paid' && <Button type="link">Перенести запись</Button>}
+              {status === 'paid' && (
+                <Button type="link" onClick={rescheduleAppointmentButtonClick}>
+                  Перенести запись
+                </Button>
+              )}
               <Button type="link" onClick={cancelAppointmentButtonClick}>
                 Отменить запись
               </Button>

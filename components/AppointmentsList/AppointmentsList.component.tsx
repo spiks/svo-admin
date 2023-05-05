@@ -14,7 +14,7 @@ import {
 import { AppointmentInfoModal } from '@components/AppointmentInfoModal/AppointmentInfoModal.component';
 import { CancelAppointmentModal } from '@components/CancelAppointementModal/CancelAppointementModal.component';
 import { getAppointmentStatusTranslations } from '../../helpers/getAppointmentStatusTranslations';
-import { AppointmentStatus } from '../../generated';
+import { RescheduleAppointmentModal } from '@components/RescheduleAppointmentModal/RescheduleAppointmentModal.component';
 
 const AppointmentsList: FC = () => {
   const [page, setPage] = useState(1);
@@ -22,6 +22,7 @@ const AppointmentsList: FC = () => {
   const [sortOrder, setSortOrder] = useState<NonNullable<SortOrder>>('descend');
   const [isAppointmentInfoModalOpen, setIsAppointmentInfoModalOpen] = useState<AppointmentGridView>();
   const [isCancelAppointmentModalOpen, setIsCancelAppointmentModalOpen] = useState<AppointmentGridView>();
+  const [isRescheduleAppointmentModalOpen, setIsRescheduleAppointmentModalOpen] = useState<AppointmentGridView>();
 
   const handleOpenCancelAppointmentModal = useCallback(() => {
     setIsAppointmentInfoModalOpen((prevState) => {
@@ -30,8 +31,19 @@ const AppointmentsList: FC = () => {
     });
   }, []);
 
+  const handleOpenRescheduleAppointmentModal = useCallback(() => {
+    setIsAppointmentInfoModalOpen((prevState) => {
+      setIsRescheduleAppointmentModalOpen(prevState);
+      return undefined;
+    });
+  }, []);
+
   const handleCloseCancelAppointmentModal = useCallback(() => {
     setIsCancelAppointmentModalOpen(undefined);
+  }, []);
+
+  const handleCloseRescheduleAppointmentModal = useCallback(() => {
+    setIsRescheduleAppointmentModalOpen(undefined);
   }, []);
 
   const handleCloseAppointmentInfoModal = useCallback(() => setIsAppointmentInfoModalOpen(undefined), []);
@@ -169,8 +181,10 @@ const AppointmentsList: FC = () => {
       />
       {isAppointmentInfoModalOpen && (
         <AppointmentInfoModal
+          appointmentType={isAppointmentInfoModalOpen.appointmentType}
           fullName={isAppointmentInfoModalOpen.therapist.fullName}
           cancelAppointmentButtonClick={handleOpenCancelAppointmentModal}
+          rescheduleAppointmentButtonClick={handleOpenRescheduleAppointmentModal}
           appointmentId={isAppointmentInfoModalOpen.appointmentId}
           endsAt={isAppointmentInfoModalOpen.endsAt}
           startsAt={isAppointmentInfoModalOpen.startsAt}
@@ -182,11 +196,22 @@ const AppointmentsList: FC = () => {
       )}
       {isCancelAppointmentModalOpen && (
         <CancelAppointmentModal
+          appointmentType={isCancelAppointmentModalOpen.appointmentType}
           open={!!isCancelAppointmentModalOpen}
           onCancel={handleCloseCancelAppointmentModal}
           fullName={isCancelAppointmentModalOpen.therapist.fullName}
           appointmentId={isCancelAppointmentModalOpen.appointmentId}
           therapistId={isCancelAppointmentModalOpen.therapist.id}
+        />
+      )}
+      {isRescheduleAppointmentModalOpen && (
+        <RescheduleAppointmentModal
+          appointmentType={isRescheduleAppointmentModalOpen.appointmentType}
+          open={!!isRescheduleAppointmentModalOpen}
+          onCancel={handleCloseRescheduleAppointmentModal}
+          fullName={isRescheduleAppointmentModalOpen.therapist.fullName}
+          appointmentId={isRescheduleAppointmentModalOpen.appointmentId}
+          therapistId={isRescheduleAppointmentModalOpen.therapist.id}
         />
       )}
     </>
