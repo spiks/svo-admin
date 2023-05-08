@@ -17,6 +17,7 @@ import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import { UserProfileFormValues } from '../therapists/[id]';
+import AppointmentsList from '@components/AppointmentsList/AppointmentsList.component';
 
 const tabListItems: { label: string; key: 'information' | 'appointments' }[] = [
   { label: 'Сведения', key: 'information' },
@@ -162,7 +163,7 @@ const PatientPage: NextPage = () => {
       case 'appointments':
         return (
           <PageWrapper>
-            <div>{'Сеансы'}</div>
+            <AppointmentsList />
           </PageWrapper>
         );
     }
