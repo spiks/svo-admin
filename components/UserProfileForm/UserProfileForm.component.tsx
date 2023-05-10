@@ -6,7 +6,7 @@ import { UserProfileFormValues } from 'pages/users/therapists/[id]';
 import CountryPhoneInput from 'antd-country-phone-input';
 
 import { Email, MediaImage, Name, Phone, ProfileGender, Surname, TherapistAmoCrmContactId, Uuid } from 'generated';
-import { getCountryCallingCode, isPossiblePhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
+import { getCountryCallingCode, isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 import { UploadWithCrop } from '@components/UploadCrop/UploadCrop.component';
 import { validateUploadImage } from '../../helpers/validateUploadImage';
 
@@ -151,12 +151,12 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
               } else if (!value.phone) {
                 throw new Error('Введите номер телефона');
               }
-              const isLengthValid = isPossiblePhoneNumber(
+              const isPhoneValid = isValidPhoneNumber(
                 '+' + getCountryCallingCode(value.short) + value.phone,
                 value.short,
               );
-              if (!isLengthValid) {
-                throw new Error('Неверная длина номера');
+              if (!isPhoneValid) {
+                throw new Error('Неверный номер!');
               }
             },
           },

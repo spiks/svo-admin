@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from 'react';
 import { Button, Form, Modal, ModalProps, Typography } from 'antd';
 import { useRegisterTherapist } from '@components/RegisterTherapistModal/RegisterTherapistModal.hooks/useRegisterTherapist';
 import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
-import { CountryCode, getCountryCallingCode, isPossiblePhoneNumber } from 'libphonenumber-js';
+import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 
 export type RegisterTherapistForm = { phone: CountryPhoneInputValue };
 export type RegisterTherapistModalProps = Omit<ModalProps, 'footer' | 'onCancel'> & {
@@ -86,13 +86,13 @@ export const RegisterTherapistModal: FC<RegisterTherapistModalProps> = (props) =
                 } else if (!value.phone) {
                   throw new Error('Введите номер телефона');
                 }
-                const isLengthValid = isPossiblePhoneNumber(
+                const isPhoneValid = isValidPhoneNumber(
                   '+' + getCountryCallingCode(value.short) + value.phone,
                   value.short,
                 );
 
-                if (!isLengthValid) {
-                  throw new Error('Неверная длина номера');
+                if (!isPhoneValid) {
+                  throw new Error('Неверный номер!');
                 }
               },
             },
