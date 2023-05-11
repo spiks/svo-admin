@@ -3,8 +3,6 @@ import { Tabs } from 'antd';
 import styles from './TabList.module.css';
 import { TabsProps } from 'antd/lib/tabs';
 
-const { TabPane } = Tabs;
-
 type TabListItem = {
   label: string;
   key: string;

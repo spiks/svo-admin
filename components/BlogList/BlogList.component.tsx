@@ -34,6 +34,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
 
   useEffect(() => {
     setPage(1);
+    setMultipleChoice(false);
   }, [activeTab]);
 
   const dateWithTimeZone = useMemo((): DateWithTimezone | null => {
