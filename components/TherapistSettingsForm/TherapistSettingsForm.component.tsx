@@ -5,7 +5,11 @@ import {
   ServicePricingFormValues,
   useTherapistServicePricing,
 } from './TherapistSettingsForm.hooks/useTherapistServicePricing';
-import { MIN_PRICE_FOR_INDIVIDUAL_SESSION, MIN_PRICE_FOR_PAIR_SESSION } from '../../constants/sessionPrices';
+import {
+  MAX_SESSION_PRICE,
+  MIN_PRICE_FOR_INDIVIDUAL_SESSION,
+  MIN_PRICE_FOR_PAIR_SESSION,
+} from '../../constants/sessionPrices';
 import { useTherapistBan } from '../../hooks/useTherapistBan';
 import { useTherapistSignupQueriesRefresh } from '../../hooks/useTherapistSignupQueries';
 
@@ -51,11 +55,19 @@ export const TherapistSettingsForm: FC = () => {
                     },
                     {
                       async validator(_, value) {
+                        if (!value) {
+                          return;
+                        }
                         if (value && value < MIN_PRICE_FOR_INDIVIDUAL_SESSION) {
                           throw new Error(
                             `Минимальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(
                               MIN_PRICE_FOR_INDIVIDUAL_SESSION,
                             )}₽`,
+                          );
+                        }
+                        if (value > MAX_SESSION_PRICE) {
+                          throw new Error(
+                            `Макисмальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(MAX_SESSION_PRICE)}₽`,
                           );
                         }
                       },
@@ -76,11 +88,19 @@ export const TherapistSettingsForm: FC = () => {
                     },
                     {
                       async validator(_, value) {
-                        if (value && value < MIN_PRICE_FOR_PAIR_SESSION) {
+                        if (!value) {
+                          return;
+                        }
+                        if (value < MIN_PRICE_FOR_PAIR_SESSION) {
                           throw new Error(
                             `Минимальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(
                               MIN_PRICE_FOR_PAIR_SESSION,
                             )}₽`,
+                          );
+                        }
+                        if (value > MAX_SESSION_PRICE) {
+                          throw new Error(
+                            `Макисмальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(MAX_SESSION_PRICE)}₽`,
                           );
                         }
                       },
