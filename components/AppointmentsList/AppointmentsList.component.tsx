@@ -162,6 +162,10 @@ const AppointmentsList: FC = () => {
   return (
     <>
       <Table
+        locale={{
+          triggerDesc: 'Сортировать по убыванию',
+          triggerAsc: 'Сортировать по возрастанию',
+        }}
         loading={isFetching}
         sortDirections={['ascend', 'descend', 'ascend']}
         onChange={(pagination, filters, sorter) => {
