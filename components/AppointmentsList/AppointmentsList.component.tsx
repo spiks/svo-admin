@@ -137,7 +137,7 @@ const AppointmentsList: FC = () => {
       width: 153,
     },
     {
-      title: 'Статус',
+      title: 'Статус записи',
       dataIndex: 'status',
       width: 200,
       render: (_, appointment) => getAppointmentStatusTranslations(appointment.status, appointment.startsAt),
