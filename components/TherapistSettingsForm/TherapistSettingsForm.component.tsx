@@ -62,12 +62,14 @@ export const TherapistSettingsForm: FC = () => {
                           throw new Error(
                             `Минимальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(
                               MIN_PRICE_FOR_INDIVIDUAL_SESSION,
-                            )}₽`,
+                            )}\u20bd`,
                           );
                         }
                         if (value > MAX_SESSION_PRICE) {
                           throw new Error(
-                            `Макисмальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(MAX_SESSION_PRICE)}₽`,
+                            `Макисмальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(
+                              MAX_SESSION_PRICE,
+                            )}\u20bd`,
                           );
                         }
                       },
@@ -95,12 +97,14 @@ export const TherapistSettingsForm: FC = () => {
                           throw new Error(
                             `Минимальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(
                               MIN_PRICE_FOR_PAIR_SESSION,
-                            )}₽`,
+                            )}\u20bd`,
                           );
                         }
                         if (value > MAX_SESSION_PRICE) {
                           throw new Error(
-                            `Макисмальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(MAX_SESSION_PRICE)}₽`,
+                            `Макисмальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(
+                              MAX_SESSION_PRICE,
+                            )}\u20bd`,
                           );
                         }
                       },

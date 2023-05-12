@@ -58,7 +58,6 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
   const { push } = useRouter();
 
   const isMounted = useRef(true);
-  const [isMultipleChoice] = useState(false);
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -140,6 +139,10 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
   return (
     <Table
       loading={isFetching}
+      locale={{
+        triggerDesc: 'Сортировать по убыванию',
+        triggerAsc: 'Сортировать по возрастанию',
+      }}
       sortDirections={['ascend', 'descend', 'ascend']}
       onChange={(pagination, filters, sorter) => {
         if (sorter && !Array.isArray(sorter) && sorter.order) {

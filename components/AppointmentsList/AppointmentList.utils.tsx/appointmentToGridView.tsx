@@ -20,7 +20,7 @@ export function appointmentToGridView(it: AppointmentListingPreview) {
     }),
     // @ts-ignore
     therapist: { id: it.therapistId.id, fullName },
-    price: `${Intl.NumberFormat('ru-RU').format(it.price.amount)} ₽`,
+    price: `${Intl.NumberFormat('ru-RU').format(it.price.amount)} \u20bd`,
     duration: `${differenceInMinutes(new Date(it.endsAt), new Date(it.startsAt))} минут`,
   };
 }

@@ -137,7 +137,7 @@ const AppointmentsList: FC = () => {
       width: 153,
     },
     {
-      title: 'Статус',
+      title: 'Статус записи',
       dataIndex: 'status',
       width: 200,
       render: (_, appointment) => getAppointmentStatusTranslations(appointment.status, appointment.startsAt),
@@ -162,6 +162,10 @@ const AppointmentsList: FC = () => {
   return (
     <>
       <Table
+        locale={{
+          triggerDesc: 'Сортировать по убыванию',
+          triggerAsc: 'Сортировать по возрастанию',
+        }}
         loading={isFetching}
         sortDirections={['ascend', 'descend', 'ascend']}
         onChange={(pagination, filters, sorter) => {

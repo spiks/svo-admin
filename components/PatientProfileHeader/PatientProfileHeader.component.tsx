@@ -1,4 +1,4 @@
-import { Alert, BreadcrumbProps, Button } from 'antd';
+import { BreadcrumbProps, Button } from 'antd';
 import { Route } from 'antd/lib/breadcrumb/Breadcrumb';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -59,14 +59,6 @@ export const PatientProfileHeader: FC<PatientProfileHeaderProps> = ({ id, name, 
         </>
       }
       footer={children}
-    >
-      <Alert
-        style={{ borderRadius: '8px', marginLeft: '-32px' }}
-        description="Информация об образовании размещена в разделе «Документы»"
-        type="info"
-        showIcon
-        closable
-      />
-    </Header>
+    />
   );
 };
