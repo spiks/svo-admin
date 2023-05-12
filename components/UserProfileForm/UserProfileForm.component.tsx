@@ -133,7 +133,7 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
               </Form.Item>
             </Col>
             <Col>
-              <Tooltip placement="left" title="Копировать amoCrm id">
+              <Tooltip placement="left" title="Копировать системны ID">
                 <Button onClick={copyAmoCrmId} icon={<CopyOutlined />} />
               </Tooltip>
             </Col>
