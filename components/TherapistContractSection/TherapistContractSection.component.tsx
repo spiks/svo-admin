@@ -3,13 +3,12 @@ import { CheckCircleFilled, CloseCircleFilled } from '@ant-design/icons';
 import { FC, useContext } from 'react';
 import { TherapistPageContext } from 'pages/users/therapists/[id]';
 import { useContractsQuery } from 'hooks/useContractsQuery';
-import { ContractForm } from './ContractForm/ContractForm.component';
 import { SignedContractForm } from './SignedContractForm/SignedContractForm.component';
 import { useActivateTherapistProfile } from './TherapistContractSection.hooks/useActivateTherapistProfile';
 
 export const TherapistContractSection: FC = () => {
   const { therapist } = useContext(TherapistPageContext);
-  const { signedContract, contract, ...contractService } = useContractsQuery(therapist.id);
+  const { signedContract, ...contractService } = useContractsQuery(therapist.id);
   const { activateTherapistProfile, canActivateTherapistProfile } = useActivateTherapistProfile(therapist.id);
 
   const { Panel } = Collapse;
@@ -22,26 +21,10 @@ export const TherapistContractSection: FC = () => {
     <section>
       <h2 style={{ marginBottom: '24px' }}>Договор</h2>
       <Collapse
-        defaultActiveKey={['contract', 'signedContract']}
+        defaultActiveKey={['signedContract']}
         style={{ width: '100%', marginBottom: '24px' }}
         expandIconPosition={'end'}
       >
-        {therapist.status !== 'created_by_admin' && (
-          <Panel
-            collapsible="disabled"
-            showArrow={false}
-            header={
-              <Row align="middle" gutter={17.5}>
-                <Col>
-                  <Form.Item style={{ margin: '0' }} label="Договор на отправку" required />
-                </Col>
-              </Row>
-            }
-            key="contract"
-          >
-            <ContractForm contract={contract} onSubmit={contractService.submitTherapistContract.mutate} />
-          </Panel>
-        )}
         <Panel
           collapsible="disabled"
           showArrow={false}

@@ -1,10 +1,8 @@
-import { ContractFormValues } from '@components/TherapistContractSection/ContractForm/ContractForm.component';
 import { SignedContractFormValues } from '@components/TherapistContractSection/SignedContractForm/SignedContractForm.component';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { notification } from 'antd';
 import { acceptContract } from 'api/therapist/acceptContract';
 import { rejectContract } from 'api/therapist/rejectContract';
-import { submitContract } from 'api/therapist/submitContract';
 import { updateSignedContract } from 'api/therapist/updateSignedContract';
 import { useCallback, useMemo } from 'react';
 import { getTherapistContracts } from '../api/therapist/getTherapistContracts';
@@ -75,33 +73,6 @@ export function useContractsQuery(therapistId: string) {
     },
   );
 
-  const submitTherapistContract = useMutation(
-    (values: ContractFormValues) => {
-      const document = values.contract.find(Boolean);
-      if (!document?.response) {
-        throw new Error('Нельзя создать документ без файла');
-      }
-      return submitContract(therapistId, document.response.token);
-    },
-    {
-      onSuccess: () => {
-        notification.success({
-          type: 'success',
-          message: 'Успех',
-          description: 'Контракт отправлен!',
-        });
-        refetch();
-      },
-      onError: () => {
-        notification.error({
-          type: 'error',
-          message: 'Ошибка',
-          description: 'Не удалось отправить контракт',
-        });
-      },
-    },
-  );
-
   const therapistRejectContract = useMutation(
     () => {
       return rejectContract(therapistId);
@@ -154,22 +125,20 @@ export function useContractsQuery(therapistId: string) {
     return {
       isLoading,
       isError,
-      contract: data?.data.contract ?? null,
+
       signedContract: data?.data.signedContract ?? null,
       therapistAcceptContract,
       therapistRejectContract,
-      submitTherapistContract,
+
       updateTherapistSignedContract,
       submitTherapistSignedContract,
     };
   }, [
     isLoading,
     isError,
-    data?.data.contract,
     data?.data.signedContract,
     therapistAcceptContract,
     therapistRejectContract,
-    submitTherapistContract,
     updateTherapistSignedContract,
     submitTherapistSignedContract,
   ]);
