@@ -17,4 +17,5 @@ export enum MarkdownEditorBlockType {
   HEADER_THREE = 'header-three',
   PARAGRAPH = 'paragraph',
   UNSTYLED = 'unstyled',
+  BLOCKQUOTE = 'blockquote',
 }
