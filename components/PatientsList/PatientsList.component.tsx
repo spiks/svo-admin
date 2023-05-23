@@ -1,4 +1,3 @@
-import { PageWrapper } from '@components/PageWrapper/PageWrapper.component';
 import { useUsersQueryParams } from '@components/UsersHeader/UsersHeader.hooks/useUsersQueryParams';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge, Table } from 'antd';
@@ -117,6 +116,7 @@ const PatientsList: FC = () => {
 
   return (
     <Table
+      locale={{ emptyText: 'Нет пациентов' }}
       loading={isFetching}
       title={() => {
         return (

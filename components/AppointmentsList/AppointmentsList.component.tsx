@@ -163,6 +163,7 @@ const AppointmentsList: FC = () => {
     <>
       <Table
         locale={{
+          emptyText: 'Нет сеансов',
           triggerDesc: 'Сортировать по убыванию',
           triggerAsc: 'Сортировать по возрастанию',
         }}
