@@ -1,7 +1,7 @@
-import { Alert, Button, Form, Input, Select, DatePicker, Row, Col, notification } from 'antd';
+import { Button, Form, Input, Select, DatePicker, Row, Col, notification } from 'antd';
 import { FC } from 'react';
 import { Header } from '../Header/Header.component';
-import { FilterFilled, InfoCircleOutlined } from '@ant-design/icons';
+import { FilterFilled } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import { useBlogHeaderForm } from './BlogHeader.hooks/useBlogHeaderForm';
 import { useBlogHeaderQueryParams } from './BlogHeader.hooks/useBlogHeaderQueryParams';
@@ -54,22 +54,17 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
       }
     >
       {showFilters && (
-        <Row
-          gutter={[0, 16]}
-          style={{
-            paddingLeft: '36px',
-          }}
-        >
-          <Col span={24}>
-            <Alert
-              style={{ borderRadius: '8px' }}
-              message="Описание"
-              description="Здесь можно разместить какое-нибудь описание для блога. Его можно скрыть."
-              type="info"
-              showIcon
-              closable
-            />
-          </Col>
+        <Row gutter={[0, 16]}>
+          {/*<Col span={24}>*/}
+          {/*  <Alert*/}
+          {/*    style={{ borderRadius: '8px' }}*/}
+          {/*    message="Описание"*/}
+          {/*    description="Здесь можно разместить какое-нибудь описание для блога. Его можно скрыть."*/}
+          {/*    type="info"*/}
+          {/*    showIcon*/}
+          {/*    closable*/}
+          {/*  />*/}
+          {/*</Col>*/}
           <Col span={24}>
             <Form
               onFinish={handleFiltersApply}
@@ -89,7 +84,7 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                     style={{ width: '100%' }}
                     label="Поиск"
                     name="search"
-                    tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+                    // tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
                   >
                     <Search
                       size="large"
@@ -104,7 +99,7 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                       style={{ width: '100%' }}
                       label="Теги"
                       name="tags"
-                      tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+                      // tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
                     >
                       <Select
                         options={tagsOptions.map((it) => {
@@ -130,7 +125,7 @@ export const BlogHeader: FC<BlogHeaderProps> = ({ showFilters, handleShowFilters
                     style={{ width: '100%', margin: '0' }}
                     label="Опубликовано"
                     name="date"
-                    tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
+                    // tooltip={{ title: 'Tooltip with customize icon', icon: <InfoCircleOutlined /> }}
                   >
                     <DatePicker
                       size="large"
