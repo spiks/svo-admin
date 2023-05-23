@@ -1,5 +1,6 @@
 import { Button, Modal, ModalProps, Input, Form, Typography } from 'antd';
-import { FC, useState } from 'react';
+import { FC } from 'react';
+import { SUPPORT_LINK } from '../../constants/links';
 
 export const PasswordRecoveryModal: FC<ModalProps> = ({ open, onOk, onCancel }) => {
   return (
@@ -7,7 +8,9 @@ export const PasswordRecoveryModal: FC<ModalProps> = ({ open, onOk, onCancel }) 
       footer={[
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '44px' }} key={0}>
           <Typography.Text>Нужна дополнительная помощь?</Typography.Text>
-          <Typography.Link style={{ marginLeft: '8px' }}>Подробнее</Typography.Link>
+          <Typography.Link target="_blank" style={{ marginLeft: '8px' }} href={SUPPORT_LINK}>
+            Подробнее
+          </Typography.Link>
         </div>,
       ]}
       open={open}
