@@ -2,7 +2,7 @@ import { differenceInMinutes } from 'date-fns';
 import { AppointmentServiceWithToken } from '../../../api/services';
 
 export type AppointmentListingPreview = Awaited<
-    ReturnType<typeof AppointmentServiceWithToken.listAppointments>
+  ReturnType<typeof AppointmentServiceWithToken.listAppointments>
 >['data']['items'][0];
 
 export function appointmentToGridView(it: AppointmentListingPreview) {
