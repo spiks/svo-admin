@@ -140,6 +140,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
     <Table
       loading={isFetching}
       locale={{
+        emptyText: 'Нет терапевтов',
         triggerDesc: 'Сортировать по убыванию',
         triggerAsc: 'Сортировать по возрастанию',
       }}
