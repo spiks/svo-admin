@@ -35,6 +35,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
   useEffect(() => {
     setPage(1);
     setMultipleChoice(false);
+    setSelectedArticles([]);
   }, [activeTab]);
 
   const dateWithTimeZone = useMemo((): DateWithTimezone | null => {
@@ -173,7 +174,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
                 <Row align="middle" gutter={24}>
                   <Col>
                     <span style={{ marginRight: '28px' }}>Множественный выбор</span>
-                    <Switch onChange={toggleMultipleChoice} defaultChecked={multipleChoice} />
+                    <Switch onChange={toggleMultipleChoice} checked={multipleChoice} />
                   </Col>
                   <Col>
                     <Button
