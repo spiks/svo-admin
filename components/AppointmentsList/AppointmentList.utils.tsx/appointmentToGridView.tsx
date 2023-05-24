@@ -17,7 +17,6 @@ export function appointmentToGridView(it: AppointmentListingPreview) {
       hour: '2-digit',
       minute: '2-digit',
     }),
-    // @ts-ignore
     therapist: { id: it.therapist.id, fullName },
     price: `${Intl.NumberFormat('ru-RU').format(it.price.amount)} \u20bd`,
     duration: `${differenceInMinutes(new Date(it.endsAt), new Date(it.startsAt))} минут`,
