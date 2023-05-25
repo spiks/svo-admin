@@ -33,14 +33,14 @@ export function useTherapistLegalForm(therapistId: string) {
       onSuccess() {
         notification.success({
           message: 'Юридические данные',
-          description: 'Ваши юридические данные сохранены',
+          description: 'Юридические данные сохранены',
         });
         refetch();
       },
       onError() {
         notification.error({
           message: 'Юридические данные',
-          description: 'Не удалось сохранить ваши юридические данные',
+          description: 'Не удалось сохранить юридические данные',
         });
       },
     },
