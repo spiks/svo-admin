@@ -42,14 +42,14 @@ export function useTherapistSocialLinks(therapistId: string) {
       onSuccess() {
         notification.success({
           message: 'Социальные сети',
-          description: 'Ваши социальные сети сохранены',
+          description: 'Социальные сети сохранены',
         });
         refetch();
       },
       onError() {
         notification.error({
           message: 'Социальные сети',
-          description: 'Не удалось сохранить ваши социальные сети',
+          description: 'Не удалось сохранить социальные сети',
         });
       },
     },

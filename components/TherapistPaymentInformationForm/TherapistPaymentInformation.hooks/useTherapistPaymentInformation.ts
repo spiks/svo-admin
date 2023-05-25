@@ -33,14 +33,14 @@ export function useTherapistPaymentInformation(therapistId: string) {
       onSuccess() {
         notification.success({
           message: 'Банковские реквизиты',
-          description: 'Ваши банковские реквизиты сохранены',
+          description: 'Банковские реквизиты сохранены',
         });
         refetch();
       },
       onError() {
         notification.error({
           message: 'Банковские реквизиты',
-          description: 'Не удалось сохранить ваши банковские реквизиты',
+          description: 'Не удалось сохранить банковские реквизиты',
         });
       },
     },
