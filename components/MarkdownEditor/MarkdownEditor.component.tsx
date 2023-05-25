@@ -1,4 +1,4 @@
-import React, { FC, MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+import { FC, MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
 import { Editor, EditorProps } from 'react-draft-wysiwyg';
 import { fromStringToContentState } from './MarkdownEditor.utils';
 import { MarkdownEditorBlockType, MarkdownEditorInlineStyle, MarkdownEditorProps } from './MarkdownEditor.typedef';
