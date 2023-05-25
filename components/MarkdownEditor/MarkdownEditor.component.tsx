@@ -1,4 +1,4 @@
-import { FC, MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react';
 import { Editor, EditorProps } from 'react-draft-wysiwyg';
 import { fromStringToContentState } from './MarkdownEditor.utils';
 import { MarkdownEditorBlockType, MarkdownEditorInlineStyle, MarkdownEditorProps } from './MarkdownEditor.typedef';
@@ -133,6 +133,20 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
     const block = editorState.getCurrentContent().getBlockForKey(blockKey);
     return block.getType();
   }, [editorState]);
+
+  // Функция исключительно для кнопки добавления изображений, обрабатывает клик вне контейнера Popover
+  const handleClickOutside = (event: MouseEvent) => {
+    if (event.target instanceof HTMLElement)
+      if (!event.target.closest('.ant-popover-content') && !event.target.closest('img[alt="add image"]'))
+        setUploadOpen(false);
+  };
+
+  useEffect(() => {
+    if (uploadOpen) document.addEventListener('click', handleClickOutside);
+    else document.removeEventListener('click', handleClickOutside);
+
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [uploadOpen]);
 
   return (
     <div className={styles['container']}>
