@@ -8,6 +8,7 @@ import { PasswordRecoveryModal } from '../PasswordRecoveryModal/PasswordRecovery
 import { IssueTokenByEmailAndPasswordRequest } from '../../generated';
 import { useLogin } from '../../api/hooks/useLogin';
 import { handleFormErrors } from '../../utility/handleFormErrors';
+import { validateEmailRule } from '../../helpers/validateEmailRule';
 
 export type ILoginFormProps = {
   email: string;
@@ -65,7 +66,10 @@ export const LoginForm: FC = () => {
                 required: true,
                 message: 'Необходимо указать email',
               },
+              validateEmailRule(),
             ]}
+            validateTrigger="onSubmit"
+            validateFirst
           >
             <Input size="large" prefix={<UserOutlined />} placeholder="Email" />
           </Form.Item>

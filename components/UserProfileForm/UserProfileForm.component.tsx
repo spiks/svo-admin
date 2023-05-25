@@ -9,6 +9,7 @@ import { Email, MediaImage, Name, Phone, ProfileGender, Surname, TherapistAmoCrm
 import { getCountryCallingCode, isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
 import { UploadWithCrop } from '@components/UploadCrop/UploadCrop.component';
 import { validateUploadImage } from '../../helpers/validateUploadImage';
+import { validateEmailRule } from '../../helpers/validateEmailRule';
 
 export type UserProfileFormProps = {
   id?: Uuid;
@@ -66,6 +67,7 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
             }
           : { short: 'RU' },
       }}
+      noValidate
     >
       <Divider>Персональные данные</Divider>
       <Form.Item label="Изображение профиля">
@@ -178,6 +180,8 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
         label="Email"
         name="email"
         required={false}
+        rules={[validateEmailRule(true)]}
+        validateTrigger="onSubmit"
       >
         <Input prefix={<MailOutlined style={{ color: '#52C41A' }} />} type={'email'} />
       </Form.Item>

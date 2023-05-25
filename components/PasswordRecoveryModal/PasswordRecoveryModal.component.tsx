@@ -1,5 +1,6 @@
 import { Button, Modal, ModalProps, Input, Form, Typography } from 'antd';
 import { FC } from 'react';
+import { validateEmailRule } from '../../helpers/validateEmailRule';
 import { SUPPORT_LINK } from '../../constants/links';
 
 export const PasswordRecoveryModal: FC<ModalProps> = ({ open, onOk, onCancel }) => {
@@ -25,7 +26,9 @@ export const PasswordRecoveryModal: FC<ModalProps> = ({ open, onOk, onCancel }) 
             requiredMark={'optional'}
             label="Укажите свой адрес электронной почты, воспользовавшись подсказкой в поле ввода"
             name="Email"
-            rules={[{ required: true, message: 'Please input your Email!' }]}
+            rules={[{ required: true, message: 'Необходимо указать email' }, validateEmailRule()]}
+            validateTrigger="onSubmit"
+            validateFirst
           >
             <Input placeholder="m********in@gmail.com" size="large" />
           </Form.Item>
