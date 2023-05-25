@@ -164,6 +164,7 @@ const BlogList: FC<BlogListProps> = ({ showFilters, activeTab }) => {
             </Col>
             <Col>
               <Badge
+                showZero={true}
                 count={showFilters || !multipleChoice ? blogArticlesList?.data.itemsAmount : selectedArticles.length}
               />
             </Col>
