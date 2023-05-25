@@ -104,8 +104,9 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
     (inlineStyle: MarkdownEditorInlineStyle) => {
       const state = RichUtils.toggleInlineStyle(editorState, inlineStyle);
       setEditorState(state);
+      handleEditorStateChange(state);
     },
-    [editorState],
+    [editorState, handleEditorStateChange],
   );
 
   /** Current block type toggle */
@@ -113,8 +114,9 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
     (type: MarkdownEditorBlockType) => {
       const state = RichUtils.toggleBlockType(editorState, type);
       setEditorState(state);
+      handleEditorStateChange(state);
     },
-    [editorState],
+    [editorState, handleEditorStateChange],
   );
 
   /** Text type toggle */
