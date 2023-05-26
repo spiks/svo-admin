@@ -83,7 +83,13 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
               return validateUploadImage(file);
             }}
             maxCount={1}
-            locale={{ removeFile: 'Удалить', previewFile: 'Предпросмотр' }}
+            locale={{
+              uploading: 'Загрузка',
+              removeFile: 'Удалить',
+              uploadError: 'Ошибка загрузки',
+              previewFile: 'Предпросмотр',
+              downloadFile: 'Загрузить изображение',
+            }}
             listType="picture-card"
             showUploadList={true}
           >
