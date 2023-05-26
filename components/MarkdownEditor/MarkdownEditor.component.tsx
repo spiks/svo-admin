@@ -143,111 +143,136 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
         onEditorStateChange={handleEditorStateChange}
         locale={'ru'}
         wrapperClassName={styles['markdown-editor']}
-      />
-      {/* Toolbar */}
-      <div className={styles['toolbar']}>
-        {/* Bold */}
-        <button type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.BOLD)}>
-          <Image {...formatBoldSvg} alt={'bold'} unoptimized={true} />
-        </button>
-        {/* Italic */}
-        <button type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.ITALIC)}>
-          <Image {...formatItalicSvg} alt={'italic'} unoptimized={true} />
-        </button>
-        {/* Underline */}
-        <button type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.UNDERLINE)}>
-          <Image {...formatUnderlineSvg} alt={'underline'} unoptimized={true} />
-        </button>
-        {/* Strike through */}
-        <button type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.STRIKETHROUGH)}>
-          <Image {...formatStrikeThroughSvg} alt={'strike through'} unoptimized={true} />
-        </button>
-        {/* Dotted list */}
-        <button type="button" onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.UNORDERED_LIST_ITEM)}>
-          <Image {...formatUnorderedListSvg} alt={'unordered list'} unoptimized={true} />
-        </button>
-        {/* Numeric list */}
-        <button type="button" onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.ORDERED_LIST_ITEM)}>
-          <Image {...formatOrderedListSvg} alt={'ordered list'} unoptimized={true} />
-        </button>
-        {/* Block text type */}
-        <Popover
-          content={
-            <Radio.Group
-              value={activeBlockTextType}
-              onChange={handleTextTypeChange}
-              style={{ display: 'flex', flexDirection: 'column', rowGap: '8px' }}
-            >
-              <Radio.Button value={MarkdownEditorBlockType.HEADER_ONE}>Заголовок</Radio.Button>
-              {/*<Radio.Button value={MarkdownEditorBlockType.HEADER_THREE}>Подзаголовок</Radio.Button>*/}
-              <Radio.Button value={MarkdownEditorBlockType.PARAGRAPH}>Основной текст</Radio.Button>
-              <Radio.Button value={MarkdownEditorBlockType.BLOCKQUOTE}>Цитата</Radio.Button>
-              {/*<Radio.Button value={MarkdownEditorBlockType.UNSTYLED}>Чистый текст</Radio.Button>*/}
-            </Radio.Group>
-          }
-          title="Тип текста"
-        >
-          <button type="button">
-            <Image {...formatSizeSvg} alt={'block text type'} unoptimized={true} />
-          </button>
-        </Popover>
-        {/* Add image */}
-        <Popover
-          placement={'top'}
-          open={uploadOpen}
-          content={
-            <Form form={imageForm} layout={'vertical'} onFinish={imageFormSubmit}>
-              <Form.Item name={'url'} label={'URL'} rules={[urlValidator]}>
-                <Input type={'text'} disabled={!!imageFormImage} />
-              </Form.Item>
-              <Form.Item
-                name={'image'}
-                getValueFromEvent={getValueFromEvent}
-                valuePropName={'fileList'}
-                rules={[imageValidator]}
-                style={{
-                  maxWidth: '219px',
-                }}
+        toolbar={{
+          options: [],
+        }}
+        /* Toolbar buttons */
+        toolbarCustomButtons={[
+          /* Bold */
+          <button key="bold" type="button" onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.BOLD)}>
+            <Image {...formatBoldSvg} alt={'bold'} unoptimized={true} />
+          </button>,
+          /* Italic */
+          <button
+            key="italic"
+            type="button"
+            onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.ITALIC)}
+          >
+            <Image {...formatItalicSvg} alt={'italic'} unoptimized={true} />
+          </button>,
+          /* Underline */
+          <button
+            key="underline"
+            type="button"
+            onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.UNDERLINE)}
+          >
+            <Image {...formatUnderlineSvg} alt={'underline'} unoptimized={true} />
+          </button>,
+          /* Strike through */
+          <button
+            key="strike-through"
+            type="button"
+            onClick={handleInlineStyleToggle.bind(null, MarkdownEditorInlineStyle.STRIKETHROUGH)}
+          >
+            <Image {...formatStrikeThroughSvg} alt={'strike through'} unoptimized={true} />
+          </button>,
+          /* Unordered list */
+          <button
+            key="unordered-list"
+            type="button"
+            onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.UNORDERED_LIST_ITEM)}
+          >
+            <Image {...formatUnorderedListSvg} alt={'unordered list'} unoptimized={true} />
+          </button>,
+          /* Ordered list */
+          <button
+            key="ordered-list"
+            type="button"
+            onClick={handleBlockTypeToggle.bind(null, MarkdownEditorBlockType.ORDERED_LIST_ITEM)}
+          >
+            <Image {...formatOrderedListSvg} alt={'ordered list'} unoptimized={true} />
+          </button>,
+          /* Popover for different text sizes */
+          <Popover
+            content={
+              <Radio.Group
+                value={activeBlockTextType}
+                onChange={handleTextTypeChange}
+                style={{ display: 'flex', flexDirection: 'column', rowGap: '8px' }}
               >
-                <Upload
-                  headers={{ 'X-Requested-With': null } as unknown as HttpRequestHeader}
-                  multiple={false}
-                  maxCount={1}
-                  showUploadList={true}
-                  action={imageUploadUrl}
+                <Radio.Button value={MarkdownEditorBlockType.HEADER_ONE}>Заголовок</Radio.Button>
+                {/*<Radio.Button value={MarkdownEditorBlockType.HEADER_THREE}>Подзаголовок</Radio.Button>*/}
+                <Radio.Button value={MarkdownEditorBlockType.PARAGRAPH}>Основной текст</Radio.Button>
+                <Radio.Button value={MarkdownEditorBlockType.BLOCKQUOTE}>Цитата</Radio.Button>
+                {/*<Radio.Button value={MarkdownEditorBlockType.UNSTYLED}>Чистый текст</Radio.Button>*/}
+              </Radio.Group>
+            }
+            key="block-text-type"
+            title="Тип текста"
+          >
+            <button type="button">
+              <Image {...formatSizeSvg} alt={'block text type'} unoptimized={true} />
+            </button>
+          </Popover>,
+          /* Popover for images uploading */
+          <Popover
+            placement={'top'}
+            open={uploadOpen}
+            content={
+              <Form form={imageForm} layout={'vertical'} onFinish={imageFormSubmit}>
+                <Form.Item name={'url'} label={'URL'} rules={[urlValidator]}>
+                  <Input type={'text'} disabled={!!imageFormImage} />
+                </Form.Item>
+                <Form.Item
+                  name={'image'}
+                  getValueFromEvent={getValueFromEvent}
+                  valuePropName={'fileList'}
+                  rules={[imageValidator]}
+                  style={{
+                    maxWidth: '219px',
+                  }}
                 >
-                  <Button disabled={!!imageFormImage || imageFormUrl} icon={<UploadOutlined />}>
-                    Загрузить с компьютера
-                  </Button>
-                </Upload>
-              </Form.Item>
-              <Form.Item>
-                <Row justify={'space-between'}>
-                  <Col>
-                    <Button
-                      htmlType={'button'}
-                      onClick={imageForm.resetFields.bind(null, undefined) as unknown as MouseEventHandler<unknown>}
-                      danger={true}
-                    >
-                      Сбросить
+                  <Upload
+                    headers={{ 'X-Requested-With': null } as unknown as HttpRequestHeader}
+                    multiple={false}
+                    maxCount={1}
+                    showUploadList={true}
+                    action={imageUploadUrl}
+                  >
+                    <Button disabled={!!imageFormImage || imageFormUrl} icon={<UploadOutlined />}>
+                      Загрузить с компьютера
                     </Button>
-                  </Col>
-                  <Col>
-                    <Button htmlType={'submit'} type={'primary'} disabled={!imageFormImage && !imageFormUrl}>
-                      Вставить
-                    </Button>
-                  </Col>
-                </Row>
-              </Form.Item>
-            </Form>
-          }
-          title={'Вставить изображение'}
-        >
-          <button onClick={setUploadOpen.bind(null, !uploadOpen)} type={'button'}>
-            <Image {...blockImageSvg} alt={'add image'} unoptimized={true} />
-          </button>
-        </Popover>
-      </div>
+                  </Upload>
+                </Form.Item>
+                <Form.Item>
+                  <Row justify={'space-between'}>
+                    <Col>
+                      <Button
+                        htmlType={'button'}
+                        onClick={imageForm.resetFields.bind(null, undefined) as unknown as MouseEventHandler<unknown>}
+                        danger={true}
+                      >
+                        Сбросить
+                      </Button>
+                    </Col>
+                    <Col>
+                      <Button htmlType={'submit'} type={'primary'} disabled={!imageFormImage && !imageFormUrl}>
+                        Вставить
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form.Item>
+              </Form>
+            }
+            key="add-image"
+            title={'Вставить изображение'}
+          >
+            <button onClick={setUploadOpen.bind(null, !uploadOpen)} type={'button'}>
+              <Image {...blockImageSvg} alt={'add image'} unoptimized={true} />
+            </button>
+          </Popover>,
+        ]}
+      />
     </div>
   );
 };
