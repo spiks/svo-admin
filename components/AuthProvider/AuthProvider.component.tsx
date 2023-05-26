@@ -23,6 +23,10 @@ export const AuthContext = createContext<AuthContextValue>({
   isLoading: false,
 });
 
+const getLocationPathnameFromWindow = () => {
+  if (typeof window !== 'undefined') return window.location.pathname;
+};
+
 const AuthProvider: FC = ({ children }) => {
   const [credentials, setCredentials] = useState<CredentialsType>({
     token: null,
@@ -30,6 +34,8 @@ const AuthProvider: FC = ({ children }) => {
   });
   const [isLoading, setIsLoading] = useState(true);
   const { push } = useRouter();
+
+  const location = getLocationPathnameFromWindow();
 
   const isUserLoggedIn = useCallback(async () => {
     const storageToken = TokenStorage.getTokens()?.accessToken;
@@ -62,7 +68,7 @@ const AuthProvider: FC = ({ children }) => {
 
     // если передать router, то будет бесконечный цикл
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     (async () => {
