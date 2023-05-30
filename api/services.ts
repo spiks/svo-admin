@@ -15,6 +15,7 @@ import {
   UploadingFilesService,
   VideoPresentationService,
 } from '../generated';
+import { PayoutService } from 'generated/services/PayoutService';
 
 export const PatientServiceWithToken = provideToken(PatientService);
 export const TherapistServiceWithToken = provideToken(TherapistService);
@@ -30,3 +31,4 @@ export const UploadingFilesServiceWithToken = provideToken(UploadingFilesService
 export const AdminBlogServiceWithToken = provideToken(AdminBlogService);
 export const AppointmentServiceWithToken = provideToken(AppointmentService);
 export const VideoPresentationWithToken = provideToken(VideoPresentationService);
+export const PayoutServiceWithToken = provideToken(PayoutService);

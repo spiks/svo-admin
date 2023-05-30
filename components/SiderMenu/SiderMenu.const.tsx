@@ -1,4 +1,4 @@
-import { PictureOutlined, UserOutlined } from '@ant-design/icons';
+import { PictureOutlined, UserOutlined, CreditCardOutlined } from '@ant-design/icons';
 import { NAVIGATION } from '../../constants/navigation';
 
 export const SiderMenuItems = [
@@ -44,6 +44,18 @@ export const SiderMenuItems = [
       //   label: 'Администраторы',
       //   url: NAVIGATION.administrators,
       // },
+    ],
+  },
+  // Billing
+  {
+    url: NAVIGATION.therapistsPayouts,
+    label: 'Биллинг',
+    icon: <CreditCardOutlined />,
+    children: [
+      {
+        label: 'Отчет по психологам',
+        url: NAVIGATION.therapistsPayouts,
+      },
     ],
   },
   // Logs

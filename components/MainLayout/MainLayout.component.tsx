@@ -25,7 +25,7 @@ export const MainLayout: FC<{ loading?: boolean }> = ({ children, loading }) => 
           marginLeft: 280,
         }}
       >
-        <Content style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+        <Content style={{ display: 'flex', flexDirection: 'column' }}>
           {loading ? (
             <Spin
               style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}

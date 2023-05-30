@@ -10,10 +10,12 @@ import { ConfigProvider as CountryPhoneConfigProvider } from 'antd-country-phone
 import ru from 'world_countries_lists/data/countries/ru/world.json';
 import 'antd-country-phone-input/dist/index.css';
 import { CountryCode, getCountryCallingCode } from 'libphonenumber-js';
+import ru_RU from 'antd/lib/locale/ru_RU';
+import { ConfigProvider } from 'antd';
+import 'moment/locale/ru';
 
 require('../styles/ant.less');
 require('react-draft-wysiwyg/dist/react-draft-wysiwyg.css');
-
 createErrorResponseInterceptor();
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 2, refetchOnWindowFocus: false } } });
@@ -21,22 +23,24 @@ const queryClient = new QueryClient({ defaultOptions: { queries: { retry: 2, ref
 function MyApp({ Component, pageProps }: AppProps) {
   const { isLoading } = useContext(AuthContext);
   return (
-    <CountryPhoneConfigProvider
-      areaMapper={(area) => {
-        // Обновляем коды стран из более свежей библиотеки
-        const code = getCountryCallingCode(area.short as CountryCode);
+    <ConfigProvider locale={ru_RU}>
+      <CountryPhoneConfigProvider
+        areaMapper={(area) => {
+          // Обновляем коды стран из более свежей библиотеки
+          const code = getCountryCallingCode(area.short as CountryCode);
 
-        return {
-          ...area,
-          phoneCode: Number(code),
-        };
-      }}
-      locale={ru}
-    >
-      <QueryClientProvider client={queryClient}>
-        {isLoading ? <SplashScreenLoader /> : <Component {...pageProps} />}
-      </QueryClientProvider>
-    </CountryPhoneConfigProvider>
+          return {
+            ...area,
+            phoneCode: Number(code),
+          };
+        }}
+        locale={ru}
+      >
+        <QueryClientProvider client={queryClient}>
+          {isLoading ? <SplashScreenLoader /> : <Component {...pageProps} />}
+        </QueryClientProvider>
+      </CountryPhoneConfigProvider>
+    </ConfigProvider>
   );
 }
 
