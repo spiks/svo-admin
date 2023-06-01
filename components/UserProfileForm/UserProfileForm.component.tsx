@@ -10,6 +10,7 @@ import { getCountryCallingCode, isValidPhoneNumber, parsePhoneNumber } from 'lib
 import { UploadWithCrop } from '@components/UploadCrop/UploadCrop.component';
 import { validateUploadImage } from '../../helpers/validateUploadImage';
 import { validateEmailRule } from '../../helpers/validateEmailRule';
+import { MAX_USER_NAME_LENGTH, MAX_USER_SURNAME_LENGTH } from '../../constants/inputMaxLength';
 
 export type UserProfileFormProps = {
   id?: Uuid;
@@ -113,7 +114,13 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
         }}
         label="Фамилия"
         name="surname"
-        rules={[{ required: true, message: 'Пожалуйста, введите фамилию' }]}
+        rules={[
+          { required: true, message: 'Пожалуйста, введите фамилию' },
+          {
+            max: MAX_USER_NAME_LENGTH,
+            message: `Фамилия не может содержать более ${MAX_USER_SURNAME_LENGTH} символов`,
+          },
+        ]}
       >
         <Input />
       </Form.Item>
@@ -126,7 +133,10 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
         }}
         label="Имя"
         name="name"
-        rules={[{ required: true, message: 'Пожалуйста, введите имя' }]}
+        rules={[
+          { required: true, message: 'Пожалуйста, введите имя' },
+          { max: MAX_USER_SURNAME_LENGTH, message: `Имя не может содержать более ${MAX_USER_NAME_LENGTH} символов` },
+        ]}
       >
         <Input />
       </Form.Item>
