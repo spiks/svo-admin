@@ -6,9 +6,9 @@ import { useContext } from 'react';
 import { OpenAPI } from '../generated';
 import getConfig from 'next/config';
 import SplashScreenLoader from '../components/SplashScreenLoader/SplashScreenLoader.component';
-import { ConfigProvider as CountryPhoneConfigProvider } from 'antd-country-phone-input';
+import { ConfigProvider as CountryPhoneConfigProvider } from 'antd-country-phone-input-upgraded';
 import ru from 'world_countries_lists/data/countries/ru/world.json';
-import 'antd-country-phone-input/dist/index.css';
+import 'antd-country-phone-input-upgraded/dist/index.css';
 import { CountryCode, getCountryCallingCode } from 'libphonenumber-js';
 
 require('../styles/ant.less');

@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useState } from 'react';
 import { Button, Form, Modal, ModalProps, Typography } from 'antd';
 import { useRegisterTherapist } from '@components/RegisterTherapistModal/RegisterTherapistModal.hooks/useRegisterTherapist';
-import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input';
+import CountryPhoneInput, { CountryPhoneInputValue } from 'antd-country-phone-input-upgraded';
 import { CountryCode, getCountryCallingCode, isValidPhoneNumber } from 'libphonenumber-js';
 
 export type RegisterTherapistForm = { phone: CountryPhoneInputValue };

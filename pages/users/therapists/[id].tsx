@@ -35,7 +35,7 @@ import { TherapistPracticeSection } from '@components/TherapistPracticeSection/T
 import { TherapistSocialsLinksFrom } from '@components/TherapistSocialLinksForm/TherapistSocialLinksForm.component';
 import { TherapistSettingsForm } from '@components/TherapistSettingsForm/TherapistSettingsForm.component';
 import { SmileOutlined } from '@ant-design/icons';
-import { CountryPhoneInputValue } from 'antd-country-phone-input';
+import { CountryPhoneInputValue } from 'antd-country-phone-input-upgraded';
 import { requestFileUploadUrl } from 'api/upload/requestFileUploadUrl';
 import { uploadFile } from 'api/upload/uploadFile';
 import { updateTherapistAvatar } from 'api/therapist/updateTherapistAvatar';

@@ -3,7 +3,7 @@ import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
 import { FC, useCallback } from 'react';
 import { CopyOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
 import { UserProfileFormValues } from 'pages/users/therapists/[id]';
-import CountryPhoneInput from 'antd-country-phone-input';
+import CountryPhoneInput from 'antd-country-phone-input-upgraded';
 
 import { Email, MediaImage, Name, Phone, ProfileGender, Surname, TherapistAmoCrmContactId, Uuid } from 'generated';
 import { getCountryCallingCode, isValidPhoneNumber, parsePhoneNumber } from 'libphonenumber-js';
