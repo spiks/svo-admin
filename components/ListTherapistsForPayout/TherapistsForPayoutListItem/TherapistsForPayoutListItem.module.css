@@ -1,0 +1,19 @@
+.header {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  column-gap: 12px;
+}
+
+.table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 8px 18px;
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 2;
+}
