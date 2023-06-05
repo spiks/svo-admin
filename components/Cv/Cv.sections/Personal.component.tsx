@@ -109,7 +109,7 @@ export const Personal: FC = () => {
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', rowGap: '8px', marginBottom: '16px' }}>
         <CvSubTitle>СНИЛС</CvSubTitle>
-        <CvEntry title={'Номер СНИЛСА'} value={snils ? snils.information.number : '-'} />
+        <CvEntry title={'Номер СНИЛС'} value={snils ? snils.information.number : '-'} />
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', rowGap: '8px', marginBottom: '16px' }}>
         <CvSubTitle>ИНН</CvSubTitle>
