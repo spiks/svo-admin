@@ -11,6 +11,7 @@ import { UploadWithCrop } from '@components/UploadCrop/UploadCrop.component';
 import { validateUploadImage } from '../../helpers/validateUploadImage';
 import { validateEmailRule } from '../../helpers/validateEmailRule';
 import { MAX_USER_NAME_LENGTH, MAX_USER_SURNAME_LENGTH } from '../../constants/inputMaxLength';
+import { MAX_INTEGER } from 'constants/amoCrmContactId';
 
 export type UserProfileFormProps = {
   id?: Uuid;
@@ -145,7 +146,22 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
           <Row>
             <Col flex={1}>
               <Form.Item
-                rules={[{ pattern: /^[0-9]+$/, message: 'ID должен состоять только из цифр' }]}
+                rules={[
+                  { pattern: /^[0-9]+$/, message: 'ID должен состоять только из цифр' },
+                  {
+                    async validator(_, value) {
+                      if (!value) {
+                        return;
+                      }
+                      if (value == 0) {
+                        throw new Error('ID должен быть больше, чем 0');
+                      }
+                      if (value > 2147483647) {
+                        throw new Error(`ID должен быть не больше, чем ${MAX_INTEGER}`);
+                      }
+                    },
+                  },
+                ]}
                 name="amoCrmContactId"
               >
                 <Input />
