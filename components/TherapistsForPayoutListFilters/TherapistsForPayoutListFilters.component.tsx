@@ -6,6 +6,7 @@ import moment from 'moment';
 import { StaticFile } from 'generated';
 import { TherapistsForPayoutListFiltersForm } from './TherapistsForPayoutListFilters.hooks/useTherapistsForPayoutListFilters';
 import { getPeriods } from './TherapistsForPayoutListFilters.utils/getPeriods';
+import { getPayoutPeriod } from '../../helpers/getPayoutPeriod';
 
 const { Search } = Input;
 
@@ -35,6 +36,20 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
   }, [form]);
 
   const { firstPeriod, secondPeriod, thirdPeriod } = getPeriods(filters.date);
+  const dateField = form.getFieldValue('date');
+  const periodField = form.getFieldValue('period');
+
+  const isFuturePayoutPeriodSelected = useMemo(() => {
+    const todayDate = new Date();
+    const payoutPeriod = getPayoutPeriod(todayDate);
+    const selectedDate = new Date(dateField);
+
+    return (
+      periodField >= payoutPeriod.period &&
+      new Date(selectedDate).getFullYear() >= payoutPeriod.year &&
+      new Date(selectedDate).getMonth() + 1 >= payoutPeriod.month
+    );
+  }, [periodField, dateField]);
 
   return (
     <div className={styles['container']}>
@@ -72,7 +87,12 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
                 ]}
               />
             </Form.Item>
-            <Button onClick={markPayoutPeriodAsPaid} type={'primary'} icon={<CheckCircleOutlined />}>
+            <Button
+              disabled={isFuturePayoutPeriodSelected}
+              onClick={markPayoutPeriodAsPaid}
+              type={'primary'}
+              icon={<CheckCircleOutlined />}
+            >
               {'Одобрить все выплаты'}
             </Button>
             <Button href={payoutReport?.url} disabled={!payoutReport} icon={<DownloadOutlined />}>
