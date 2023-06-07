@@ -47,6 +47,5 @@ export const uploadFile = async (credentials: FileUploadCredentials, file: File 
   const formData = new FormData();
   formData.append('file', file);
 
-  const url = 'https://' + credentials.url;
-  return await axios.postForm<UploadFileResponse>(url, formData);
+  return await axios.postForm<UploadFileResponse>(credentials.url, formData);
 };

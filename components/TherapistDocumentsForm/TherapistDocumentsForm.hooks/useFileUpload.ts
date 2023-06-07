@@ -66,8 +66,6 @@ export function useFileUpload(purpose: FilePurpose, options?: UseFileUploadOptio
         },
       });
 
-      resp.data.url = `https://` + resp.data.url;
-
       return resp;
     },
     {
