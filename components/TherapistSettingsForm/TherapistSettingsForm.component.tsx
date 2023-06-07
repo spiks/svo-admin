@@ -58,11 +58,10 @@ export const TherapistSettingsForm: FC = () => {
                         if (!value) {
                           return;
                         }
-                        if (value && value < MIN_PRICE_FOR_INDIVIDUAL_SESSION) {
+                        // Временно минимальная стоимость сеанса 10 рублей, потом вернуть MIN_PRICE_FOR_INDIVIDUAL_SESSION
+                        if (value && value < 10) {
                           throw new Error(
-                            `Минимальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(
-                              MIN_PRICE_FOR_INDIVIDUAL_SESSION,
-                            )}\u20bd`,
+                            `Минимальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(10)}\u20bd`,
                           );
                         }
                         if (value > MAX_SESSION_PRICE) {
@@ -93,11 +92,10 @@ export const TherapistSettingsForm: FC = () => {
                         if (!value) {
                           return;
                         }
-                        if (value < MIN_PRICE_FOR_PAIR_SESSION) {
+                        // Временно минимальная стоимость сеанса 10 рублей, потом вернуть MIN_PRICE_FOR_PAIR_SESSION,
+                        if (value < 10) {
                           throw new Error(
-                            `Минимальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(
-                              MIN_PRICE_FOR_PAIR_SESSION,
-                            )}\u20bd`,
+                            `Минимальная стоимость сеанса ${Intl.NumberFormat('ru-RU').format(10)}\u20bd`,
                           );
                         }
                         if (value > MAX_SESSION_PRICE) {
