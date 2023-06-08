@@ -259,7 +259,7 @@ const TherapistPage: NextPage = () => {
             ]);
             break;
           case 'user_with_this_phone_already_exists':
-            message = 'Пользователь с таким номером уже сщуествует';
+            message = 'Пользователь с таким номером уже существует';
             form.setFields([
               {
                 name: 'phone',
