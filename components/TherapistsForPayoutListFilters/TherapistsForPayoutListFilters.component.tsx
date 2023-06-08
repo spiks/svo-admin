@@ -1,5 +1,5 @@
 import { Button, DatePicker, Form, FormInstance, Input, Select, Typography } from 'antd';
-import { FC, useEffect, useMemo } from 'react';
+import { FC, useEffect } from 'react';
 import styles from './TherapistsForPayoutListFilters.module.css';
 import { CheckCircleOutlined, DownloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -36,20 +36,15 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
   }, [form]);
 
   const { firstPeriod, secondPeriod, thirdPeriod } = getPeriods(filters.date);
-  const dateField = form.getFieldValue('date');
+  const selectedDate = new Date(form.getFieldValue('date'));
   const periodField = form.getFieldValue('period');
+  const todayDate = new Date();
+  const payoutPeriod = getPayoutPeriod(todayDate);
 
-  const isFuturePayoutPeriodSelected = useMemo(() => {
-    const todayDate = new Date();
-    const payoutPeriod = getPayoutPeriod(todayDate);
-    const selectedDate = new Date(dateField);
-
-    return (
-      periodField >= payoutPeriod.period &&
-      new Date(selectedDate).getFullYear() >= payoutPeriod.year &&
-      new Date(selectedDate).getMonth() + 1 >= payoutPeriod.month
-    );
-  }, [periodField, dateField]);
+  const isFuturePayoutPeriodSelected =
+    periodField >= payoutPeriod.period &&
+    new Date(selectedDate).getFullYear() >= payoutPeriod.year &&
+    new Date(selectedDate).getMonth() >= payoutPeriod.month;
 
   return (
     <div className={styles['container']}>

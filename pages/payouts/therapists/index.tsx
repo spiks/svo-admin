@@ -1,8 +1,6 @@
 import { Header } from '@components/Header/Header.component';
 import { ListTherapistsForPayout } from '@components/ListTherapistsForPayout/ListTherapistsForPayout.component';
 import { MainLayout } from '@components/MainLayout/MainLayout.component';
-import { TherapistsForPayoutListFilters } from '@components/TherapistsForPayoutListFilters/TherapistsForPayoutListFilters.component';
-import { useTherapistsForPayoutListFilters } from '@components/TherapistsForPayoutListFilters/TherapistsForPayoutListFilters.hooks/useTherapistsForPayoutListFilters';
 import { BreadcrumbProps } from 'antd';
 import { Route } from 'antd/lib/breadcrumb/Breadcrumb';
 import { NextPage } from 'next';
