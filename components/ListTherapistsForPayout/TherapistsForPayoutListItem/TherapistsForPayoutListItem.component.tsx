@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { Avatar, Collapse, Input, Table, Typography } from 'antd';
+import { Avatar, Collapse, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { getListPayoutsForTherapists } from 'api/payout/getListPayoutsForTherapist';
 import { MediaImage, PayoutPeriod } from 'generated';
 import { FC, useCallback, useState } from 'react';
 import { PayoutGridView, payoutToGridView } from '../TherapistsForPayoutList.utils/payoutToGridView';
 import styles from './TherapistsForPayoutListItem.module.css';
-import { UserOutlined } from '@ant-design/icons';
+import { CheckOutlined, MinusOutlined, UserOutlined } from '@ant-design/icons';
 
 const { Panel } = Collapse;
 
@@ -31,7 +31,7 @@ const columns: ColumnsType<PayoutGridView> = [
         {patient.avatar ? (
           <Avatar src={'https://' + patient.avatar.sizes.original.url} size={22} />
         ) : (
-          <Avatar icon={<UserOutlined />} size={22} />
+          <Avatar style={{ flexShrink: 0 }} icon={<UserOutlined />} size={22} />
         )}
         <Typography.Text>{patient.fullName || 'Аноним'}</Typography.Text>
       </div>
@@ -44,6 +44,15 @@ const columns: ColumnsType<PayoutGridView> = [
   {
     title: 'Общая стоимость сеанса',
     dataIndex: 'amount',
+  },
+  {
+    title: 'Выплачено',
+    dataIndex: 'isPaid',
+    render: (isPaid) => (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        {isPaid ? <CheckOutlined /> : <MinusOutlined />}
+      </div>
+    ),
   },
   {
     title: 'Сумма к выплате психологу',
