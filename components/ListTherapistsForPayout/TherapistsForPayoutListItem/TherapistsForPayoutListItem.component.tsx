@@ -3,7 +3,7 @@ import { Avatar, Collapse, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { getListPayoutsForTherapists } from 'api/payout/getListPayoutsForTherapist';
 import { MediaImage, PayoutPeriod } from 'generated';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { PayoutGridView, payoutToGridView } from '../TherapistsForPayoutList.utils/payoutToGridView';
 import styles from './TherapistsForPayoutListItem.module.css';
 import { CheckOutlined, MinusOutlined, UserOutlined } from '@ant-design/icons';
@@ -67,6 +67,7 @@ export const TherapistsForPayoutListItem: FC<TherapistsForPayoutListItemProps> =
   id,
   payoutPeriod,
 }) => {
+  const [isActive, setIsActive] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -92,9 +93,17 @@ export const TherapistsForPayoutListItem: FC<TherapistsForPayoutListItemProps> =
     [pageSize, id, payoutPeriod],
   );
 
-  const { isFetching, data: listPayouts } = useQuery(getQueryKey(page), () => {
-    return fetchPayouts(page - 1);
-  });
+  const { isFetching, data: listPayouts } = useQuery(
+    getQueryKey(page),
+    () => {
+      return fetchPayouts(page - 1);
+    },
+    { enabled: isActive },
+  );
+
+  const handleChangeStatus = () => {
+    setIsActive((prev) => !prev);
+  };
 
   const handlePaginationChange = useCallback((page: number, pageSize: number) => {
     setPageSize(pageSize);
@@ -102,7 +111,7 @@ export const TherapistsForPayoutListItem: FC<TherapistsForPayoutListItemProps> =
   }, []);
 
   return (
-    <Collapse expandIconPosition={'end'}>
+    <Collapse expandIconPosition={'end'} onChange={handleChangeStatus}>
       <Panel
         key={id}
         header={

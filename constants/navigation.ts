@@ -18,6 +18,7 @@ export const NAVIGATION = {
   logs: '/logs',
   content: '/content',
   users: '/users',
+  payouts: '/payouts',
 
   // Биллинг
   therapistsPayouts: '/payouts/therapists',

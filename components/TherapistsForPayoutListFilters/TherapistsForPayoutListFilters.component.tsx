@@ -1,5 +1,5 @@
-import { Button, DatePicker, Form, FormInstance, Input, Select, Typography } from 'antd';
-import { FC, useEffect } from 'react';
+import { Button, DatePicker, Form, FormInstance, Input, Select, Spin, Typography } from 'antd';
+import { FC, useEffect, useMemo, useCallback } from 'react';
 import styles from './TherapistsForPayoutListFilters.module.css';
 import { CheckCircleOutlined, DownloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -14,7 +14,11 @@ type TherapistsForPayoutListFiltersProps = {
   form: FormInstance<TherapistsForPayoutListFiltersForm>;
   onChangeFilters: () => void;
   markPayoutPeriodAsPaid: () => Promise<void>;
-  filters: TherapistsForPayoutListFiltersForm;
+  periodIsPaid: boolean;
+  isFetchingPayoutReport: boolean;
+  isFetchingFinalAmount: boolean;
+  isFetchingTherapists: boolean;
+  isDisabled: boolean;
   finalAmount?: number;
   payoutReport?: StaticFile;
 };
@@ -24,8 +28,12 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
   onChangeFilters,
   markPayoutPeriodAsPaid,
   finalAmount,
-  filters,
   payoutReport,
+  periodIsPaid,
+  isFetchingFinalAmount,
+  isFetchingPayoutReport,
+  isDisabled,
+  isFetchingTherapists,
 }) => {
   useEffect(() => {
     form.setFieldsValue({
@@ -35,7 +43,6 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
     });
   }, [form]);
 
-  const { firstPeriod, secondPeriod, thirdPeriod } = getPeriods(filters.date);
   const selectedDate = new Date(form.getFieldValue('date'));
   const periodField = form.getFieldValue('period');
   const todayDate = new Date();
@@ -46,13 +53,41 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
     new Date(selectedDate).getFullYear() >= payoutPeriod.year &&
     new Date(selectedDate).getMonth() >= payoutPeriod.month;
 
+  const { firstPeriod, secondPeriod, thirdPeriod } = getPeriods(moment(selectedDate));
+
+  const renderButton = () => {
+    if (!periodIsPaid) {
+      return (
+        <Button
+          style={{ width: '100%' }}
+          disabled={isFuturePayoutPeriodSelected || isDisabled}
+          onClick={markPayoutPeriodAsPaid}
+          type={'primary'}
+          icon={<CheckCircleOutlined />}
+        >
+          {'Одобрить выплаты'}
+        </Button>
+      );
+    }
+    return (
+      <div className={styles['paid']}>
+        <CheckCircleOutlined />
+        <Typography.Text style={{ color: '#ffffff' }}>{'Одобрено'}</Typography.Text>
+      </div>
+    );
+  };
+
   return (
     <div className={styles['container']}>
       <div className={styles['left']}>
         <Typography.Text type={'secondary'}>{'Общая сумма  за период'}</Typography.Text>
-        <Typography.Text style={{ fontSize: '24px', lineHeight: '32px' }}>{`${Intl.NumberFormat('ru-RU').format(
-          finalAmount ?? 0,
-        )} \u20bd`}</Typography.Text>
+        {isFetchingFinalAmount ? (
+          <Spin />
+        ) : (
+          <Typography.Text style={{ fontSize: '24px', lineHeight: '32px' }}>{`${Intl.NumberFormat('ru-RU').format(
+            finalAmount ?? 0,
+          )} \u20bd`}</Typography.Text>
+        )}
       </div>
       <Form form={form} onValuesChange={onChangeFilters}>
         <div className={styles['right']}>
@@ -82,15 +117,15 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
                 ]}
               />
             </Form.Item>
+            <div style={{ minWidth: '182px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {isFetchingTherapists ? <Spin /> : renderButton()}
+            </div>
             <Button
-              disabled={isFuturePayoutPeriodSelected}
-              onClick={markPayoutPeriodAsPaid}
-              type={'primary'}
-              icon={<CheckCircleOutlined />}
+              loading={isFetchingPayoutReport}
+              href={payoutReport?.url}
+              disabled={!payoutReport}
+              icon={<DownloadOutlined />}
             >
-              {'Одобрить все выплаты'}
-            </Button>
-            <Button href={payoutReport?.url} disabled={!payoutReport} icon={<DownloadOutlined />}>
               {'Выгрузить данные'}
             </Button>
           </div>

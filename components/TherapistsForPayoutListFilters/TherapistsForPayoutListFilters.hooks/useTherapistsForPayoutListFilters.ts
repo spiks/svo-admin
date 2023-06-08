@@ -43,24 +43,7 @@ export const useTherapistsForPayoutListFilters = () => {
     }, 1500);
   }, [form]);
 
-  const handleMarkPayoutPeriodAsPaid = useCallback(async () => {
-    try {
-      await markPayoutPeriodAsPaid(payoutPeriod);
-      notification.success({
-        type: 'success',
-        message: 'Успех',
-        description: 'Выплаты одобрены',
-      });
-    } catch (e) {
-      notification.error({
-        type: 'error',
-        message: 'Ошибка',
-        description: 'Не удалось одобрить выплаты за данный период',
-      });
-    }
-  }, [payoutPeriod]);
-
-  const { data: finalAmount } = useQuery(
+  const { data: finalAmount, isFetching: isFetchingFinalAmount } = useQuery(
     ['finalAmount', payoutPeriod],
     () => {
       return getFinalAmountForPayoutPeriod(payoutPeriod);
@@ -75,7 +58,7 @@ export const useTherapistsForPayoutListFilters = () => {
     },
   );
 
-  const { data: payoutReport } = useQuery(['payoutReport', payoutPeriod], () => {
+  const { data: payoutReport, isFetching: isFetchingPayoutReport } = useQuery(['payoutReport', payoutPeriod], () => {
     return getPayoutReportForPeriod(payoutPeriod);
   });
 
@@ -84,9 +67,18 @@ export const useTherapistsForPayoutListFilters = () => {
       form,
       handleChangeFilters,
       formFilters,
-      handleMarkPayoutPeriodAsPaid,
       finalAmount: finalAmount?.data.amount.amount,
       payoutReport: payoutReport?.data,
+      isFetchingPayoutReport,
+      isFetchingFinalAmount,
     };
-  }, [form, handleChangeFilters, formFilters, handleMarkPayoutPeriodAsPaid, finalAmount, payoutReport]);
+  }, [
+    form,
+    handleChangeFilters,
+    formFilters,
+    finalAmount,
+    payoutReport,
+    isFetchingFinalAmount,
+    isFetchingPayoutReport,
+  ]);
 };

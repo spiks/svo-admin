@@ -1,18 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
-import { List } from 'antd';
+import { List, notification } from 'antd';
 import { getListTherapistsForPayoutPeriod } from 'api/payout/getListTherapistsForPayoutPeriod';
 import { PayoutPeriod } from 'generated';
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { TherapistsForPayoutListItem } from './TherapistsForPayoutListItem/TherapistsForPayoutListItem.component';
 import { useTherapistsForPayoutListFilters } from '@components/TherapistsForPayoutListFilters/TherapistsForPayoutListFilters.hooks/useTherapistsForPayoutListFilters';
 import { TherapistsForPayoutListFilters } from '@components/TherapistsForPayoutListFilters/TherapistsForPayoutListFilters.component';
+import { markPayoutPeriodAsPaid } from 'api/payout/markPayoutPeriodAsPaid';
+import { getListPayoutsForTherapists } from 'api/payout/getListPayoutsForTherapist';
 
 export const ListTherapistsForPayout: FC = () => {
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [periodIsPaid, setPeriodIsPaid] = useState<boolean>(false);
 
-  const { form, handleChangeFilters, formFilters, handleMarkPayoutPeriodAsPaid, finalAmount, payoutReport } =
-    useTherapistsForPayoutListFilters();
+  const {
+    form,
+    handleChangeFilters,
+    formFilters,
+    finalAmount,
+    payoutReport,
+    isFetchingPayoutReport,
+    isFetchingFinalAmount,
+  } = useTherapistsForPayoutListFilters();
 
   const { search, period, date } = formFilters;
 
@@ -45,28 +55,74 @@ export const ListTherapistsForPayout: FC = () => {
     [pageSize, search, payoutPeriod],
   );
 
-  const { isFetching, data: listTherapists } = useQuery(getQueryKey(page), () => {
-    return fetchTherapistsForPayout(page - 1);
-  });
+  const {
+    isFetching: isFetchingTherapists,
+    data: listTherapists,
+    refetch,
+  } = useQuery(
+    getQueryKey(page),
+    () => {
+      return fetchTherapistsForPayout(page - 1);
+    },
+    {
+      onSuccess: async ({ data }) => {
+        if (!data.items.length) {
+          setPeriodIsPaid(false);
+        }
+        const resp = await getListPayoutsForTherapists({
+          therapistId: data.items[0]?.id,
+          searchQuery: null,
+          pagination: {
+            count: 1,
+            offset: 0,
+          },
+          payoutPeriod: payoutPeriod,
+        });
+        setPeriodIsPaid(resp.data.items[0].isPaid);
+      },
+    },
+  );
 
   const handlePaginationChange = useCallback((page: number, pageSize: number) => {
     setPageSize(pageSize);
     setPage(page);
   }, []);
 
+  const handleMarkPayoutPeriodAsPaid = useCallback(async () => {
+    try {
+      await markPayoutPeriodAsPaid(payoutPeriod);
+      refetch();
+      notification.success({
+        type: 'success',
+        message: 'Успех',
+        description: 'Выплаты одобрены',
+      });
+    } catch (e) {
+      notification.error({
+        type: 'error',
+        message: 'Ошибка',
+        description: 'Не удалось одобрить выплаты за данный период',
+      });
+    }
+  }, [payoutPeriod, refetch]);
+
   return (
     <div style={{ padding: '40px' }}>
       <TherapistsForPayoutListFilters
+        isDisabled={!listTherapists?.data.items.length}
         form={form}
         onChangeFilters={handleChangeFilters}
         markPayoutPeriodAsPaid={handleMarkPayoutPeriodAsPaid}
         finalAmount={finalAmount}
-        filters={formFilters}
         payoutReport={payoutReport}
+        periodIsPaid={periodIsPaid}
+        isFetchingPayoutReport={isFetchingPayoutReport}
+        isFetchingFinalAmount={isFetchingFinalAmount}
+        isFetchingTherapists={isFetchingTherapists}
       />
       <List
         locale={{ emptyText: 'Список пуст' }}
-        loading={isFetching}
+        loading={isFetchingTherapists}
         itemLayout="vertical"
         size="large"
         renderItem={(it) => {
