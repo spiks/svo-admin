@@ -121,33 +121,27 @@ export const SignedContractForm: FC<SignedContractFormProps> = ({ signedContract
         </Col>
         <Col span={12}>
           <Form.Item label={'Статус договора'}>
-            {therapist.status === 'created_by_admin' ? (
-              <Typography.Text type={'secondary'}>
-                После загрузки документа необходимо активировать аккаунт терапевта.
-              </Typography.Text>
-            ) : (
-              <Select
-                value={getContractStatus()}
-                disabled={!canModerateContract}
-                onChange={handleChange}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Select.Option value={'approved'}>{'Подтверждён'}</Select.Option>
-                <Select.Option value={'rejected'}>{'Отклонен'}</Select.Option>
-                <Select.Option value={'pending'} disabled={true}>
-                  {'Ожидает проверки'}
-                </Select.Option>
-                <Select.Option value={'not_arrived'} disabled={true}>
-                  {'Не получен'}
-                </Select.Option>
-              </Select>
-            )}
+            <Select
+              value={getContractStatus()}
+              disabled={!canModerateContract}
+              onChange={handleChange}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Select.Option value={'approved'}>{'Подтверждён'}</Select.Option>
+              <Select.Option value={'rejected'}>{'Отклонен'}</Select.Option>
+              <Select.Option value={'pending'} disabled={true}>
+                {'Ожидает проверки'}
+              </Select.Option>
+              <Select.Option value={'not_arrived'} disabled={true}>
+                {'Не получен'}
+              </Select.Option>
+            </Select>
           </Form.Item>
         </Col>
       </Row>
-      {therapist.status === 'created_by_admin' && (
+      {therapist.status !== 'contract_awaiting_review' && (
         <Row align={'middle'} justify={'end'}>
           <Form.Item>
             <Button disabled={!canUploadSignedContract} type={'primary'} htmlType={'submit'}>

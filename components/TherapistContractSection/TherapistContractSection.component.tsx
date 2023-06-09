@@ -9,7 +9,7 @@ import { useActivateTherapistProfile } from './TherapistContractSection.hooks/us
 export const TherapistContractSection: FC = () => {
   const { therapist } = useContext(TherapistPageContext);
   const { signedContract, ...contractService } = useContractsQuery(therapist.id);
-  const { activateTherapistProfile, canActivateTherapistProfile } = useActivateTherapistProfile(therapist.id);
+  // const { activateTherapistProfile, canActivateTherapistProfile } = useActivateTherapistProfile(therapist.id);
 
   const { Panel } = Collapse;
 
@@ -53,8 +53,8 @@ export const TherapistContractSection: FC = () => {
           />
         </Panel>
       </Collapse>
-
-      {therapist.status === 'created_by_admin' && (
+      {/* Сейчас регистрация терапевта, созданного админом, заканчивается после загрузки договора, а после finishTherapistDocumentsModeration */}
+      {/* {therapist.status === 'created_by_admin' && (
         <Row align="middle" justify="end">
           {!canActivateTherapistProfile ? (
             <Alert
@@ -70,7 +70,7 @@ export const TherapistContractSection: FC = () => {
             </Button>
           )}
         </Row>
-      )}
+      )} */}
     </section>
   );
 };
