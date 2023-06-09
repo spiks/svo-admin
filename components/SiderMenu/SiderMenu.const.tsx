@@ -48,7 +48,7 @@ export const SiderMenuItems = [
   },
   // Billing
   {
-    url: NAVIGATION.therapistsPayouts,
+    url: NAVIGATION.payouts,
     label: 'Биллинг',
     icon: <CreditCardOutlined />,
     children: [
