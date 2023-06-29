@@ -11,13 +11,18 @@ export const Practice: FC = () => {
 
   const personalInformation = query.data!.personalInformation;
   const employments = personalInformation.employments;
-  const specs = personalInformation.specializations;
+  const specs = personalInformation.problems;
   const addSpecs = personalInformation.additionalSpecializations;
-  const specTags = personalInformation.specializationTags;
 
   const formatedSpecs = specs
-    .flatMap((spec) => {
-      return spec.items;
+    .flatMap((problem) => {
+      if (problem.type === 'me_and_partner') {
+        return problem.items;
+      } else {
+        return problem.problemGroups.flatMap((group) => {
+          return group.items;
+        });
+      }
     })
     .filter((item) => {
       return item.isSelected;
@@ -26,14 +31,6 @@ export const Practice: FC = () => {
       return item.name;
     })
     .join(', ');
-
-  const formatedTags = specTags
-    .flatMap((group) => {
-      return group.items;
-    })
-    .filter((tag) => {
-      return tag.isSelected;
-    });
 
   return (
     <CvSection title={'Практика и специализации'}>
@@ -60,20 +57,6 @@ export const Practice: FC = () => {
         <CvSubTitle>Специализации</CvSubTitle>
         <CvEntry title={'Основная специализация'} value={formatedSpecs} />
         <CvEntry title={'Дополнительная специализация'} value={addSpecs ? addSpecs : '-'} />
-      </div>
-      <div style={{ display: 'flex', flexDirection: 'column', rowGap: '8px' }}>
-        <CvSubTitle>Мои теги</CvSubTitle>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-          {formatedTags.length
-            ? formatedTags.map((tag) => {
-                return (
-                  <Tag style={{ fontSize: '8px', marginLeft: '-3px' }} key={tag.id}>
-                    {tag.name}
-                  </Tag>
-                );
-              })
-            : '-'}
-        </div>
       </div>
     </CvSection>
   );

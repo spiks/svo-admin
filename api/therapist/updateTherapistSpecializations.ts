@@ -3,7 +3,6 @@ import { MainSpecialization } from 'generated';
 
 export const updateTherapistSpecializations = async (
   therapistId: string,
-  specializations: string[],
   additionalSpecializations: string | null,
   mainSpecialization: MainSpecialization | null,
 ) => {
@@ -11,7 +10,6 @@ export const updateTherapistSpecializations = async (
     requestBody: {
       arguments: {
         therapistId,
-        specializations,
         additionalSpecializations: additionalSpecializations || null,
         mainSpecialization: mainSpecialization || null,
       },
