@@ -1,5 +1,5 @@
 import { Button, DatePicker, Form, FormInstance, Input, Select, Spin, Typography } from 'antd';
-import { FC, useEffect, useMemo, useCallback } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import styles from './TherapistsForPayoutListFilters.module.css';
 import { CheckCircleOutlined, DownloadOutlined } from '@ant-design/icons';
 import moment from 'moment';
@@ -35,18 +35,18 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
   isDisabled,
   isFetchingTherapists,
 }) => {
+  const todayDate = useRef(new Date());
   useEffect(() => {
     form.setFieldsValue({
       search: undefined,
       date: moment(),
-      period: '1',
+      period: getPayoutPeriod(todayDate.current).period,
     });
   }, [form]);
 
   const selectedDate = new Date(form.getFieldValue('date'));
   const periodField = form.getFieldValue('period');
-  const todayDate = new Date();
-  const payoutPeriod = getPayoutPeriod(todayDate);
+  const payoutPeriod = getPayoutPeriod(todayDate.current);
 
   const isFuturePayoutPeriodSelected =
     periodField >= payoutPeriod.period &&
