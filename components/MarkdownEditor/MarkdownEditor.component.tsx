@@ -39,7 +39,19 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
 
       const contentState = draftState.getCurrentContent();
       const raw = convertToRaw(contentState);
-      const markdown = draftToMarkdown(raw);
+      const markdown = draftToMarkdown(raw, {
+        styleItems: {
+          UNDERLINE: {
+            open: function open() {
+              return '++';
+            },
+
+            close: function close() {
+              return '++';
+            },
+          },
+        },
+      });
       onChange(markdown);
     },
     [onChange, touched],
@@ -92,7 +104,16 @@ export const MarkdownEditor: FC<MarkdownEditorProps> = ({ initialValue, onChange
     }
 
     if (initialValue) {
-      const draft = markdownToDraft(initialValue);
+      const draft = markdownToDraft(initialValue, {
+        blockStyles: {
+          ins_open: 'UNDERLINE',
+        },
+        remarkableOptions: {
+          enable: {
+            inline: 'ins',
+          },
+        },
+      });
       const content = convertFromRaw(draft);
       const state = EditorState.createWithContent(content);
       setEditorState(state);
