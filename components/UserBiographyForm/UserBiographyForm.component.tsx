@@ -45,7 +45,7 @@ export const UserBiographyForm: FC = () => {
         onFinish={onFinish}
         form={form}
         size="large"
-        labelCol={{ span: 10 }}
+        labelCol={{ span: 5 }}
         wrapperCol={{ span: 16 }}
         initialValues={{
           biography: therapist.biography,
@@ -76,7 +76,7 @@ export const UserBiographyForm: FC = () => {
         >
           <TextArea rows={6} showCount maxLength={2048} />
         </Form.Item>
-        <Form.Item wrapperCol={{ offset: '10' }}>
+        <Form.Item wrapperCol={{ offset: '5' }}>
           <Button type="primary" htmlType="submit">
             Сохранить
           </Button>

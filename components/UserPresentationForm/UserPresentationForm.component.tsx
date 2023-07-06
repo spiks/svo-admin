@@ -39,7 +39,7 @@ export const UserPresentationForm: FC = () => {
         onFinish={onFinish}
         form={form}
         size="large"
-        labelCol={{ span: 8 }}
+        labelCol={{ span: 4 }}
         wrapperCol={{ span: 16 }}
         initialValues={{
           url: videoPresentation?.url,
@@ -59,12 +59,12 @@ export const UserPresentationForm: FC = () => {
         >
           <Input />
         </Form.Item>
-        <Form.Item wrapperCol={{ offset: 8 }}>
+        <Form.Item wrapperCol={{ offset: '4' }}>
           <Typography.Text type={'secondary'}>
             Необходимо указать URL на видео-презентацию с видеохостинга
           </Typography.Text>
         </Form.Item>
-        <Form.Item wrapperCol={{ offset: '8' }}>
+        <Form.Item wrapperCol={{ offset: '4' }}>
           <Button type="primary" htmlType="submit">
             Сохранить
           </Button>
