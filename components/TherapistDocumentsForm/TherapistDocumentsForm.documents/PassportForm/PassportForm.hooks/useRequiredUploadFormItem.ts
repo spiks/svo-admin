@@ -38,7 +38,7 @@ export function useRequiredUploadFormItem(
         rules: [
           {
             async validator(_: RuleObject, value: UploadFile[]) {
-              value.forEach((file) => {
+              value?.forEach((file) => {
                 if (file.response) {
                   setIsUploadFinished(true);
                 }

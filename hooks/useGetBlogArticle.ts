@@ -13,7 +13,7 @@ export const useGetBlogArticle = (
       notification.error({
         type: 'error',
         message: 'Ошибка',
-        description: 'Непридвенная ошибка',
+        description: 'Непредвенная ошибка',
       }),
     onSuccess: (article) => {
       const cover: UploadFile[] = [];

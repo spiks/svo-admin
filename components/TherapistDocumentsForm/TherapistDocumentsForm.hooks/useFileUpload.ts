@@ -97,10 +97,9 @@ export function useFileUpload(purpose: FilePurpose, options?: UseFileUploadOptio
     },
     {
       onError: (err: AxiosError<FusErrorResponse>) => {
-        const errorText = String(err);
         notification.error({
           message: 'Загрузка файла',
-          description: 'Не удалось загрузить файл: ' + errorText,
+          description: 'Не удалось загрузить файл. Попробуйте снова.',
         });
         options?.onUploadError && options.onUploadError(err.response?.data.type);
       },

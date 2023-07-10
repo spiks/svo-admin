@@ -18,6 +18,7 @@ import { Moment } from 'moment';
 import { useRequiredUploadFormItem } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.hooks/useRequiredUploadFormItem';
 import { birthday } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/birthday.rule';
 import { issuerName } from './PassportForm.rules/issuerName.rule';
+import { issuedAt } from '@components/TherapistDocumentsForm/TherapistDocumentsForm.documents/PassportForm/PassportForm.rules/issuedAt.rule';
 
 const countryRelatedFields = new Map<Passport['information']['country'], ComponentType>();
 countryRelatedFields.set('russia', RussianPassportFields);
@@ -129,7 +130,7 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
           </Form.Item>
         </Col>
         <Col xs={8}>
-          <Form.Item label={'Дата выдачи'} name={'issuedAt'} rules={[required]}>
+          <Form.Item label={'Дата выдачи'} name={'issuedAt'} rules={[required, issuedAt]}>
             <DatePicker style={{ width: '100%' }} format={'YYYY-MM-DD'} />
           </Form.Item>
         </Col>
