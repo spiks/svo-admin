@@ -61,10 +61,10 @@ export function useTherapistSnils(therapistId: string) {
         });
         refetch();
       },
-      onError(err) {
+      onError() {
         notification.error({
           message: 'СНИЛС',
-          description: 'Не удалось сохранить документ: ' + err,
+          description: 'Не удалось сохранить документ. Попробуйте снова.',
         });
       },
     },
