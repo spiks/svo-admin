@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { Form, notification } from 'antd';
 import { getFinalAmountForPayoutPeriod } from 'api/payout/getFinalAmountForPayoutPeriod';
-import { markPayoutPeriodAsPaid } from 'api/payout/markPayoutPeriodAsPaid';
 import { PayoutPeriod } from 'generated';
 import moment from 'moment';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { getPayoutReportForPeriod } from 'api/payout/getPayoutReportForPeriod';
+import { getPayoutPeriod } from '../../../helpers/getPayoutPeriod';
 
 export type TherapistsForPayoutListFiltersForm = {
   search?: string;
@@ -15,10 +15,11 @@ export type TherapistsForPayoutListFiltersForm = {
 
 export const useTherapistsForPayoutListFilters = () => {
   const [form] = Form.useForm<TherapistsForPayoutListFiltersForm>();
+  const todayDate = useRef(moment());
   const [formFilters, setFormFilters] = useState<TherapistsForPayoutListFiltersForm>({
     search: undefined,
-    date: moment(),
-    period: '1',
+    date: todayDate.current,
+    period: getPayoutPeriod(todayDate.current.toDate()).period,
   });
 
   const payoutPeriod: PayoutPeriod = useMemo(() => {

@@ -35,18 +35,19 @@ export const TherapistsForPayoutListFilters: FC<TherapistsForPayoutListFiltersPr
   isDisabled,
   isFetchingTherapists,
 }) => {
-  const todayDate = useRef(new Date());
+  const todayDate = useRef(moment());
+  const payoutPeriod = getPayoutPeriod(todayDate.current.toDate());
+
   useEffect(() => {
     form.setFieldsValue({
       search: undefined,
-      date: moment(),
-      period: getPayoutPeriod(todayDate.current).period,
+      date: todayDate.current,
+      period: payoutPeriod.period,
     });
-  }, [form]);
+  }, [form, payoutPeriod.period]);
 
   const selectedDate = new Date(form.getFieldValue('date'));
   const periodField = form.getFieldValue('period');
-  const payoutPeriod = getPayoutPeriod(todayDate.current);
 
   const isFuturePayoutPeriodSelected =
     periodField >= payoutPeriod.period &&
