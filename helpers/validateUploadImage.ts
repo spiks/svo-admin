@@ -27,7 +27,7 @@ export async function validateUploadImage(file: RcFile) {
     const width = imageDims.width;
     const height = imageDims.height;
     const isMaxDims = width < 5400 && height < 5400;
-    const isMinDims = width > 10 && height > 10;
+    const isMinDims = width > 912 && height > 10;
 
     if (!isMaxDims) {
       notification.error({
@@ -42,7 +42,7 @@ export async function validateUploadImage(file: RcFile) {
       notification.error({
         type: 'error',
         message: 'Ошибка',
-        description: `Минимальный размер изображения 10 x 10!`,
+        description: `Минимальный размер изображения 912 x 10!`,
       });
       return Upload.LIST_IGNORE;
     }
