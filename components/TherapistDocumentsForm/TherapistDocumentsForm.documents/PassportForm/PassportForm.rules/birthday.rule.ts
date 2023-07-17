@@ -13,7 +13,7 @@ export const birthday: Rule = {
       throw new Error('Дата рождения не может принимать такое значение');
     }
     const yearsBetweenNowAndBirthday = intervalToDuration({
-      start: value.date(),
+      start: value.toDate(),
       end: new Date(),
     })?.years;
     if (yearsBetweenNowAndBirthday! < 18) {
