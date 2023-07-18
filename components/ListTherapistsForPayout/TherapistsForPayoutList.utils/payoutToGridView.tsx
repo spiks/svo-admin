@@ -15,7 +15,6 @@ export const payoutToGridView = (it: PayoutSchema) => {
       day: 'numeric',
       hour: 'numeric',
       minute: 'numeric',
-      timeZone: 'UTC',
     }),
     amount: `${Intl.NumberFormat('ru-RU').format(it.amount.amount)} \u20bd`,
     patient: { avatar: it.patient.avatar, fullName },
