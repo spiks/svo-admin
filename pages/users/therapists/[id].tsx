@@ -47,7 +47,6 @@ import { UserProfileForm } from '@components/UserProfileForm/UserProfileForm.com
 import { TherapistLegalForm } from '@components/TherapistLegalForm/TherapistLegalForm.component';
 import { TherapistPaymentInformationForm } from '@components/TherapistPaymentInformationForm/TherapistPaymentInformationForm.component';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { router } from 'next/client';
 import { NAVIGATION } from '../../../constants/navigation';
 
 // Этапы регистрации терапевта
@@ -106,6 +105,7 @@ export const TherapistPageContext = createContext({} as TherapistPageContextValu
 const TherapistPage: NextPage = () => {
   const { query, replace, events } = useRouter();
   const [form] = Form.useForm<UserProfileFormValues>();
+  const router = useRouter();
 
   const [routeChanging, setRouteChanging] = useState(false);
 

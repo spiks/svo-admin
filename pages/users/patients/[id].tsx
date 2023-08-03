@@ -19,7 +19,6 @@ import { useCallback, useMemo } from 'react';
 import { UserProfileFormValues } from '../therapists/[id]';
 import AppointmentsList from '@components/AppointmentsList/AppointmentsList.component';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { router } from 'next/client';
 import { NAVIGATION } from '../../../constants/navigation';
 
 const tabListItems: { label: string; key: 'information' | 'appointments' }[] = [
@@ -168,7 +167,7 @@ const PatientPage: NextPage = () => {
       },
       onSuccess: async () => {
         await client.resetQueries(['patients']);
-        await router.push(NAVIGATION.patients);
+        await push(NAVIGATION.patients);
       },
     },
   );
