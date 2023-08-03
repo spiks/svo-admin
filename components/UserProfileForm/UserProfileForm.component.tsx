@@ -1,6 +1,6 @@
 import { Button, Col, Divider, Form, FormInstance, Input, Row, Tooltip, Typography } from 'antd';
 import { UploadChangeParam, UploadFile } from 'antd/lib/upload/interface';
-import { FC, useCallback } from 'react';
+import React, { FC, useCallback, useState } from 'react';
 import { CopyOutlined, MailOutlined, PlusOutlined } from '@ant-design/icons';
 import { UserProfileFormValues } from 'pages/users/therapists/[id]';
 import CountryPhoneInput from 'antd-country-phone-input-upgraded';
@@ -12,6 +12,7 @@ import { validateUploadImage } from '../../helpers/validateUploadImage';
 import { validateEmailRule } from '../../helpers/validateEmailRule';
 import { MAX_USER_NAME_LENGTH, MAX_USER_SURNAME_LENGTH } from '../../constants/inputMaxLength';
 import { MAX_INTEGER } from 'constants/amoCrmContactId';
+import DeleteUserModal from '@components/DeleteUserModal/DeleteUserModal.component';
 
 export type UserProfileFormProps = {
   id?: Uuid;
@@ -24,9 +25,10 @@ export type UserProfileFormProps = {
   amoCrmContactId?: TherapistAmoCrmContactId | null;
   form: FormInstance<UserProfileFormValues>;
   onFinish: (values: UserProfileFormValues) => void;
+  deleteUser: () => void;
 };
 
-export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...props }) => {
+export const UserProfileForm: FC<UserProfileFormProps> = ({ form, deleteUser, onFinish, ...props }) => {
   const getAvatar = () => {
     const uploadedAvatar: UploadFile[] = [];
     const userAvatar = props.avatar?.sizes.small;
@@ -45,6 +47,11 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
   const copyAmoCrmId = useCallback(() => {
     navigator.clipboard.writeText(form.getFieldValue('amoCrmContactId'));
   }, [form]);
+
+  const [isDeleteUserModalOpen, setDeleteUserModalOpen] = useState(false);
+  const handleToggleModal = useCallback(() => {
+    setDeleteUserModalOpen((prev) => !prev);
+  }, []);
 
   return (
     <Form
@@ -222,6 +229,12 @@ export const UserProfileForm: FC<UserProfileFormProps> = ({ form, onFinish, ...p
           Сохранить
         </Button>
       </Form.Item>
+      <Form.Item wrapperCol={{ offset: '8' }}>
+        <Button onClick={handleToggleModal} type="text" danger>
+          Удалить пользователя
+        </Button>
+      </Form.Item>
+      <DeleteUserModal isOpen={isDeleteUserModalOpen} deleteUser={deleteUser} onCancel={handleToggleModal} />
     </Form>
   );
 };

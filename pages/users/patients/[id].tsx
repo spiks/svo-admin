@@ -18,6 +18,8 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 import { UserProfileFormValues } from '../therapists/[id]';
 import AppointmentsList from '@components/AppointmentsList/AppointmentsList.component';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { NAVIGATION } from '../../../constants/navigation';
 
 const tabListItems: { label: string; key: 'information' | 'appointments' }[] = [
   { label: 'Сведения', key: 'information' },
@@ -143,12 +145,40 @@ const PatientPage: NextPage = () => {
     }
   };
 
+  const client = useQueryClient();
+
+  const { mutate: deletePatientProfile } = useMutation(
+    () => {
+      return PatientServiceWithToken.removePatientProfile({
+        requestBody: {
+          arguments: {
+            patientId,
+          },
+        },
+      });
+    },
+    {
+      onError: () => {
+        notification.error({
+          type: 'error',
+          message: 'Ошибка',
+          description: 'Не удалось удалить пользователя',
+        });
+      },
+      onSuccess: async () => {
+        await client.resetQueries(['patients']);
+        await push(NAVIGATION.patients);
+      },
+    },
+  );
+
   const renderTabContents = () => {
     switch (activeTab) {
       case 'information':
         return (
           <PageWrapper>
             <UserProfileForm
+              deleteUser={deletePatientProfile}
               id={patient?.id}
               name={patient?.name}
               surname={patient?.surname}
