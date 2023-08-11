@@ -48,13 +48,6 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
 
   const convertedDto = usePassportConverterFromDto(information, passport?.document);
 
-  const getPatronymicRules = () => {
-    if (country !== 'kazakhstan') {
-      return required;
-    }
-    return { required: false };
-  };
-
   const country = Form.useWatch('country', form);
   const CountryRelated = countryRelatedFields.get(country);
 
@@ -100,7 +93,7 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
             }}
             label={'Отчество'}
             name={'patronymic'}
-            rules={[getPatronymicRules(), middleText]}
+            rules={[middleText]}
           >
             <Input type={'text'} />
           </Form.Item>
