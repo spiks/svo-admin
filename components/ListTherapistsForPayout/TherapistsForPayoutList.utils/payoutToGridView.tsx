@@ -9,7 +9,7 @@ export const payoutToGridView = (it: PayoutSchema) => {
   const fullName = [it.patient.surname, it.patient.name].filter(Boolean).join(' ').trim();
   return {
     ...it,
-    date: new Date(it.appointmentEndsAt).toLocaleString('ru-RU', {
+    date: new Date(it.appointmentStartsAt).toLocaleString('ru-RU', {
       year: 'numeric',
       month: 'numeric',
       day: 'numeric',

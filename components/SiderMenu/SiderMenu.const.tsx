@@ -1,4 +1,4 @@
-import { PictureOutlined, UserOutlined, CreditCardOutlined } from '@ant-design/icons';
+import { PictureOutlined, UserOutlined, CreditCardOutlined, ProfileOutlined } from '@ant-design/icons';
 import { NAVIGATION } from '../../constants/navigation';
 
 export const SiderMenuItems = [
@@ -58,6 +58,12 @@ export const SiderMenuItems = [
       },
     ],
   },
+  {
+    url: NAVIGATION.promocodes,
+    label: 'Промокоды',
+    icon: <ProfileOutlined />,
+  },
+
   // Logs
   // {
   //   url: NAVIGATION.logs,

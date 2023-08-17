@@ -22,4 +22,7 @@ export const NAVIGATION = {
 
   // Биллинг
   therapistsPayouts: '/payouts/therapists',
+
+  // Промокоды
+  promocodes: '/promocodes',
 };
