@@ -7,6 +7,7 @@ import {
   InnService,
   PassportService,
   PatientService,
+  PromoCodeService,
   SnilsService,
   TherapistContractService,
   TherapistDocumentsService,
@@ -32,3 +33,4 @@ export const AdminBlogServiceWithToken = provideToken(AdminBlogService);
 export const AppointmentServiceWithToken = provideToken(AppointmentService);
 export const VideoPresentationWithToken = provideToken(VideoPresentationService);
 export const PayoutServiceWithToken = provideToken(PayoutService);
+export const PromoCodesServiceWithToken = provideToken(PromoCodeService);
