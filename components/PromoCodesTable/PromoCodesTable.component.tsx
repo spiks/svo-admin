@@ -149,6 +149,7 @@ export const PromoCodesTable: FC = () => {
         });
         handleHidePromoCodeModal();
         refetchPromoCode();
+        refetch();
       },
       onError(error) {
         if (error instanceof ApiRegularError) {

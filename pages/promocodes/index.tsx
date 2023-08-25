@@ -21,7 +21,7 @@ const PromocodesPage: NextPage = () => {
     <MainLayout>
       <Header
         style={{ backgroundColor: '#FFFFFF' }}
-        title={'Управление кодами'}
+        title={'Управление промокодами'}
         breadcrumb={{ routes, itemRender }}
         backIcon={false}
       />

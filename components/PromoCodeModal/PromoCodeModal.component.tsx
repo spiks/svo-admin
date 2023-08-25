@@ -4,6 +4,7 @@ import { getPatientList } from 'api/patient/getPatientList';
 import { getTherapistList } from 'api/therapist/getTherapistList';
 import { GetPromoCodeResponseSchema, SubmitPromoCodeAuto, SubmitPromoCodeB2b, SubmitPromoCodeInput } from 'generated';
 import { FC, useEffect } from 'react';
+import { extractFullName } from '../../utility/extractFullName';
 
 export type SelectedUsersType = {
   forTherapists: string[];
@@ -196,7 +197,8 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
             renderOptions={(data) => {
               return data?.pages.flatMap(({ data }) => {
                 return data.items.map((it) => {
-                  return { value: it.id, label: it.name };
+                  const fullName = extractFullName({ name: it.name, surname: it.surname });
+                  return { value: it.id, label: fullName };
                 });
               });
             }}
@@ -219,7 +221,8 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
             renderOptions={(data) => {
               return data?.pages.flatMap(({ data }) => {
                 return data.items.map((it) => {
-                  return { value: it.id, label: it.name || 'Аноним' };
+                  const fullName = extractFullName({ name: it.name, surname: it.surname });
+                  return { value: it.id, label: fullName };
                 });
               });
             }}

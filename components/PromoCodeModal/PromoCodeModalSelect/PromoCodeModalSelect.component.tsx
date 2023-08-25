@@ -60,11 +60,10 @@ export function PromoCodeModalSelect<T>({
       placeholder={placeholder}
       showSearch={true}
       mode="multiple"
-      allowClear
+      allowClear={true}
       onPopupScroll={handleScrollPopup}
       options={renderOptions(data)}
       onSearch={handleChangeSearch}
-      searchValue={search}
       value={value}
       onChange={onChange}
       maxTagCount={'responsive'}
