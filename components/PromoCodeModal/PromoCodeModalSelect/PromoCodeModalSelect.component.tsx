@@ -1,13 +1,6 @@
-import { ReactNode, Ref, UIEvent, useRef } from 'react';
-import type { BaseSelectRef } from 'rc-select';
+import { ReactNode, UIEvent, useState } from 'react';
 import { Select } from 'antd';
-import {
-  InfiniteData,
-  QueryFunction,
-  QueryKey,
-  useInfiniteQuery,
-  UseInfiniteQueryOptions,
-} from '@tanstack/react-query';
+import { InfiniteData, QueryKey, useInfiniteQuery, UseInfiniteQueryOptions } from '@tanstack/react-query';
 import { DefaultOptionType } from 'antd/lib/select';
 
 type AntDesignFormItemProps = {
@@ -17,7 +10,7 @@ type AntDesignFormItemProps = {
 
 export type PromoCodeModalSelectProps<T> = {
   queryKey: QueryKey;
-  queryFn: QueryFunction<T>;
+  fetchData: (offset: number, search: string) => T | Promise<T>;
   queryOptions: UseInfiniteQueryOptions<T>;
   renderOptions: (data: InfiniteData<T> | undefined) => DefaultOptionType[] | undefined;
   placeholder?: ReactNode;
@@ -30,20 +23,26 @@ export function PromoCodeModalSelect<T>({
   value,
   onChange,
   queryKey,
-  queryFn,
+  fetchData,
   queryOptions,
   renderOptions,
   placeholder,
 }: PromoCodeModalSelectProps<T>) {
-  const selectRef: Ref<BaseSelectRef> = useRef(null);
+  const [search, setSearch] = useState('');
 
-  const scrollPopupToTop = () => {
-    if (selectRef.current !== null) {
-      selectRef.current.scrollTo(0);
-    }
+  const handleChangeSearch = (value: string) => {
+    setSearch(value);
   };
 
-  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(queryKey, queryFn, queryOptions);
+  const fetchOptions = ({ pageParam = null }: { pageParam?: number | null }) => {
+    return fetchData(pageParam || 0, search);
+  };
+
+  const { data, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    [...queryKey, search] as QueryKey,
+    fetchOptions,
+    queryOptions,
+  );
 
   const handleScrollPopup = async (event: UIEvent<HTMLDivElement>) => {
     const popupElm = event.target as HTMLDivElement;
@@ -57,13 +56,15 @@ export function PromoCodeModalSelect<T>({
 
   return (
     <Select
+      filterOption={false}
       placeholder={placeholder}
       showSearch={true}
       mode="multiple"
       allowClear
       onPopupScroll={handleScrollPopup}
-      ref={selectRef}
       options={renderOptions(data)}
+      onSearch={handleChangeSearch}
+      searchValue={search}
       value={value}
       onChange={onChange}
       maxTagCount={'responsive'}

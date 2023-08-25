@@ -47,10 +47,10 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
     onSubmit(formValues);
   };
 
-  const fetchTherapistsListQueryFn = (offset: number) => {
+  const fetchTherapistsList = (offset: number, search: string) => {
     return getTherapistList({
       search: {
-        fullName: null,
+        fullName: search || null,
         phone: null,
       },
       pagination: {
@@ -66,10 +66,10 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
     });
   };
 
-  const fetchPatientsListQueryFn = (offset: number) => {
+  const fetchPatientsList = (offset: number, search: string) => {
     return getPatientList({
       search: {
-        fullName: null,
+        fullName: search || null,
         phone: null,
       },
       pagination: {
@@ -83,37 +83,30 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
     });
   };
 
-  const fetchTherapistList = ({ pageParam = null }: { pageParam?: number | null }) => {
-    return fetchTherapistsListQueryFn(pageParam || 0);
-  };
-
-  const fetchPatientList = ({ pageParam = null }: { pageParam?: number | null }) => {
-    return fetchPatientsListQueryFn(pageParam || 0);
-  };
-
   useEffect(() => {
-    if (promoCode?.type === 'b2b') {
-      promoCodeForm.setFieldsValue({
-        ...promoCode,
-        forPatients: promoCode.forPatients.patientProfiles,
-        forTherapists: promoCode.forTherapists.therapistProfiles,
-      });
-    }
-    promoCodeForm.setFieldsValue({
-      ...promoCode,
-      forTherapists:
-        promoCode?.forTherapists.type === 'all'
-          ? []
-          : promoCode?.forTherapists.therapistProfiles.map((it) => {
-              return it.id;
-            }),
-      forPatients:
-        promoCode?.forPatients.type === 'all'
-          ? []
-          : promoCode?.forPatients.patientProfiles.map((it) => {
-              return it.id;
-            }),
-    });
+    promoCodeForm.setFieldsValue(
+      promoCode?.type === 'b2b'
+        ? {
+            ...promoCode,
+            forPatients: promoCode.forPatients.patientProfiles,
+            forTherapists: promoCode.forTherapists.therapistProfiles,
+          }
+        : {
+            ...promoCode,
+            forTherapists:
+              promoCode?.forTherapists.type === 'all'
+                ? []
+                : promoCode?.forTherapists.therapistProfiles.map((it) => {
+                    return it.id;
+                  }),
+            forPatients:
+              promoCode?.forPatients.type === 'all'
+                ? []
+                : promoCode?.forPatients.patientProfiles.map((it) => {
+                    return it.id;
+                  }),
+          },
+    );
   }, [promoCode, promoCodeForm, isOpen]);
 
   useEffect(() => {
@@ -124,7 +117,21 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
 
   return (
     <Modal title={title} open={isOpen} onCancel={onCancel} footer={null}>
-      <Form layout="vertical" form={promoCodeForm} onFinish={handleSubmit}>
+      <Form
+        initialValues={{
+          forTherapists: ['all'],
+          forPatients: ['all'],
+          type: 'auto',
+          isActive: false,
+          isDisposable: false,
+          serviceDiscount: undefined,
+          title: '',
+          therapistDiscount: undefined,
+        }}
+        layout="vertical"
+        form={promoCodeForm}
+        onFinish={handleSubmit}
+      >
         <Form.Item
           rules={[{ required: true, message: 'Заполните недостающие поля' }]}
           normalize={(value: string) => {
@@ -185,7 +192,7 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
           <PromoCodeModalSelect
             placeholder={'Выберите психологов, к которым будет применяться промокод'}
             queryKey={['therapistList']}
-            queryFn={fetchTherapistList}
+            fetchData={fetchTherapistsList}
             renderOptions={(data) => {
               return data?.pages.flatMap(({ data }) => {
                 return data.items.map((it) => {
@@ -208,7 +215,7 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
           <PromoCodeModalSelect
             placeholder={'Выберите пациентов, к которым будет применяться промокод'}
             queryKey={['patientList']}
-            queryFn={fetchPatientList}
+            fetchData={fetchPatientsList}
             renderOptions={(data) => {
               return data?.pages.flatMap(({ data }) => {
                 return data.items.map((it) => {
