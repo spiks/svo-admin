@@ -1,32 +1,29 @@
-import { ReactNode, UIEvent, useState } from 'react';
+import { ReactNode, UIEvent, useMemo, useState } from 'react';
 import { Select } from 'antd';
 import { InfiniteData, QueryKey, useInfiniteQuery, UseInfiniteQueryOptions } from '@tanstack/react-query';
-import { DefaultOptionType } from 'antd/lib/select';
-
-type AntDesignFormItemProps = {
-  value?: string | string[];
-  onChange?: (value: string | string[]) => void;
-};
 
 export type PromoCodeModalSelectProps<T> = {
   queryKey: QueryKey;
   fetchData: (offset: number, search: string) => T | Promise<T>;
   queryOptions: UseInfiniteQueryOptions<T>;
-  renderOptions: (data: InfiniteData<T> | undefined) => DefaultOptionType[] | undefined;
+  renderOptions: (data: InfiniteData<T> | undefined) => Array<{ value: string; label: string }> | undefined;
   placeholder?: ReactNode;
-} & AntDesignFormItemProps;
+} & {
+  value?: Array<{ value: string; label: string }>;
+  onChange?: (value: Array<{ value: string; label: string }> | { value: string; label: string }) => void;
+};
 
 /**
  * Компонент выпадающего списка с возможностью фетчинга опций
  */
 export function PromoCodeModalSelect<T>({
   value,
-  onChange,
   queryKey,
   fetchData,
   queryOptions,
   renderOptions,
   placeholder,
+  onChange,
 }: PromoCodeModalSelectProps<T>) {
   const [search, setSearch] = useState('');
 
@@ -54,6 +51,37 @@ export function PromoCodeModalSelect<T>({
     }
   };
 
+  const handleChangeSelectedItems = async (
+    _: unknown,
+    values: Array<{ value: string; label: string }> | { value: string; label: string },
+  ) => {
+    if (onChange === undefined) {
+      return;
+    }
+
+    if (Array.isArray(values)) {
+      onChange(
+        values.map((item) => {
+          return item;
+        }),
+      );
+
+      return;
+    }
+
+    onChange(values);
+  };
+
+  const mappedValue = useMemo(() => {
+    if (value === undefined || value === null) {
+      return [];
+    }
+
+    return value.map((valueItem) => {
+      return { value: valueItem.value, label: valueItem.label || 'Аноним' };
+    });
+  }, [value]);
+
   return (
     <Select
       filterOption={false}
@@ -64,9 +92,9 @@ export function PromoCodeModalSelect<T>({
       onPopupScroll={handleScrollPopup}
       options={renderOptions(data)}
       onSearch={handleChangeSearch}
-      value={value}
-      onChange={onChange}
+      value={mappedValue}
       maxTagCount={'responsive'}
+      onChange={handleChangeSelectedItems}
     />
   );
 }
