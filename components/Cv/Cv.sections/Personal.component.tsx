@@ -8,11 +8,11 @@ import { CvContext } from '@components/Cv/Cv.component';
 import { Passport } from '../../../generated';
 
 const countryMap: Record<Passport['information']['country'], string> = {
-  kazakhstan: 'Казахстан',
+  kazakhstan: 'Республика Казахстан',
   russia: 'Российская Федерация',
-  armenia: 'Армения',
-  belarus: 'Беларусь',
-  kyrgyzstan: 'Киргизстан',
+  armenia: 'Республика Армения',
+  belarus: 'Республика Беларусь',
+  kyrgyzstan: 'Киргизская Республика',
 };
 
 const genderMap: Record<Passport['information']['gender'], string> = {

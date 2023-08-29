@@ -102,10 +102,10 @@ export const PassportForm: FC<PassportFormProps> = ({ passport, onSubmit, onDele
           <Form.Item label={'Гражданство'} name={'country'} rules={[required]}>
             <Select>
               <Select.Option value={'russia'}>Российская Федерация</Select.Option>
-              <Select.Option value={'armenia'}>Армения</Select.Option>
-              <Select.Option value={'belarus'}>Беларусь</Select.Option>
-              <Select.Option value={'kazakhstan'}>Казахстан</Select.Option>
-              <Select.Option value={'kyrgyzstan'}>Киргизия</Select.Option>
+              <Select.Option value={'armenia'}>Республика Армения</Select.Option>
+              <Select.Option value={'belarus'}>Республика Беларусь</Select.Option>
+              <Select.Option value={'kazakhstan'}>Республика Казахстан</Select.Option>
+              <Select.Option value={'kyrgyzstan'}>Киргизская Республика</Select.Option>
             </Select>
           </Form.Item>
         </Col>
