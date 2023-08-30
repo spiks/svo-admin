@@ -75,16 +75,32 @@ export const PromoCodesTable: FC = () => {
       case 'b2b':
         return {
           ...formValues,
+          forPatients: formValues.forPatients.map((it) => {
+            return it.value;
+          }),
+          forTherapists: formValues.forTherapists.map((it) => {
+            return it.value;
+          }),
         };
       default:
         return {
           ...formValues,
           forTherapists: !formValues.forTherapists?.length
             ? { type: 'all' }
-            : { type: 'selected', therapistIds: formValues.forTherapists },
+            : {
+                type: 'selected',
+                therapistIds: formValues.forTherapists.map((it) => {
+                  return it.value;
+                }),
+              },
           forPatients: !formValues.forPatients?.length
             ? { type: 'all' }
-            : { type: 'selected', patientIds: formValues.forPatients },
+            : {
+                type: 'selected',
+                patientIds: formValues.forPatients.map((it) => {
+                  return it.value;
+                }),
+              },
         };
     }
   };

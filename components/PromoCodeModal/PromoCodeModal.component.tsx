@@ -3,12 +3,12 @@ import { Alert, Button, Checkbox, Col, Form, FormProps, Input, Modal, Row, Selec
 import { getPatientList } from 'api/patient/getPatientList';
 import { getTherapistList } from 'api/therapist/getTherapistList';
 import { GetPromoCodeResponseSchema, SubmitPromoCodeAuto, SubmitPromoCodeB2b, SubmitPromoCodeInput } from 'generated';
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { extractFullName } from '../../utility/extractFullName';
 
 export type SelectedUsersType = {
-  forTherapists: string[];
-  forPatients: string[];
+  forTherapists: { value: string; label: string }[];
+  forPatients: { value: string; label: string }[];
 };
 
 export type PromoCodeFormAutoViewModel = Omit<SubmitPromoCodeAuto, 'forTherapists' | 'forPatients'> & SelectedUsersType;
@@ -84,31 +84,45 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
     });
   };
 
+  const promoCodeToViewModelMapper = useCallback(() => {
+    if (promoCode?.type === 'b2b') {
+      const forPatientsValueB2b = promoCode.forPatients.patientProfiles.map((it) => {
+        return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
+      });
+      const forTherapistsValueB2b = promoCode.forTherapists.therapistProfiles.map((it) => {
+        return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
+      });
+
+      return {
+        ...promoCode,
+        forPatients: forPatientsValueB2b,
+        forTherapists: forTherapistsValueB2b,
+      };
+    }
+    const forTherapistsValue =
+      promoCode?.forTherapists.type === 'all'
+        ? []
+        : promoCode?.forTherapists.therapistProfiles.map((it) => {
+            return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
+          });
+
+    const forPatientsValue =
+      promoCode?.forPatients.type === 'all'
+        ? []
+        : promoCode?.forPatients.patientProfiles.map((it) => {
+            return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
+          });
+
+    return {
+      ...promoCode,
+      forTherapists: forTherapistsValue,
+      forPatients: forPatientsValue,
+    };
+  }, [promoCode]);
+
   useEffect(() => {
-    promoCodeForm.setFieldsValue(
-      promoCode?.type === 'b2b'
-        ? {
-            ...promoCode,
-            forPatients: promoCode.forPatients.patientProfiles,
-            forTherapists: promoCode.forTherapists.therapistProfiles,
-          }
-        : {
-            ...promoCode,
-            forTherapists:
-              promoCode?.forTherapists.type === 'all'
-                ? []
-                : promoCode?.forTherapists.therapistProfiles.map((it) => {
-                    return it.id;
-                  }),
-            forPatients:
-              promoCode?.forPatients.type === 'all'
-                ? []
-                : promoCode?.forPatients.patientProfiles.map((it) => {
-                    return it.id;
-                  }),
-          },
-    );
-  }, [promoCode, promoCodeForm, isOpen]);
+    promoCodeForm.setFieldsValue(promoCodeToViewModelMapper());
+  }, [promoCode, promoCodeForm, isOpen, promoCodeToViewModelMapper]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -120,8 +134,8 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
     <Modal title={title} open={isOpen} onCancel={onCancel} footer={null}>
       <Form
         initialValues={{
-          forTherapists: ['all'],
-          forPatients: ['all'],
+          forTherapists: [],
+          forPatients: [],
           type: 'auto',
           isActive: false,
           isDisposable: false,
@@ -197,8 +211,7 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
             renderOptions={(data) => {
               return data?.pages.flatMap(({ data }) => {
                 return data.items.map((it) => {
-                  const fullName = extractFullName({ name: it.name, surname: it.surname });
-                  return { value: it.id, label: fullName };
+                  return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
                 });
               });
             }}
@@ -221,8 +234,7 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
             renderOptions={(data) => {
               return data?.pages.flatMap(({ data }) => {
                 return data.items.map((it) => {
-                  const fullName = extractFullName({ name: it.name, surname: it.surname });
-                  return { value: it.id, label: fullName };
+                  return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
                 });
               });
             }}
