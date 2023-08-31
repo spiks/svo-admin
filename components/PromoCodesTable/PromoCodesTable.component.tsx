@@ -141,6 +141,11 @@ export const PromoCodesTable: FC = () => {
                 message: 'Промокод',
                 description: 'Скидка промокода не может быть равна 0',
               });
+            case 'promo_code_discount_equals_100_percents':
+              return notification.error({
+                message: 'Промокод',
+                description: 'Скидка промокода не должна составлять 100%',
+              });
             default:
               return notification.error({
                 message: 'Промокод',
@@ -179,6 +184,11 @@ export const PromoCodesTable: FC = () => {
               return notification.error({
                 message: 'Промокод',
                 description: 'Промокод с таким названием уже существует',
+              });
+            case 'promo_code_discount_equals_100_percents':
+              return notification.error({
+                message: 'Промокод',
+                description: 'Скидка промокода не должна составлять 100%',
               });
             case 'promo_code_discount_equals_zero':
               return notification.error({
