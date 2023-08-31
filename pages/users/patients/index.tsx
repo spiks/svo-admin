@@ -20,7 +20,7 @@ const ClientsPage: NextPage = () => {
       <UsersHeader
         subTitle={'В этом разделе собраны профили клиентов системы'}
         form={form}
-        searchPlaceholder={'Начните вводить имя пользователя'}
+        searchPlaceholder={'Начните вводить имя пользователя или телефон'}
         title={'Клиенты'}
       />
       <div style={{ overflow: 'auto' }}>

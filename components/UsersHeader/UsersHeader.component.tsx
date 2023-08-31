@@ -31,7 +31,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
   const { back } = useRouter();
   const { toggleShowFilters, handleFiltersApply, handleResetFilters, handleFiltersChange, showFilters } =
     useUsersHeaderForm(form);
-  const { search, phone } = useUsersQueryParams();
+  const { search } = useUsersQueryParams();
 
   return (
     <div
@@ -79,7 +79,6 @@ export const UsersHeader: FC<UserHeaderProps> = ({
             onValuesChange={handleFiltersChange}
             initialValues={{
               search,
-              phone,
             }}
           >
             <Row style={{ columnGap: '24px', flexWrap: 'nowrap' }}>
@@ -88,11 +87,7 @@ export const UsersHeader: FC<UserHeaderProps> = ({
                   <Input.Search size={'large'} placeholder={searchPlaceholder} onSearch={handleFiltersApply} />
                 </Form.Item>
               </Col>
-              <Col flex={2}>
-                <Form.Item name={'phone'} label={'Номер телефона'} tooltip={'Номер телефона'}>
-                  <Input placeholder={'Начните вводить номер'} type={'tel'} size={'large'} />
-                </Form.Item>
-              </Col>
+
               <Col flex={1}>
                 <Form.Item label={<span style={{ color: 'transparent' }}>.</span>}>
                   <Button

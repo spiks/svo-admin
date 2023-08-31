@@ -85,7 +85,7 @@ const TherapistsPage: NextPage = () => {
         title={'Психологи'}
         subTitle={'В этом разделе собраны профили терапевтов системы'}
         form={form}
-        searchPlaceholder={'Начните вводить имя терапевта'}
+        searchPlaceholder={'Начните вводить имя пользователя или телефон'}
         addUser
       >
         <TabList
