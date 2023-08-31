@@ -8,11 +8,10 @@ export function useUsersQueryParams(): NullableProperties<UsersQueryParams> {
 
   return useMemo(() => {
     const search = (typeof query['search'] === 'string' && query['search']) || null;
-    const phone = (typeof query['phone'] === 'string' && query['phone']) || null;
+
     return {
       search,
-      phone,
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query['search'], query['phone']]);
+  }, [query['search']]);
 }

@@ -47,7 +47,7 @@ const PatientsList: FC = () => {
   const [pageSize, setPageSize] = useState(10);
   const isMounted = useRef(true);
 
-  const { search, phone } = useUsersQueryParams();
+  const { search } = useUsersQueryParams();
 
   const router = useRouter();
 
@@ -57,18 +57,15 @@ const PatientsList: FC = () => {
       return;
     }
 
-    if (phone || search) {
+    if (search) {
       setPage(1);
     }
-  }, [phone, search]);
+  }, [search]);
 
   const fetchPatients = useCallback(
     (page) => {
       return getPatientList({
-        search: {
-          fullName: search,
-          phone,
-        },
+        searchQuery: search,
         pagination: {
           count: pageSize,
           offset: page * pageSize,
@@ -79,16 +76,16 @@ const PatientsList: FC = () => {
         },
       });
     },
-    [pageSize, phone, search],
+    [pageSize, search],
   );
 
   const queryClient = useQueryClient();
 
   const getQueryKey = useCallback(
     (page) => {
-      return ['patients', page, search, phone, pageSize];
+      return ['patients', page, search, pageSize];
     },
-    [pageSize, phone, search],
+    [pageSize, search],
   );
 
   const { isFetching, data: patientList } = useQuery(

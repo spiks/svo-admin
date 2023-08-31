@@ -50,10 +50,7 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
 
   const fetchTherapistsList = (offset: number, search: string) => {
     return getTherapistList({
-      search: {
-        fullName: search || null,
-        phone: null,
-      },
+      searchQuery: search || null,
       pagination: {
         count: 10,
         offset,
@@ -69,10 +66,7 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
 
   const fetchPatientsList = (offset: number, search: string) => {
     return getPatientList({
-      search: {
-        fullName: search || null,
-        phone: null,
-      },
+      searchQuery: search || null,
       pagination: {
         count: 10,
         offset,

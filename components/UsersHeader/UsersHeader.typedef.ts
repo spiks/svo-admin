@@ -1,1 +1,1 @@
-export type UsersQueryParams = { search: string; phone: string };
+export type UsersQueryParams = { search: string };

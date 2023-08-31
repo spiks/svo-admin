@@ -16,16 +16,14 @@ export function useUsersHeaderForm(form: FormInstance<UsersQueryParams>) {
 
   const handleFiltersApply = useCallback(async () => {
     const values = form.getFieldsValue();
-    const { search, phone } = values;
+    const { search } = values;
     const prev = { ...query };
     delete prev.search;
-    delete prev.phone;
 
     await replace({
       query: {
         ...prev,
         ...(search && { search }),
-        ...(phone && { phone }),
       },
     });
   }, [form, query, replace]);
@@ -33,7 +31,6 @@ export function useUsersHeaderForm(form: FormInstance<UsersQueryParams>) {
   const handleResetFilters = useCallback(() => {
     form.setFieldsValue({
       search: undefined,
-      phone: undefined,
     });
     form.submit();
   }, [form]);

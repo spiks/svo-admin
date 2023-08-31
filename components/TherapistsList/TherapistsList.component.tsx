@@ -63,7 +63,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState<NonNullable<SortOrder>>('descend');
 
-  const { search, phone } = useUsersQueryParams();
+  const { search } = useUsersQueryParams();
 
   useEffect(() => {
     if (isMounted.current) {
@@ -71,10 +71,10 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
       return;
     }
 
-    if (phone || search) {
+    if (search) {
       setPage(1);
     }
-  }, [phone, search]);
+  }, [search]);
 
   useEffect(() => {
     setPage(1);
@@ -84,10 +84,7 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
     (page) => {
       const fixedProfileStatus = profileStatus === 'all' ? null : profileStatus;
       return getTherapistList({
-        search: {
-          fullName: search,
-          phone,
-        },
+        searchQuery: search,
         pagination: {
           count: pageSize,
           offset: page * pageSize,
@@ -100,16 +97,16 @@ const TherapistsList: FC<Props> = ({ activeTab, profileStatus }) => {
         statuses: fixedProfileStatus ? [fixedProfileStatus] : queryStatusLists[activeTab],
       });
     },
-    [activeTab, pageSize, phone, profileStatus, search, sortOrder],
+    [activeTab, pageSize, profileStatus, search, sortOrder],
   );
 
   const queryClient = useQueryClient();
 
   const getQueryKey = useCallback(
     (page) => {
-      return ['therapists', page, activeTab, search, phone, pageSize, sortOrder, profileStatus];
+      return ['therapists', page, activeTab, search, pageSize, sortOrder, profileStatus];
     },
-    [activeTab, pageSize, phone, search, sortOrder, profileStatus],
+    [activeTab, pageSize, search, sortOrder, profileStatus],
   );
 
   const { isFetching, data: therapistsList } = useQuery(
