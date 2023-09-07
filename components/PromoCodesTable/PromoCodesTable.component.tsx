@@ -71,16 +71,15 @@ export const PromoCodesTable: FC = () => {
   const promoCodeFormViewModelToRequestDataMapper = (
     formValues: PromoCodeFormAutoViewModel | PromoCodeFormInputViewModel | PromoCodeFormB2bViewModel,
   ): SubmitPromoCodeRequestSchema | UpdatePromoCodeRequestSchema => {
+    const getValue = (it: { value: string; label: string }) => {
+      return it.value;
+    };
     switch (formValues.type) {
       case 'b2b':
         return {
           ...formValues,
-          forPatients: formValues.forPatients.map((it) => {
-            return it.value;
-          }),
-          forTherapists: formValues.forTherapists.map((it) => {
-            return it.value;
-          }),
+          forPatients: formValues.forPatients.map(getValue),
+          forTherapists: formValues.forTherapists.map(getValue),
         };
       default:
         return {
@@ -89,17 +88,13 @@ export const PromoCodesTable: FC = () => {
             ? { type: 'all' }
             : {
                 type: 'selected',
-                therapistIds: formValues.forTherapists.map((it) => {
-                  return it.value;
-                }),
+                therapistIds: formValues.forTherapists.map(getValue),
               },
           forPatients: !formValues.forPatients?.length
             ? { type: 'all' }
             : {
                 type: 'selected',
-                patientIds: formValues.forPatients.map((it) => {
-                  return it.value;
-                }),
+                patientIds: formValues.forPatients.map(getValue),
               },
         };
     }
