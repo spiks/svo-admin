@@ -2,7 +2,14 @@ import { PromoCodeModalSelect } from '@components/PromoCodeModal/PromoCodeModalS
 import { Alert, Button, Checkbox, Col, Form, FormProps, Input, Modal, Row, Select } from 'antd';
 import { getPatientList } from 'api/patient/getPatientList';
 import { getTherapistList } from 'api/therapist/getTherapistList';
-import { GetPromoCodeResponseSchema, SubmitPromoCodeAuto, SubmitPromoCodeB2b, SubmitPromoCodeInput } from 'generated';
+import {
+  GetPromoCodeResponseSchema,
+  PromoCodePatientProfiles,
+  PromoCodeTherapistProfiles,
+  SubmitPromoCodeAuto,
+  SubmitPromoCodeB2b,
+  SubmitPromoCodeInput,
+} from 'generated';
 import { FC, useCallback, useEffect } from 'react';
 import { extractFullName } from '../../utility/extractFullName';
 
@@ -48,6 +55,8 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
     onSubmit(formValues);
   };
 
+  const type = Form.useWatch('type', promoCodeForm);
+
   const fetchTherapistsList = (offset: number, search: string) => {
     return getTherapistList({
       searchQuery: search || null,
@@ -78,14 +87,16 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
     });
   };
 
+  const profileMapper = (profiles: PromoCodeTherapistProfiles | PromoCodePatientProfiles | undefined) => {
+    return profiles?.map((it) => {
+      return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
+    });
+  };
+
   const promoCodeToViewModelMapper = useCallback(() => {
     if (promoCode?.type === 'b2b') {
-      const forPatientsValueB2b = promoCode.forPatients.patientProfiles.map((it) => {
-        return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
-      });
-      const forTherapistsValueB2b = promoCode.forTherapists.therapistProfiles.map((it) => {
-        return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
-      });
+      const forPatientsValueB2b = profileMapper(promoCode.forPatients.patientProfiles);
+      const forTherapistsValueB2b = profileMapper(promoCode.forTherapists.therapistProfiles);
 
       return {
         ...promoCode,
@@ -94,18 +105,10 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
       };
     }
     const forTherapistsValue =
-      promoCode?.forTherapists.type === 'all'
-        ? []
-        : promoCode?.forTherapists.therapistProfiles.map((it) => {
-            return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
-          });
+      promoCode?.forTherapists.type === 'all' ? [] : profileMapper(promoCode?.forTherapists.therapistProfiles);
 
     const forPatientsValue =
-      promoCode?.forPatients.type === 'all'
-        ? []
-        : promoCode?.forPatients.patientProfiles.map((it) => {
-            return { value: it.id, label: extractFullName({ name: it.name, surname: it.surname }) };
-          });
+      promoCode?.forPatients.type === 'all' ? [] : profileMapper(promoCode?.forPatients.patientProfiles);
 
     return {
       ...promoCode,
@@ -113,6 +116,15 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
       forPatients: forPatientsValue,
     };
   }, [promoCode]);
+
+  useEffect(() => {
+    if (!promoCode) {
+      promoCodeForm.setFieldsValue({
+        serviceDiscount: type === 'b2b' ? 30 : undefined,
+        therapistDiscount: type === 'b2b' ? 70 : undefined,
+      });
+    }
+  }, [promoCode, promoCodeForm, type]);
 
   useEffect(() => {
     promoCodeForm.setFieldsValue(promoCodeToViewModelMapper());
@@ -133,9 +145,7 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
           type: 'auto',
           isActive: false,
           isDisposable: false,
-          serviceDiscount: undefined,
           title: '',
-          therapistDiscount: undefined,
         }}
         layout="vertical"
         form={promoCodeForm}
@@ -152,47 +162,58 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
           <Input showCount type="text" placeholder="Введите текст промокода" maxLength={20} />
         </Form.Item>
         <Form.Item name={'type'} label={'Тип'}>
-          <Select defaultValue={'auto'}>
+          <Select>
             <Select.Option value="input">Для ввода</Select.Option>
             <Select.Option value="auto">Автоматический</Select.Option>
             <Select.Option value="b2b">B2B</Select.Option>
           </Select>
         </Form.Item>
         <Form.Item
-          noStyle
-          shouldUpdate={(prevValues, currentValues) => {
-            return prevValues.type !== currentValues.type;
+          normalize={(value) => {
+            return +value;
           }}
+          name={'serviceDiscount'}
+          label={'Скидка за счет площадки в процентах'}
+          rules={[
+            {
+              required: true,
+              message: 'Заполните недостающие поля',
+            },
+            {
+              async validator(_, value) {
+                if (value < 0 || value > 30) {
+                  throw new Error('Значение от 0 до 30');
+                }
+              },
+            },
+          ]}
         >
-          {({ getFieldValue }) =>
-            getFieldValue('type') !== 'b2b' ? (
-              <>
-                <Form.Item
-                  normalize={(value) => {
-                    return +value;
-                  }}
-                  name={'serviceDiscount'}
-                  label={'Скидка за счет площадки в процентах'}
-                  rules={[{ required: true, message: 'Заполните недостающие поля' }]}
-                >
-                  <Input type={'number'} min={0} max={30} />
-                </Form.Item>
-                <Form.Item
-                  normalize={(value) => {
-                    return +value;
-                  }}
-                  name={'therapistDiscount'}
-                  label={'Скидка за счет терапевта в процентах'}
-                  rules={[{ required: true, message: 'Заполните недостающие поля' }]}
-                >
-                  <Input type={'number'} min={0} max={70} />
-                </Form.Item>
-                <Form.Item name={'isDisposable'} valuePropName="checked" label={'Одноразовый промокод'}>
-                  <Checkbox />
-                </Form.Item>
-              </>
-            ) : null
-          }
+          <Input type={'number'} />
+        </Form.Item>
+        <Form.Item
+          normalize={(value) => {
+            return +value;
+          }}
+          rules={[
+            {
+              required: true,
+              message: 'Заполните недостающие поля',
+            },
+            {
+              async validator(_, value) {
+                if (value < 0 || value > 70) {
+                  throw new Error('Значение от 0 до 70');
+                }
+              },
+            },
+          ]}
+          name={'therapistDiscount'}
+          label={'Скидка за счет терапевта в процентах'}
+        >
+          <Input type={'number'} />
+        </Form.Item>
+        <Form.Item name={'isDisposable'} valuePropName="checked" label={'Одноразовый промокод'}>
+          <Checkbox />
         </Form.Item>
         <Form.Item name={'isActive'} label={'Активный промокод'} valuePropName="checked">
           <Checkbox />
