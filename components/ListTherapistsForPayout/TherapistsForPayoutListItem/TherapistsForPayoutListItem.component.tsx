@@ -1,12 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { Avatar, Collapse, Table, Typography } from 'antd';
+import { Avatar, Button, Collapse, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import { getListPayoutsForTherapists } from 'api/payout/getListPayoutsForTherapist';
 import { MediaImage, PayoutPeriod } from 'generated';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { PayoutGridView, payoutToGridView } from '../TherapistsForPayoutList.utils/payoutToGridView';
 import styles from './TherapistsForPayoutListItem.module.css';
-import { CheckOutlined, MinusOutlined, UserOutlined } from '@ant-design/icons';
+import { CheckOutlined, MinusOutlined, UserOutlined, DownloadOutlined } from '@ant-design/icons';
+import { getTherapistPersonalPayoutReport } from 'api/payout/getTherapistPersonalPayoutReport';
 
 const { Panel } = Collapse;
 
@@ -93,6 +94,14 @@ export const TherapistsForPayoutListItem: FC<TherapistsForPayoutListItemProps> =
     [pageSize, id, payoutPeriod],
   );
 
+  const { data: therapistPersonalReport, isLoading: isLoadingTherapistPersonalReport } = useQuery(
+    ['therapistReport', payoutPeriod, id],
+    () => {
+      return getTherapistPersonalPayoutReport({ therapistId: id, payoutPeriod });
+    },
+    { enabled: isActive },
+  );
+
   const { isFetching, data: listPayouts } = useQuery(
     getQueryKey(page),
     () => {
@@ -133,6 +142,14 @@ export const TherapistsForPayoutListItem: FC<TherapistsForPayoutListItemProps> =
                 {`${Intl.NumberFormat('ru-RU').format(listPayouts?.data.totalAmount.amount ?? 0)} \u20bd`}
               </Typography.Text>
             </div>
+            <Button
+              disabled={!therapistPersonalReport?.data}
+              href={therapistPersonalReport?.data.url}
+              loading={isLoadingTherapistPersonalReport}
+              icon={<DownloadOutlined />}
+            >
+              {'Загрузить отчет'}
+            </Button>
           </div>
           <Table
             columns={columns}
