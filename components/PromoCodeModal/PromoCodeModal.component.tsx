@@ -23,7 +23,9 @@ export type PromoCodeFormAutoViewModel = Omit<SubmitPromoCodeAuto, 'forTherapist
 export type PromoCodeFormInputViewModel = Omit<SubmitPromoCodeInput, 'forTherapists' | 'forPatients'> &
   SelectedUsersType;
 
-export type PromoCodeFormB2bViewModel = Omit<SubmitPromoCodeB2b, 'forTherapists' | 'forPatients'> & SelectedUsersType;
+export type PromoCodeFormB2bViewModel = Omit<SubmitPromoCodeB2b, 'forTherapists' | 'forPatients'> &
+  Omit<SelectedUsersType, 'forTherapists'> &
+  Pick<Partial<SelectedUsersType>, 'forTherapists'>;
 
 export type PromoCodeFormViewModel =
   | PromoCodeFormInputViewModel
@@ -241,7 +243,11 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
             }}
           />
         </Form.Item>
-        <Form.Item name={'forPatients'} label={'Пациенты'}>
+        <Form.Item
+          name={'forPatients'}
+          label={'Пациенты'}
+          rules={[{ required: promoCodeForm.getFieldValue('type') === 'b2b', message: 'Заполните недостающие поля' }]}
+        >
           <PromoCodeModalSelect
             placeholder={'Выберите пациентов, к которым будет применяться промокод'}
             queryKey={['patientList']}

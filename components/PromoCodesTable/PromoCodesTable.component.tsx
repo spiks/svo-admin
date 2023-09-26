@@ -22,7 +22,7 @@ import {
   PromoCodeFormViewModel,
   PromoCodeModal,
 } from '@components/PromoCodeModal/PromoCodeModal.component';
-import { ApiRegularError } from 'api/errorClasses';
+import { ApiRegularError, ApiValidationError } from 'api/errorClasses';
 import { getPromoCode } from 'api/promoCodes/getPromoCode';
 
 export const PromoCodesTable: FC = () => {
@@ -79,7 +79,7 @@ export const PromoCodesTable: FC = () => {
         return {
           ...formValues,
           forPatients: formValues.forPatients.map(getValue),
-          forTherapists: formValues.forTherapists.map(getValue),
+          forTherapists: formValues.forTherapists?.map(getValue) ?? [],
         };
       default:
         return {
@@ -147,6 +147,26 @@ export const PromoCodesTable: FC = () => {
                 description: 'Не удалось обновить промокод',
               });
           }
+        }
+        if (error instanceof ApiValidationError) {
+          const errMsg = error.violations.reduce((acc, apiViolation, idx) => {
+            switch (apiViolation.type) {
+              case 'array_is_too_short':
+                acc +=
+                  idx === 0
+                    ? `Поле ${apiViolation.pointer} слишком короткое`
+                    : ` Поле ${apiViolation.pointer} слишком короткое`;
+                break;
+              default:
+                return acc;
+            }
+            return acc;
+          }, '');
+
+          return notification.error({
+            message: 'Ошибка валидации',
+            description: errMsg,
+          });
         }
       },
     },
