@@ -1,15 +1,15 @@
 .page-wrapper {
-    overflow: auto;
+  overflow: auto;
 }
 
 .page-wrapper .ant-card-body {
-    overflow: hidden;
-    min-width: 930px;
+  overflow: hidden;
+  min-width: 930px;
 }
 
 .page-wrapper > div > div {
-    min-width: 930px;
-    padding-right: 24px;
-    box-sizing: content-box;
-    overflow: auto;
+  min-width: 930px;
+  padding-right: 24px;
+  box-sizing: content-box;
+  overflow: auto;
 }
