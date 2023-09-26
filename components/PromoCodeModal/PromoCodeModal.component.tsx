@@ -98,7 +98,8 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
   const promoCodeToViewModelMapper = useCallback(() => {
     if (promoCode?.type === 'b2b') {
       const forPatientsValueB2b = profileMapper(promoCode.forPatients.patientProfiles);
-      const forTherapistsValueB2b = profileMapper(promoCode.forTherapists.therapistProfiles);
+      const forTherapistsValueB2b =
+        promoCode.forTherapists.type === 'all' ? [] : profileMapper(promoCode.forTherapists.therapistProfiles);
 
       return {
         ...promoCode,
