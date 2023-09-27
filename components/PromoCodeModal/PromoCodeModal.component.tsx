@@ -277,19 +277,22 @@ export const PromoCodeModal: FC<PromoCodeModalProps> = ({
             return prevValues.type !== currentValues.type;
           }}
         >
-          {({ getFieldValue }) =>
-            getFieldValue('type') !== 'b2b' ? (
-              <>
-                <Alert
-                  style={{ marginBottom: '24px' }}
-                  message={'Обратите внимание!'}
-                  description={' Пустой список психологов/пациентов будет означать, что промокод применяется ко всем.'}
-                  type="warning"
-                  showIcon
-                />
-              </>
-            ) : null
-          }
+          {({ getFieldValue }) => {
+            const alertDescription =
+              getFieldValue('type') === 'b2b'
+                ? 'Пустой список психологов будет означать, что промокод применяется ко всем.'
+                : 'Пустой список психологов/пациентов будет означать, что промокод применяется ко всем.';
+
+            return (
+              <Alert
+                style={{ marginBottom: '24px' }}
+                message={'Обратите внимание!'}
+                description={alertDescription}
+                type="warning"
+                showIcon
+              />
+            );
+          }}
         </Form.Item>
         <Row justify={'space-between'}>
           <Col>
