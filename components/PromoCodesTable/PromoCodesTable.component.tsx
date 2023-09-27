@@ -79,9 +79,10 @@ export const PromoCodesTable: FC = () => {
         return {
           ...formValues,
           forPatients: formValues.forPatients.map(getValue),
-          forTherapists: formValues.forTherapists
-            ? { type: 'selected', therapistIds: formValues.forTherapists?.map(getValue) }
-            : { type: 'all' },
+          forTherapists:
+            formValues.forTherapists && formValues.forTherapists.length
+              ? { type: 'selected', therapistIds: formValues.forTherapists?.map(getValue) }
+              : { type: 'all' },
         };
       default:
         return {
