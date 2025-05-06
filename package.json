@@ -3,12 +3,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev -p 3001",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint --max-warnings=0",
     "lint:fix": "npx prettier --write . && next lint --fix --max-warnings=0",
-    "generate": "openapi --input https://storage.yandexcloud.net/most-docs/admin/openapi/0.154.json --output ./generated --useOptions --useUnionTypes --client axios"
+    "generate": "openapi --input https://storage.yandexcloud.net/svo-docs/admin/openapi/0.0.json --output ./generated --useOptions --useUnionTypes --client axios"
   },
   "dependencies": {
     "@sentry/nextjs": "^7.17.4",
