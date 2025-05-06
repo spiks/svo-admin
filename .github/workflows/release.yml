@@ -15,7 +15,7 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
-          registry: cr.yandex/crp4dgofvl6rfflbhmj7
+          registry: cr.yandex/crpc901cpos7900u853a
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
@@ -26,7 +26,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: cr.yandex/crp4dgofvl6rfflbhmj7/frontend-admin:${{ github.event.release.tag_name }}
+          tags: cr.yandex/crpc901cpos7900u853a/frontend-admin:${{ github.event.release.tag_name }}
           build-args: |
             SENTRY_DSN=https://99787a99a4e848d4b9ca95e1512521c9@o236525.ingest.sentry.io/4504095677349888
             SENTRY_ORG=${{ secrets.SENTRY_ORG }}
