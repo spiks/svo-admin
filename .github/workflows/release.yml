@@ -27,8 +27,3 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: cr.yandex/crpc901cpos7900u853a/frontend-admin:${{ github.event.release.tag_name }}
-          build-args: |
-            SENTRY_DSN=https://99787a99a4e848d4b9ca95e1512521c9@o236525.ingest.sentry.io/4504095677349888
-            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
-            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
-            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
